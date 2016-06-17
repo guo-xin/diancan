@@ -217,7 +217,6 @@
           name: 'orderDetail',
           params: {
             'order_id': this.orderId,
-            'customer_id': 2, // TODO ????
             'mchnt_id': this.mchnt_id
           }
         })

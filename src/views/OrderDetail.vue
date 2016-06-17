@@ -67,8 +67,8 @@
         let args = this.$route.params
         /**
          * order_id     // 订单id
-         * customer_id  // 用户id
          * mchnt_id     // 商户id
+         * customer_id  // 用户id(去掉)
          */
         args.format = 'jsonp'
         this.$http({

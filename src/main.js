@@ -39,7 +39,7 @@ router.map({
     name: 'createOrder',
     component: require('./views/CreateOrder')
   },
-  'order_detail/:order_id/:customer_id/:mchnt_id': { // 订单详情:订单id|用户id|商户id
+  'order_detail/:order_id/:mchnt_id': { // 订单详情: 订单id|商户id
     name: 'orderDetail',
     component: require('./views/OrderDetail')
   },
