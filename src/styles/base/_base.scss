@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+* {
+  /* 防止点击闪烁 */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+  /* 缩放网页，文字大小不变 */
+  -webkit-text-size-adjust: none;
+}
+
+*, :before, :after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: Helvetica Neue, Helvetica, STHeiTi, Arial, sans-serif;
+  height: inherit;
+  //font-size: 24px; /*px*/
+  //font-size: 12px; /*px*/
+}
+
+[v-cloak] {
+  display: none;
+}
+
+.v-cloak--block, .v-cloak--inline, .v-cloak--inlineBlock {
+  display: none;
+}
+
+#app-container {
+  margin: 0 auto;
+  width: 750px;
+  //background-color: #F7F7F7;
+}
+
+//// usual color
+//$red : #fd5359;
+//$orange : #fe9b20;
+//$white : #fff;
+//$aluminium : #8a8c92;
+//$black : #2f323a;
+//$midBlack : #4e5057;
+//$lightBlack : #606470;
+//$whiteSmoke : #f8f8f8;
+//$gray : #a7a9ae;
+//$midGray : #c2c2c2;
+//$lightGray : #e5e5e5;
+//$lilyWhite : #ebebeb;
+//// fontSize
+//$f1 : 36px;
+//$f2 : 32px;
+//$f3 : 30px;
+//$f4 : 28px;
+//$f5 : 26px;
+//$f6 : 24px;
+//$f7 : 22px;
+//$f8 : 20px;
