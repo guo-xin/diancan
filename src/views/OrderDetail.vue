@@ -6,7 +6,7 @@
     <section class="order-info">
       <div class="l-r-lr">
         <h2 class="shopname">{{order.orderinfo.shop_name}}</h2>
-        <div class="num">{{order.orderinfo.address}}</div>
+        <div class="num" v-show="order.orderinfo.address">{{order.orderinfo.address}}号桌</div>
       </div>
       <p>流水号：{{order.orderinfo.order_sn}}</p>
       <p>订单编号：{{order.orderinfo.order_id}}</p>
@@ -16,19 +16,19 @@
       <li v-for="group in order.goods_list">
         <h2>{{group.cate}}</h2>
         <div class="l-r-lr goods" v-for="goods in group.goods">
-          <div class="name">{{goods.name}}&nbsp;×&nbsp;{{goods.count}}</div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}</div>
+          <div class="name">{{goods.name}}</div>
+          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}&nbsp;×&nbsp;{{goods.count}}</div>
         </div>
       </li>
     </ul>
     <section class="remarks">
       <h2>备注</h2>
-      <div>{{order.note}}</div>
+      <div>{{order.orderinfo.note}}</div>
     </section>
 
     <div class="l-c-c allPrice">
       <span>总价</span>&nbsp;
-      <div><em class="dollar">¥</em>&nbsp;{{order.txamt|formatCurrency}}</div>
+      <div><em class="dollar">¥</em>&nbsp;{{order.orderinfo.txamt|formatCurrency}}</div>
     </div>
   </div>
 </template>
