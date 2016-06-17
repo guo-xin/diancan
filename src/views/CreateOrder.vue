@@ -51,6 +51,7 @@
         isEditAddress: '',  // 是否可以编辑桌号
         note: '',           // 备注
         orderId: '',        // 订单ID
+        checkout: {},
         btnText: '确认下单'
       }
     },
@@ -175,6 +176,7 @@
             return
           }
           this.pay(data.pay_params)
+          this.checkout = data
         }, (response) => {
           // error callback
         })
@@ -186,8 +188,7 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-              // document.write(JSON.stringify(res));
-              // alert(res.err_msg);
+//              window.alert(JSON.stringify(res))
 //              console.log(res)
 //              this.$dispatch('on-toast', res.err_msg)
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
@@ -211,18 +212,42 @@
           onBridgeReady()
         }
       },
-      orderPaySuccess () {  // 创建支付成功
-        this.$dispatch('on-cleanCart')
-        this.$router.replace({
-          name: 'orderDetail',
-          params: {
-            'order_id': this.orderId,
-            'mchnt_id': this.mchnt_id
-          }
-        })
+      orderPaySuccess () {  // 订单支付成功
+        this.$dispatch('on-cleanCart', this.mchnt_id)
+        this.queryOrder()
       },
       orderPayFail () { // 支付失败
         this.btnText = '确认下单'
+      },
+      queryOrder () {
+        let args = {
+          order_id: this.orderId,
+          mchnt_id: this.mchnt_id,
+          syssn: this.checkout.syssn,
+          format: 'cors'
+        }
+        this.$http({
+          url: Config.apiHost + 'diancan/c/check_pay',
+          method: 'GET',
+          data: args
+        }).then((response) => {
+          // success callback
+          this.$router.replace({
+            name: 'orderDetail',
+            params: {
+              'order_id': this.orderId,
+              'mchnt_id': this.mchnt_id
+            }
+          })
+//          let data = response.data
+//          if (data.respcd !== Config.code.OK) {
+//            this.$dispatch('on-toast', data.respmsg)
+//            // transition.abort()
+//            return
+//          }
+        }, (response) => {
+          // error callback
+        })
       }
     }
   }

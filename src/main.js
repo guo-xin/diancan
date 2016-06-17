@@ -15,8 +15,7 @@ import './filters/index'
 import App from './App.vue'
 
 import Wechat from './methods/Wechat'
-console.log(Wechat)
-// Wechat.verify()
+Wechat.verify()
 
 Vue.use(VueResource)
 Vue.use(VueRouter)

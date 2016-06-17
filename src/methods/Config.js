@@ -16,7 +16,7 @@ let payHost = 'https://qtapi.qa.qfpay.net/'
 
 // 测试配置
 if (debug) {
-  apiHost = 'http://172.100.111.215:6300/'
+  // apiHost = 'http://172.100.111.215:6300/'
   payHost = 'http://172.100.111.111:5600/'
 }
 

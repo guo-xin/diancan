@@ -1,6 +1,7 @@
 <template>
   <div class="">
     <h1>{{ msg }}</h1>
+    <button @click="clear">清除本地存储</button>
   </div>
 </template>
 
@@ -11,6 +12,13 @@ export default {
   data () {
     return {
       msg: '关于!'
+    }
+  },
+  methods: {
+    clear () {
+      window.localStorage.clear()
+      window.sessionStorage.clear()
+      this.msg = 'OK!'
     }
   }
 }
