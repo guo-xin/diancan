@@ -14,7 +14,7 @@ let isAPP = function () {
 
 // 获取 url 请求参数
 let getRequestParams = function (url) {
-  url = url || window.location.search
+  url = url || window.location.href
   url = decodeURIComponent(url)
   var Request = {}
   if (url.indexOf('?') !== -1) {

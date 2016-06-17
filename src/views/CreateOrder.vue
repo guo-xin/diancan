@@ -162,8 +162,7 @@
 //        args.format = 'cors'
 
         this.$http({
-//          url: Config.apiHost + 'trade/v1/checkout',
-          url: 'http://172.100.111.111:5600/trade/v1/checkout',
+          url: Config.payHost + 'trade/v1/checkout',
           method: 'POST',
           data: args
         }).then((response) => {
@@ -189,7 +188,8 @@
             function (res) {
               // document.write(JSON.stringify(res));
               // alert(res.err_msg);
-              console.log(res.err_msg)
+//              console.log(res)
+//              this.$dispatch('on-toast', res.err_msg)
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else {

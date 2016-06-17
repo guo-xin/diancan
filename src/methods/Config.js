@@ -11,11 +11,13 @@ const debug = process.env.NODE_ENV !== 'production'
 // let o2Host = 'https://o2.qfpay.com/'
 // let oHost = 'https://o.qfpay.com/'
 
-let apiHost = 'http://172.100.111.215:6300/'
+let apiHost = 'https://qtapi.qa.qfpay.net/'
+let payHost = 'https://qtapi.qa.qfpay.net/'
 
 // 测试配置
 if (debug) {
   apiHost = 'http://172.100.111.215:6300/'
+  payHost = 'http://172.100.111.111:5600/'
 }
 
 // 开发配置
@@ -23,6 +25,7 @@ if (debug) {
 
 module.exports = {
   apiHost,
+  payHost,
   code: {
     OK: '0000', // 成功
     DBERR: '2000', // 数据库查询错误
