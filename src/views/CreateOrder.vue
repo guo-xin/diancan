@@ -24,7 +24,7 @@
         <span class="text">桌号</span>
         <!--<input class="num" :class="{'edit': isEditAddress}" :disabled="!isEditAddress" type="text" maxlength="8" v-model="address" placeholder="桌号"/>-->
         <!--开放编辑桌号-->
-        <input class="num" :class="{'edit': isEditAddress}" type="text" maxlength="8" v-model="address" placeholder="桌号"/>
+        <input class="num" :class="{'edit': isEditAddress}" type="text" maxlength="8" v-model="address" placeholder=""/>
       </div>
       <div class="l-r row">
         <span class="text">备注</span>
@@ -332,7 +332,8 @@
 
   /*编号*/
   .num {
-    width: 124px;
+    /*width: 124px;*/
+    width: 350px;
     height: 68px;
     border: 2px solid #E5E5E5; /*px*/
     /*border: 2px solid #fe9b20; !*px*!*/

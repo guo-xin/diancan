@@ -21,7 +21,7 @@
         </div>
       </li>
     </ul>
-    <section class="remarks">
+    <section class="remarks" v-if="order.orderinfo.note">
       <h2>备注</h2>
       <div>{{order.orderinfo.note}}</div>
     </section>
