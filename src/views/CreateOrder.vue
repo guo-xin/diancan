@@ -332,24 +332,27 @@
 
   /*编号*/
   .num {
+    padding: 0 10px;
     /*width: 124px;*/
-    width: 350px;
+    /*width: 350px;*/
+    width: 590px;
     height: 68px;
     border: 2px solid #E5E5E5; /*px*/
     /*border: 2px solid #fe9b20; !*px*!*/
     border-radius: 6px;
-    text-align: center;
-    font-size: 40px; /*px*/
-    color: #8A8C92;
+    /*text-align: center;*/
+    font-size: 30px; /*px*/
+    /*color: #8A8C92;*/
   }
 
   /*备注*/
   .remarks {
     padding: 0 10px;
-    border: 2px solid #c2c2c2; /*px*/
+    border: 2px solid #E5E5E5; /*px*/
     border-radius: 6px;
     width: 590px;
-    height: 64px;
+    height: 68px;
+    font-size: 30px;  /*px*/
   }
 
   .order-bar {
