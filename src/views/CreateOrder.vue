@@ -260,7 +260,7 @@
   }
 
   .text {
-    font-size: 34px; /*px*/
+    font-size: 34px;
     color: #2f323a;
     line-height: 34px;
   }
@@ -268,7 +268,7 @@
   section {
     padding: 30px;
     h2 {
-      font-size: 30px; /*px*/
+      font-size: 30px;
       color: #8a8c92;
     }
   }
@@ -307,16 +307,16 @@
       border-bottom: 2px solid #e5e5e5; /*px*/
     }
     .name {
-      font-size: 34px; /*px*/
-      line-height: 34px; /*px*/
+      font-size: 34px;
+      line-height: 34px;
       color: #2f323a;
     }
     .price {
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #fe9b20;
       line-height: 34px;
       span {
-        font-size: 34px; /*px*/
+        font-size: 34px;
         color: #8A8C92;
       }
     }
@@ -341,7 +341,7 @@
     /*border: 2px solid #fe9b20; !*px*!*/
     border-radius: 6px;
     /*text-align: center;*/
-    font-size: 30px; /*px*/
+    font-size: 30px;
     /*color: #8A8C92;*/
   }
 
@@ -352,7 +352,7 @@
     border-radius: 6px;
     width: 590px;
     height: 68px;
-    font-size: 30px;  /*px*/
+    font-size: 30px;
   }
 
   .order-bar {
@@ -368,20 +368,20 @@
     align-items: center;
 
     span {
-      font-size: 26px; /*px*/
+      font-size: 26px;
       color: #2f323a;
     }
     .price {
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #2f323a;
-      line-height: 40px; /*px*/
+      line-height: 40px;
     }
     button {
       background: #fe9b20;
       border-radius: 6px;
       width: 260px;
       height: 80px;
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #fff;
     }
   }

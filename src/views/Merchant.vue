@@ -257,7 +257,7 @@
   /*左侧分类列表*/
   .list-group-box {
     height: 100%;
-    width: 146px;
+    width: 156px;
     background-color: #F7F7F7;
   }
 
@@ -266,8 +266,8 @@
     li {
       position: relative;
       text-align: center;
-      padding: 24px 12px;
-      font-size: 28px; /*px*/
+      padding: 30px 12px;
+      font-size: 28px;
       color: #2F323A;
       border-bottom: 2px solid #E5E5E5; /*px*/
 
@@ -284,13 +284,14 @@
         right: 4px;
         /*padding: 0 10px;*/
 
+        /*padding: 2px 10px;*/
         min-width: 32px;
         height: 32px;
         line-height: 32px;
         border-radius: 16px;
         text-align: center;
         /*font-size: 32px;*/
-        font-size: 26px;
+        font-size: 24px;
         color: #fff;
         background-color: #FD5359;
       }
@@ -342,21 +343,21 @@
       padding-left: 24px;
       .title {
         color: #4d4d4d;
-        font-size: 34px; /*px*/
-        line-height: 34px;
+        font-size: 32px;
+        line-height: 32px;
         color: #2f323a;
       }
 
       .description {
         height: 33px;
         margin: 8px 0;
-        font-size: 26px; /*px*/
+        font-size: 26px;
         color: #8a8c92;
         line-height: 34px;
       }
 
       .price {
-        font-size: 30px; /*px*/
+        font-size: 30px;
         color: #fe9b20;
         line-height: 40px;
       }

@@ -115,16 +115,16 @@
     position: relative;
     background: #e5e5e5;
     .shopname {
-      font-size: 34px; /*px*/
+      font-size: 34px;
       color: #2F323A;
     }
     .num {
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #FE9B20;
     }
     p {
       margin-top: 16px;
-      font-size: 26px; /*px*/
+      font-size: 26px;
       color: #8a8c92;
     }
   }
@@ -133,7 +133,7 @@
     padding: 0 30px;
     h2 {
       margin-top: 26px;
-      font-size: 30px; /*px*/
+      font-size: 30px;
       color: #8A8C92;
     }
     .goods {
@@ -142,12 +142,12 @@
       border-bottom: 2px solid #e5e5e5; /*px*/
     }
     .name {
-      font-size: 34px; /*px*/
-      line-height: 34px; /*px*/
+      font-size: 34px;
+      line-height: 34px;
       color: #2f323a;
     }
     .price {
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #8A8C92;
       line-height: 34px;
     }
@@ -163,7 +163,7 @@
     div {
       padding: 30px;
       border-radius: 6px;
-      font-size: 30px; /*px*/
+      font-size: 30px;
       background: #EFEFEF;
       color: #8a8c92;
       line-height: 30px;
@@ -178,11 +178,11 @@
     background: #fff;
     height: 104px;
     span {
-      font-size: 26px; /*px*/
+      font-size: 26px;
       color: #2F323A;
     }
     div {
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #FE9B20;
     }
   }

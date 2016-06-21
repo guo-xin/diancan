@@ -53,7 +53,7 @@
       background: #fff;
 
       i {
-        font-size: 30px; /*px*/
+        font-size: 30px;
         color: #FE9B20;
         font-weight: 700;
       }
@@ -64,7 +64,7 @@
       height: 100px;
       line-height: 100px;
       text-align: center;
-      font-size: 40px; /*px*/
+      font-size: 40px;
       color: #2f323a;
     }
   }
