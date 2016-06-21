@@ -6,8 +6,8 @@
         <img
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGgAAABgCAMAAADGkcf+AAAAnFBMVEUAAAB/1CF+1CF+0yF/1CF+1CF+1CGI9jZ/1CGB1iKB1iSC2CR+1CGA1COB1yON4DN/1CJ/1SF/1SKB1SOC2iaF3CmW/2p+1CF+1CF/1CKD5zF/1CKA1SF/1SKB1iR/1CF+1CF/1CF+1CGA1CJ/1CKA1SOC1yWB2SaA1CJ/1CJ/1SKA1SN/1CGA1CKA1CF/1CJ/1CJ/1CKA1SN+0yHQOtO8AAAAM3RSTlMA+Oj789fDBHo1LxzuRiUI66psPBYQAtC7iwrLoVwp5ODctpxXUCINl3FhTa+lkYWAZkHLcJMGAAADr0lEQVRo3qzV6W6yQACF4QPjMGxSUXAX99Yu6tee+7+3L5rGVpkBrPP8IhBCDiEvaCwPNv56OJHzWDid5cBbTf1toWBVP/ycLqkjZNpNYMd4u49ZabHb5niQ2nw4bECkbTwg+ueysaWf4W/CVPAuIk1wv+c97yfWEe6T7QT/xBnluMOswz+LN2gqWvEhadZwTosPct9RTx1owU6hRubRiuELKhVzWjKIUCF0aY0bwCiIaVErgEHQolVuYoiOS8sWETRySetkjhI1pH0fBUpGtM1ZFyjr0bL4mEHjZUGrFq+GMkxp02CmoBfQomEbRh5tEfsQ17bpr2Nr1TlEuJasyMvCvqQVrp/j2vjokPTw7Z02yM8n3NgseHKZZKMJ3ha3iuHlIs4SC6np4dbLSPAiwcmBj3F2CUo2c/7i42RuPzWhxyvyfPKh1HTHmp4dBG+EAHxqdRzWmmz6KJu5LDkCmFAnHucjVlt9Adq3puEBT9SSANoujcQ0hEa+MySjb+qpowBkK1NqRhF0Pjs0KPBGvR5Oug7L5n4OnWBCo5nxFz7CWVG6Wb4p6GRrVjhgRT1X4Uz5V6O8d2j1u3F1OzAxj/2W/HxHaQC93oDVPEgaTHDR/uiQQh6eoZdNWWcAlyYBfhsrGKjXFmvN4dBkj0a+JBtoVTxIRKgXpWxEwKXREXWU32IzHUgauU+o1pZsavm/N3vdbRQGogB8YGlKUsAstISQa3MhJTRbkvP+77aqWhV2m9iY4H5/EULC4zkjWzppHSCTv7K9MdbSp9eJyqKGVD4Mx7hmt6KWDSJK/MZlQUpNEWLWlBVeDzi6zsikL03w3XxJfU/AmBJeJo1qjeoGNpQ5SaJawx8APmXu0JCcPHbjA7gPKXNWh46aI6D8dzON9qnYJmfKWAHeZZXF7ny8S1bygomB/C2kknqhI8o5Dm8T4YNY0ihnj08FjXLrlm/ToKXAlxMNOqAhpTHTBA25Q0OsEWom66HAv5IBjUjxv8dnGmBfiOiFw5rRo++Svdvhoog9K4Af+ZKLqw7sUQSJ7a8eO4+U77EXXgmFhyl7MM6hJF54s2OGNlzeJpyjnaL/a1gD9wfPJVobszM7ukdricWOPDeDhgW7mR4EtGzZgTMbQlfFhlW529hUCDelgL5X1l72ADCs1iGvCNdunKCTOtPvYnzJt2/Hgc0Ge3Cs5gE6y/jJqr6XqngIRrHvx6PgUeBGQ35IFzCnDj97DtMmJK3JHsYVtGY5fkAyeoIBfwE2fBJDhMQqyAAAAABJRU5ErkJggg==">
         <span>微信支付</span>
+        <i class="iconfont pay-type_select">&#xe603;</i>
       </div>
-      <i class="iconfont pay-type_select">&#xe603;</i>
     </section>
     <ul class="goods-list">
       <li v-for="goods in cart">
@@ -274,10 +274,11 @@
   }
 
   section.pay {
-    position: relative;
+    /*position: relative;*/
     background: #E5E5E5;
     /*height: 160px;*/
     .text {
+      position: relative;
       display: flex;
       align-items: center;
       margin-top: 28px;
@@ -289,7 +290,7 @@
     }
     .pay-type_select {
       position: absolute;
-      right: 60px;
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
 
