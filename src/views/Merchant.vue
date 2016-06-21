@@ -27,7 +27,7 @@
               <li v-for="goods in goodsList" track-by="id" class="list-item">
                 <div class="l-r wrap">
                   <div class="list-img">
-                    <div :style="{'background-image': 'url(' + goods.img + ')'}"></div>
+                    <div :style="{'background-image': 'url(' + goods.img + '_120s)'}"></div>
                   </div>
                   <div class="l_auto list-content">
                     <h4 class="title one_text">{{goods.name}}</h4>
