@@ -4,6 +4,7 @@
  */
 
 import Util from './Util'
+import Config from './Config'
 
 exports.verify = function () {
   let url = ''
@@ -32,7 +33,7 @@ exports.verify = function () {
     // wx087a3fc3f3757766
     // window.location.href = 'https://o2.qfpay.com/trade/wechat/v1/get_weixin_code?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.redirect_uri + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
     // window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.getItem('redirect_uri') + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx087a3fc3f3757766&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
     window.location.replace(url)
   }
 }

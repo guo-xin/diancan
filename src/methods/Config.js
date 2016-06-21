@@ -13,19 +13,25 @@ const debug = process.env.NODE_ENV !== 'production'
 
 let apiHost = 'https://qtapi.qa.qfpay.net/'
 let payHost = 'https://qtapi.qa.qfpay.net/'
+let appid = 'wx087a3fc3f3757766'  // 公众号ID
 
 // 测试配置
 if (debug) {
   // apiHost = 'http://172.100.111.215:6300/'
-  payHost = 'http://172.100.111.111:5600/'
+  // payHost = 'http://172.100.111.111:5600/'
+  appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
 // 开发配置
-// if (ENV === 'development') {}
+// if (ENV === 'development') {
+//   apiHost = 'http://172.100.111.215:6300/'
+//   payHost = 'http://172.100.111.111:5600/'
+// }
 
 module.exports = {
   apiHost,
   payHost,
+  appid,
   code: {
     OK: '0000', // 成功
     DBERR: '2000', // 数据库查询错误
