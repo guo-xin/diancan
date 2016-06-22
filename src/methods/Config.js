@@ -11,14 +11,14 @@ const debug = process.env.NODE_ENV !== 'production'
 // let o2Host = 'https://o2.qfpay.com/'
 // let oHost = 'https://o.qfpay.com/'
 
-let apiHost = 'https://qtapi.qa.qfpay.net/'
-let payHost = 'https://qtapi.qa.qfpay.net/'
-let appid = 'wx087a3fc3f3757766'  // 公众号ID
+let payHost = 'https://openapi.qfpay.com/'
+let apiHost = 'https://o.qfpay.com/'
+let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
 if (debug) {
-  // apiHost = 'http://172.100.111.215:6300/'
-  // payHost = 'http://172.100.111.111:5600/'
+  let payHost = 'https://qtapi.qa.qfpay.net/'
+  let apiHost = 'https://qtapi.qa.qfpay.net/'
   appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
