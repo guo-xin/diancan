@@ -296,6 +296,7 @@
 
   .goods-list {
     padding: 30px;
+    padding-right: 0;
 
     li {
       padding: 30px;

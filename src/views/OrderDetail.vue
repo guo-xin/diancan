@@ -131,7 +131,7 @@
   }
 
   .goods-list {
-    padding: 0 30px;
+    padding: 0 0 0 30px;
     h2 {
       margin-top: 26px;
       font-size: 30px;
