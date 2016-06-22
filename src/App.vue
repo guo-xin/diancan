@@ -18,9 +18,7 @@
     data () {
       return {
         user: {
-//          open_id: 'oYkCztztAhQhfP9X3DEHz0X9q5Jk'  // TODO ????
-//          open_id: 'oCyV1t0g7oVLCWiQTy93JXWdiL1U'  // TODO ????
-          open_id: ''  // TODO ????
+          open_id: ''  // oYkCztztAhQhfP9X3DEHz0X9q5Jk oCyV1t0g7oVLCWiQTy93JXWdiL1U
         },
         cart: [],
         msg: ''
@@ -28,28 +26,10 @@
     },
     ready () {
       this.setOpenId()
-//      this.$set('cart', Store.get(STORE_CART) || [])
-//      console.log(document.getElementsByClassName('view-container'))
-//      document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
     },
     methods: {
       setOpenId () {
         this.user.open_id = window.localStorage.getItem('openid') || ''
-//        this.user.open_id = 'oYkCztw6_I5u-Bp3w5rSdKlZ3wQw'
-//        if (!open_id) {
-//          let params = Util.getRequestParams(window.location.href)
-//          console.log(params)
-//          let code = params.code || ''
-// //          let openid = params.openid || window.localStorage.getItem('openid') || ''
-//          if (code) {
-//            // let host = 'http://api.haojin.in/'
-//            let host = 'https://qtapi.qa.qfpay.net/'
-//            window.location.href = host + 'diancan/weixincallback?redirect_url=' + window.localStorage.redirect_uri + '&code=' + code
-//          } else {
-//            console.error('CODE 不存在...')
-//          }
-//          window.localStorage.setItem('openid', )
-//        }
       },
       getKey (mchntId) {
         return STORE_CART + '_' + mchntId

@@ -170,7 +170,6 @@
           // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-//            this.$dispatch('on-toast', data.respmsg)
             this.$dispatch('on-toast', data.resperr)
             // transition.abort()
             return
@@ -189,8 +188,6 @@
             'getBrandWCPayRequest', payParams,
             function (res) {
 //              window.alert(JSON.stringify(res))
-//              console.log(res)
-//              this.$dispatch('on-toast', res.err_msg)
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else {
@@ -239,12 +236,6 @@
               'mchnt_id': this.mchnt_id
             }
           })
-//          let data = response.data
-//          if (data.respcd !== Config.code.OK) {
-//            this.$dispatch('on-toast', data.respmsg)
-//            // transition.abort()
-//            return
-//          }
         }, (response) => {
           // error callback
         })

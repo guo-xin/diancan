@@ -75,7 +75,6 @@
       return {
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
-//        cart: this.$root.cart,
         selectIndex: 0, // 激活分类
         groupList: [],  // 分类列表
         goodsList: []   // 商品列表
