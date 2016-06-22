@@ -23,17 +23,14 @@ exports.verify = function () {
     return
   }
   if (code) {
-    // let host = 'http://api.haojin.in/'
-    let host = 'https://qtapi.qa.qfpay.net/'
-    url = host + 'diancan/weixincallback?redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + '?') + '&code=' + code
+    url = Config.apiHost + 'diancan/weixincallback?redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + '?') + '&code=' + code
     window.location.replace(url)
   } else {
     window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
-    // wxeb6e671f5571abce
-    // wx087a3fc3f3757766
     // window.location.href = 'https://o2.qfpay.com/trade/wechat/v1/get_weixin_code?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.redirect_uri + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    // window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.getItem('redirect_uri') + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+    // url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+
+    url = Config.o2Host + 'trade/wechat/v1/get_weixin_code?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
     window.location.replace(url)
   }
 }
