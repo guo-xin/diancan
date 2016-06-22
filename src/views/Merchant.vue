@@ -334,8 +334,9 @@
       top: 10px;
       width: 120px;
       height: 120px;
-      background: url(../assets/shoplist-default.jpg) center center no-repeat;
+      background: url(../assets/default_food_pic.png) center center no-repeat;
       /*background-size: 50px 50px;*/
+      background-size: 100%;
       > div {
         width: 120px;
         height: 120px;
