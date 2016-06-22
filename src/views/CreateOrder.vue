@@ -20,11 +20,11 @@
     </ul>
     <section class="info">
       <h2>补充信息</h2>
-      <div class="l-r-lr row">
+      <div class="l-r row">
         <span class="text">桌号</span>
         <!--<input class="num" :class="{'edit': isEditAddress}" :disabled="!isEditAddress" type="text" maxlength="8" v-model="address" placeholder="桌号"/>-->
         <!--开放编辑桌号-->
-        <input class="num" :class="{'edit': isEditAddress}" type="text" maxlength="8" v-model="address" placeholder=""/>
+        <input class="l_auto num" :class="{'edit': isEditAddress}" type="text" maxlength="8" v-model="address" placeholder=""/>
       </div>
       <div class="l-r row">
         <span class="text">备注</span>
@@ -245,6 +245,10 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+  .create-order-view {
+    padding-bottom: 300px;
+  }
+
   .edit {
     color: #2F323A !important;
     border-color: #FE9B20 !important;
@@ -327,7 +331,7 @@
     padding: 0 10px;
     /*width: 124px;*/
     /*width: 350px;*/
-    width: 590px;
+    /*width: 590px;*/
     height: 68px;
     border: 2px solid #E5E5E5; /*px*/
     /*border: 2px solid #fe9b20; !*px*!*/
@@ -342,7 +346,7 @@
     padding: 0 10px;
     border: 2px solid #E5E5E5; /*px*/
     border-radius: 6px;
-    width: 590px;
+    /*width: 590px;*/
     height: 68px;
     font-size: 30px;
   }
@@ -379,6 +383,6 @@
   }
 
   .info {
-    margin-bottom: 300px;
+    /*margin-bottom: 300px;*/
   }
 </style>

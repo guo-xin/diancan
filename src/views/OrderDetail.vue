@@ -108,6 +108,7 @@
   }
 
   .order-detail-view {
+    padding-bottom: 120px;
     background-color: #F7F7F7;
   }
 
@@ -164,9 +165,9 @@
       padding: 30px;
       border-radius: 6px;
       font-size: 30px;
+      line-height: 1.5;
       background: #EFEFEF;
       color: #8a8c92;
-      line-height: 30px;
     }
   }
 
