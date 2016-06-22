@@ -22,7 +22,8 @@
       </div>
       <no-data class="no-data" v-show="!cart.length"></no-data>
       <div class="cart-list_box">
-        <scroller lock-x v-ref:cartscroller height="8.6rem">
+        <!--8.6rem-->
+        <scroller lock-x v-ref:cartscroller height="100%">
         <ul v-show="cart.length">
           <li v-for="goods in cart">
             <div>

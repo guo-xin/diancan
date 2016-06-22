@@ -6,7 +6,7 @@
 
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <scroller lock-x>
+        <scroller class="scroller-left" lock-x v-ref:scrollerleft height="100%">
           <div class="list-group">
             <ul class="">
               <li v-for="group in groupList" :class="{'active': selectIndex===$index}"
@@ -19,8 +19,7 @@
         </scroller>
       </div>
       <div class="l_auto shopmenu-list-container">
-        <!--<scroller lock-x scrollbar-y>-->
-        <scroller lock-x v-ref:scroller>
+        <scroller class="scroller-right" lock-x v-ref:scroller height="100%">
           <div class="shopmenu-list">
             <no-data v-if="!goodsList.length" class="no-data"></no-data>
             <ul class="listgroup" v-else>
@@ -94,10 +93,6 @@
 //      this.goodsList = this.groupList[0].goods_list
     },
     ready () {
-      document.getElementById('c-restaurant-content-box').style.height = window.innerHeight + 'px'
-//      let child = this.$refs.scroller
-//      console.log(child)
-//      child.reset()
     },
     route: {
       data (transition) {
@@ -132,6 +127,14 @@
             groupList: goods,
             goodsList: goods[0].goods_list
           })
+
+          this.$nextTick(() => {
+            document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
+            document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+            this.$refs.scrollerleft.reset()
+            this.$refs.scroller.reset()
+          })
+
           document.title = data.data.shopname
         }, function (response) {
           // error callback
@@ -256,7 +259,8 @@
 
   /*左侧分类列表*/
   .list-group-box {
-    height: 100%;
+    padding-bottom: 104px;
+    /*height: 100%;*/
     width: 156px;
     background-color: #F7F7F7;
   }
@@ -300,12 +304,13 @@
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
+    padding-bottom: 104px;
     height: 100%;
     background-color: #fff;
 
     & > div:first-child {
       /*background: #f2f2f2;*/
-      /*background: url(https://static11.elemecdn.com/eleme/msite/img/scrollit.png) center 10px no-repeat;*/
+      /*background: url() center 10px no-repeat;*/
       /*background-size: 90px;*/
     }
   }
