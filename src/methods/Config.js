@@ -18,7 +18,7 @@ let o2Host = 'https://o2.qfpay.com/'  // 微信获取openid
 let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
-if (!debug) {
+if (debug) {
   rootHost = 'https://qtapi.qa.qfpay.net/q/'
   payHost = 'https://qtapi.qa.qfpay.net/'
   apiHost = 'https://qtapi.qa.qfpay.net/'
@@ -61,5 +61,6 @@ module.exports = {
   /**
    * 常量 key
    */
-  STORE_CART: 'STORE_CART'  // 购物车
+  STORE_CART: 'STORE_CART',  // 购物车
+  OPENID: 'diancan_openid'
 }

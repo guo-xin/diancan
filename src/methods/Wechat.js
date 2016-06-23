@@ -17,14 +17,16 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 
+const OPENID = Config.OPENID
+
 exports.verify = function () {
   let url = ''
   let params = Util.getRequestParams(window.location.search)
   let code = params.code || ''
-  let openid = params.openid || window.localStorage.getItem('openid') || ''
+  let openid = params.openid || window.localStorage.getItem(OPENID) || ''
 
   if (openid) {
-    window.localStorage.setItem('openid', openid)
+    window.localStorage.setItem(OPENID, openid)
     let redirectUri = window.localStorage.getItem('redirect_uri')
     if (redirectUri) {
       window.localStorage.setItem('redirect_uri', '')
