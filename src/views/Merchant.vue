@@ -133,11 +133,18 @@
             this.$refs.scrollerleft.reset()
             this.$refs.scroller.reset()
           })
+          const shopname = data.data.shopname
+          let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
+          this.$dispatch('on-onMenuShareAppMessage', {title: '动一动手指，轻松点餐', desc: shopname + '不用排队，快来体验吧', link: shareLink})
 
-          document.title = data.data.shopname
+          document.title = shopname
         }, function (response) {
           // error callback
         })
+      },
+      canDeactivate (transition) {
+        this.$dispatch('on-hideOptionMenu')
+        transition.next()
       }
     },
     methods: {

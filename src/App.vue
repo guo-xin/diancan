@@ -6,6 +6,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import Wechat from './methods/Wechat'
 //  import Util from './Util'
   import {Store} from './methods/Store'
   import {STORE_CART} from './methods/Config'
@@ -69,6 +70,12 @@
       'on-cleanCart' (mchntId) {  // 清空购物车
         this.$set('cart', [])
         this.saveCart(mchntId)
+      },
+      'on-hideOptionMenu' () {  // 隐藏右上角菜单
+        Wechat.hideOptionMenu()
+      },
+      'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
+        Wechat.onMenuShareAppMessage(args)
       }
     }
   }

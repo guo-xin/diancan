@@ -14,9 +14,6 @@ import VueResource from 'vue-resource'
 import './filters/index'
 import App from './App.vue'
 
-import Wechat from './methods/Wechat'
-Wechat.verify()
-
 Vue.use(VueResource)
 Vue.use(VueRouter)
 let router = new VueRouter()
@@ -28,6 +25,11 @@ Vue.http.options.xhr = {
   withCredentials: true
 }
 Vue.http.options.emulateJSON = true
+
+import Wechat from './methods/Wechat'
+Wechat.verify()
+Wechat.init()
+Wechat.hideOptionMenu()
 
 router.map({
   '/merchant/:mchnt_id': {
