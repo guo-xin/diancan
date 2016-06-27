@@ -1,7 +1,7 @@
 <template>
   <div id="app-container">
     <router-view class="view-container"></router-view>
-    <toast :msg="msg"></toast>
+    <toast :msg.sync="msg"></toast>
   </div>
 </template>
 
