@@ -40,7 +40,9 @@
 </template>
 
 <script type="text/ecmascript-6">
+  /* global _hmt */
   import Config from '../methods/Config'
+  import { isWX } from '../methods/Util'
 
   export default {
     components: {},
@@ -146,15 +148,18 @@
           if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.respmsg)
             // transition.abort()
+            this.btnText = '确认下单'
             return
           }
           let orderId = data.data.out_trade_no
           this.orderId = orderId
 //          this.$dispatch('on-toast', '订单创建成功：' + orderId)
           this.getPayArgs(data.data)
+          this.btnText = '下单成功'
         }, (response) => {
           // error callback
         })
+        _hmt.push(['_trackEvent', 'view-create_order', 'click-createOrderBtn'])
       },
       getPayArgs (args) {
         args.userid = 0
@@ -172,6 +177,7 @@
           if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.resperr)
             // transition.abort()
+            this.btnText = '确认下单'
             return
           }
           this.pay(data.pay_params)
@@ -182,6 +188,11 @@
       },
       pay (payParams) {
         this.btnText = '支付中'
+        if (!isWX) {  // 不是微信中打开
+          this.$dispatch('on-toast', '支付失败，请在微信中打开')
+          this.btnText = '确认下单'
+          return
+        }
         let _this = this
         let onBridgeReady = () => {
           window.WeixinJSBridge.invoke(

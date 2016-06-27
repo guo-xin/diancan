@@ -54,6 +54,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  /* global _hmt */
   import Scroller from 'vux-components/scroller'
 
   import NoData from '../components/NoData'
@@ -180,14 +181,12 @@
         })
       },
       plusHandler (event, goods) {
-//        console.log(event)
-//        var X = this.getBoundingClientRect().left + document.documentElement.scrollLeft
-//        var Y = this.getBoundingClientRect().top + document.documentElement.scrollTop
-//        console.log(X, Y)
         this.addCartHandler(goods, true)
+        _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
       minusHandler (goods) {
         this.addCartHandler(goods, false)
+        _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
       addCartHandler (goods, type) {
         type = type ? 1 : -1

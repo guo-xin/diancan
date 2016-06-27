@@ -10,7 +10,7 @@
         <div class="cart-price"><span>总价&nbsp;¥&nbsp;</span>{{cartData.price | formatCurrency}}</div>
       </div>
       <!--<a class="row-status" v-link="{name: 'createOrder', params: {mchnt_id: $parent.mchnt_id, address: $parent.address}}">选好了</a>-->
-      <a class="row-status" v-link="{name: 'createOrder', params: {mchnt_id: $parent.mchnt_id, address: $parent.address}}">选好了</a>
+      <a class="row-status" href="javascript:;" @click="goNextView()">选好了</a>
     </div>
     <!--列表-->
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
@@ -44,6 +44,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  /* global _hmt */
   import Scroller from 'vux-components/scroller'
   import GoodsSelect from '../components/GoodsSelect'
   import NoData from '../components/NoData'
@@ -87,12 +88,16 @@
       },
       cleanCart () {
         this.$dispatch('on-cleanCart', this.$parent.mchnt_id)
+        _hmt.push(['_trackEvent', 'view-merchant', 'click-cleanCart'])
       },
       refresh () {
         this.$nextTick(() => {
-          console.log(this.$refs.cartscroller)
           this.$refs.cartscroller.reset()
         })
+      },
+      goNextView () {
+        this.$router.go({name: 'createOrder', params: {mchnt_id: this.$parent.mchnt_id, address: this.$parent.address}})
+        _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])
       }
     }
   }
