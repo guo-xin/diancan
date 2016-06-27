@@ -14,7 +14,7 @@ const debug = process.env.NODE_ENV !== 'production'
 let rootHost = 'https://o.qfpay.com/dc/'
 let payHost = 'https://openapi.qfpay.com/'
 let apiHost = 'https://o.qfpay.com/'
-let o2Host = 'https://o2.qfpay.com/'  // 微信获取openid
+let wxmpHost = 'https://wxmp.qfpay.com/'  // 微信获取openid
 let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
@@ -22,7 +22,7 @@ if (debug) {
   rootHost = 'https://qtapi.qa.qfpay.net/q/'
   payHost = 'https://qtapi.qa.qfpay.net/'
   apiHost = 'https://qtapi.qa.qfpay.net/'
-  o2Host = 'https://qtapi.qa.qfpay.net/'
+  wxmpHost = 'https://qtapi.qa.qfpay.net/'
   appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
@@ -36,7 +36,7 @@ module.exports = {
   rootHost,
   apiHost,
   payHost,
-  o2Host,
+  wxmpHost,
   appid,
   code: {
     OK: '0000', // 成功
