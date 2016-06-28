@@ -309,6 +309,7 @@
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
+    overflow: hidden;
     padding-bottom: 104px;
     height: 100%;
     background-color: #fff;
@@ -351,6 +352,7 @@
       }
     }
     .list-content {
+      overflow: hidden;
       padding-left: 24px;
       .title {
         color: #4d4d4d;
