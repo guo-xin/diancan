@@ -11,8 +11,8 @@
     </section>
     <ul class="goods-list">
       <li v-for="goods in cart">
-        <div class="l-r-lr">
-          <div class="name">{{goods.name}}</div>
+        <div class="l-r">
+          <div class="l_auto name">{{goods.name}}</div>
           <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods._count}}</span>
           </div>
         </div>
@@ -313,8 +313,12 @@
       padding: 30px;
       padding-left: 0;
       border-bottom: 2px solid #e5e5e5; /*px*/
+      >div{
+        align-items: center;
+      }
     }
     .name {
+      margin-right: 30px;
       font-size: 34px;
       line-height: 34px;
       color: #2f323a;
