@@ -20,7 +20,7 @@ let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
 if (debug) {
-  rootHost = 'https://qtapi.qa.qfpay.net/q/'
+  rootHost = 'https://qtapi.qa.qfpay.net/dc/'
   payHost = 'https://qtapi.qa.qfpay.net/'
   apiHost = 'https://qtapi.qa.qfpay.net/'
   o2Host = 'https://qtapi.qa.qfpay.net/'
