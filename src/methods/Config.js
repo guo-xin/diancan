@@ -19,7 +19,7 @@ let wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
 let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
-if (!debug) {
+if (debug) {
   rootHost = 'https://qtapi.qa.qfpay.net/q/'
   payHost = 'https://qtapi.qa.qfpay.net/'
   apiHost = 'https://qtapi.qa.qfpay.net/'
