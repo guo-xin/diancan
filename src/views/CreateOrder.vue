@@ -318,17 +318,20 @@
       }
     }
     .name {
-      margin-right: 30px;
-      font-size: 34px;
-      line-height: 34px;
+      margin-right: 5px;
+      font-size: 30px;
+      line-height: 30px;
       color: #2f323a;
     }
     .price {
-      font-size: 40px;
+      width: 210px;
+      text-align: right;
+      font-size: 34px;
       color: #fe9b20;
       line-height: 34px;
       span {
-        font-size: 34px;
+        /*font-size: 34px;*/
+        font-size: 75%;
         color: #8A8C92;
       }
     }

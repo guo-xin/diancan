@@ -17,7 +17,7 @@
         <h2>{{group.cate}}</h2>
         <div class="l-r goods" v-for="goods in group.goods">
           <div class="l_auto name">{{goods.name}}</div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}&nbsp;×&nbsp;{{goods.count}}</div>
+          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.count}}</span></div>
         </div>
       </li>
     </ul>
@@ -144,15 +144,20 @@
       border-bottom: 2px solid #e5e5e5; /*px*/
     }
     .name {
-      margin-right: 30px;
-      font-size: 34px;
-      line-height: 34px;
+      margin-right: 5px;
+      font-size: 30px;
+      line-height: 30px;
       color: #2f323a;
     }
     .price {
-      font-size: 40px;
+      width: 210px;
+      text-align: right;
+      font-size: 34px;
       color: #8A8C92;
       line-height: 34px;
+      span {
+        font-size: 75%;
+      }
     }
   }
 

@@ -27,7 +27,7 @@
         <ul v-show="cart.length">
           <li v-for="goods in cart">
             <div>
-              <div class="name">{{goods.name}}</div>
+              <div class="name one_text">{{goods.name}}</div>
               <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}</div>
             </div>
             <!--商品选择-->
@@ -242,12 +242,12 @@
       border-bottom: 2px solid #e5e5e5; /*px*/
     }
     .name {
-      font-size: 34px;
+      font-size: 30px;
       color: #2f323a;
-      line-height: 34px;
+      line-height: 30px;
     }
     .price {
-      margin-top: 12px;
+      margin-top: 24px;
       font-size: 34px;
       color: #fe9b20;
     }

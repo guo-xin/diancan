@@ -125,7 +125,7 @@
   // 美元
   .dollar {
     font-style: normal;
-    font-size: 70%;
+    font-size: 75%;
   }
 
   .one_text {

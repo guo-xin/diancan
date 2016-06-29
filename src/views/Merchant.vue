@@ -264,7 +264,7 @@
 
   /*左侧分类列表*/
   .list-group-box {
-    padding-bottom: 104px;
+    /*padding-bottom: 104px;*/
     /*height: 100%;*/
     width: 156px;
     background-color: #F7F7F7;
@@ -272,6 +272,7 @@
 
   .list-group {
     /*padding-bottom: 70px;*/
+    padding-bottom: 104px;
     li {
       position: relative;
       text-align: center;
@@ -310,7 +311,7 @@
   /*右侧选菜列表*/
   .shopmenu-list-container {
     overflow: hidden;
-    padding-bottom: 104px;
+    /*padding-bottom: 104px;*/
     height: 100%;
     background-color: #fff;
 
@@ -322,6 +323,7 @@
   }
 
   .shopmenu-list {
+    padding-bottom: 104px;
     background-color: #fff;
   }
 
