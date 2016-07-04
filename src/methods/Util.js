@@ -2,14 +2,33 @@
  * Created by aidenZou on 16/5/5.
  */
 
+const ua = navigator.userAgent
+
 let isWX = function () {
-  var ua = navigator.userAgent
   return (/MicroMessenger/i).test(ua)
 }
 
 let isAPP = function () {
-  var ua = navigator.userAgent
   return (/QMMWD/i).test(ua)
+}
+
+let isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+
+let setTitle = (title) => {
+  document.title = title
+  if (!isIOS) {
+    let iframe = document.createElement('iframe')
+    iframe.style.visibility = 'hidden'
+    iframe.setAttribute('src', 'https://m.baidu.com/favicon.ico')
+    iframe.style.width = '1px'
+    iframe.style.height = '1px'
+    iframe.onload = function () {
+      setTimeout(function () {
+        document.body.removeChild(iframe)
+      }, 0)
+    }
+    document.body.appendChild(iframe)
+  }
 }
 
 // 获取 url 请求参数
@@ -57,5 +76,7 @@ let checkEmail = function (email) {
 
 exports.isWX = isWX()
 exports.isAPP = isAPP()
+exports.isIOS = isIOS
 exports.getRequestParams = getRequestParams
 exports.checkEmail = checkEmail
+exports.setTitle = setTitle

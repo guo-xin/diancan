@@ -34,6 +34,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import Util from '../methods/Util'
   import Loading from '../components/loading/Loading'
   import Config from '../methods/Config'
 
@@ -84,6 +85,8 @@
             return
           }
           transition.next({order: data.data})
+          const shopname = data.data.orderinfo.shop_name
+          Util.setTitle(shopname)
         }, function (response) {
           // error callback
         })

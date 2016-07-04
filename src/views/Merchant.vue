@@ -55,6 +55,7 @@
 
 <script type="text/ecmascript-6">
   /* global _hmt */
+  import Util from '../methods/Util'
   import Scroller from 'vux-components/scroller'
 
   import NoData from '../components/NoData'
@@ -138,7 +139,7 @@
           let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
           this.$dispatch('on-onMenuShareAppMessage', {title: '动一动手指，轻松点餐', desc: shopname + '不用排队，快来体验吧', link: shareLink})
 
-          document.title = shopname
+          Util.setTitle(shopname)
         }, function (response) {
           // error callback
         })
