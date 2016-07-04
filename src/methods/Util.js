@@ -16,7 +16,7 @@ let isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
 
 let setTitle = (title) => {
   document.title = title
-  if (!isIOS) {
+  if (isIOS) {
     let iframe = document.createElement('iframe')
     iframe.style.visibility = 'hidden'
     iframe.setAttribute('src', 'https://m.baidu.com/favicon.ico')
