@@ -8,7 +8,7 @@
         <h2 class="shopname">{{order.orderinfo.shop_name}}</h2>
         <div class="num" v-show="order.orderinfo.address">{{order.orderinfo.address}}号桌</div>
       </div>
-      <p>流&nbsp;&nbsp;水&nbsp;&nbsp;号：{{order.orderinfo.order_sn}}</p>
+      <p>取&nbsp;&nbsp;餐&nbsp;&nbsp;号：{{order.orderinfo.order_sn}}</p>
       <p>订单编号：{{order.orderinfo.order_id}}</p>
       <p>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</p>
     </section>
