@@ -3,30 +3,21 @@
     <div class="c-loading-container" v-if="$loadingRouteData">
       <loading :visible="$loadingRouteData"></loading>
     </div>
-    <section class="shop">
+    <section class="order-info">
       <div class="l-r-lr">
         <h2 class="shopname">{{order.orderinfo.shop_name}}</h2>
         <div class="num" v-show="order.orderinfo.address">{{order.orderinfo.address}}号桌</div>
       </div>
-    </section>
-    <section class="order_sn">
-      <h3>取餐号</h3>
-      <p class="f-40">{{order.orderinfo.order_sn}}</p>
-      <p class="order_sn_text">请留意餐厅叫号，及时取餐哦～</p>
+      <p>取&nbsp;&nbsp;餐&nbsp;&nbsp;号：{{order.orderinfo.order_sn}}</p>
+      <p>订单编号：{{order.orderinfo.order_id}}</p>
+      <p>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</p>
     </section>
     <ul class="goods-list">
       <li v-for="group in order.goods_list">
-        <!--<h2>{{group.cate}}</h2>-->
+        <h2>{{group.cate}}</h2>
         <div class="l-r goods" v-for="goods in group.goods">
           <div class="l_auto name">{{goods.name}}</div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.count}}</span>
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="l-r">
-          <div class="l_auto name">总价</div>
-          <div class="allPrice"><em class="dollar">¥</em>&nbsp;{{order.orderinfo.txamt|formatCurrency}}</div>
+          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.count}}</span></div>
         </div>
       </li>
     </ul>
@@ -34,12 +25,11 @@
       <h2>备注</h2>
       <div>{{order.orderinfo.note}}</div>
     </section>
-    <section class="order-info">
-      <ul>
-        <li>订单编号：{{order.orderinfo.order_id}}</li>
-        <li>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</li>
-      </ul>
-    </section>
+
+    <div class="l-c-c allPrice">
+      <span>总价</span>&nbsp;
+      <div><em class="dollar">¥</em>&nbsp;{{order.orderinfo.txamt|formatCurrency}}</div>
+    </div>
   </div>
 </template>
 
@@ -116,49 +106,30 @@
     z-index: 999;
   }
 
-  .f-40 {
-    font-size: 40px !important;
-  }
-
   section {
     padding: 30px;
   }
 
   .order-detail-view {
+    padding-bottom: 120px;
     background-color: #F7F7F7;
   }
 
-  .shop {
+  .order-info {
+    position: relative;
+    background: #e5e5e5;
     .shopname {
       font-size: 34px;
       color: #2F323A;
     }
     .num {
-      font-size: 30px;
-      color: #8A8C92;
-    }
-  }
-
-  .order_sn {
-    margin: 30px;
-    margin-bottom: 20px;
-    background: #F7F7F7;
-    border: 2px solid #FE9B20; /*px*/
-    border-radius: 8px;
-    text-align: center;
-    font-size: 30px;
-    h3 {
-      font-weight: normal;
-      color: #9B9DA3;
+      font-size: 40px;
+      color: #FE9B20;
     }
     p {
-      color: #2F323A;
-    }
-    .order_sn_text {
-      margin-top: 20px;
-      padding-top: 30px;
-      border-top: 2px solid #FFDCB1; /*px*/
-      color: #FE9B20;
+      margin-top: 16px;
+      font-size: 26px;
+      color: #8a8c92;
     }
   }
 
@@ -169,7 +140,7 @@
       font-size: 30px;
       color: #8A8C92;
     }
-    li > div {
+    .goods {
       padding: 30px;
       align-items: center;
       padding-left: 0;
@@ -179,7 +150,7 @@
       margin-right: 5px;
       font-size: 30px;
       line-height: 30px;
-      color: #2F323A;
+      color: #2f323a;
     }
     .price {
       width: 210px;
@@ -191,15 +162,10 @@
         font-size: 75%;
       }
     }
-    .allPrice {
-      font-size: 40px;
-      color: #FE9B20;
-    }
   }
 
   /*备注*/
   .remarks {
-    padding-bottom: 0;
     h2 {
       margin-bottom: 24px;
       font-size: 30px;
@@ -215,8 +181,20 @@
     }
   }
 
-  .order-info {
-    font-size: 26px;
-    color: #8A8C92;
+  .allPrice {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    height: 104px;
+    span {
+      font-size: 26px;
+      color: #2F323A;
+    }
+    div {
+      font-size: 40px;
+      color: #FE9B20;
+    }
   }
 </style>
