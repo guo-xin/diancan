@@ -4,14 +4,14 @@
       <loading :visible="$loadingRouteData"></loading>
     </div>
     <section class="shop">
-      <div class="l-r-lr">
-        <h2 class="shopname">{{order.orderinfo.shop_name}}</h2>
+      <div class="l-r">
+        <h2 class="l_auto shopname">{{order.orderinfo.shop_name}}</h2>
         <div class="num" v-show="order.orderinfo.address">{{order.orderinfo.address}}号桌</div>
       </div>
     </section>
     <section class="order_sn">
       <h3>取餐号</h3>
-      <p class="f-40">{{order.orderinfo.order_sn}}</p>
+      <p class="f-40 order_sn_num">{{order.orderinfo.order_sn}}</p>
       <p class="order_sn_text">请留意餐厅叫号，及时取餐哦～</p>
     </section>
     <ul class="goods-list">
@@ -141,7 +141,9 @@
 
   .order_sn {
     margin: 30px;
+    margin-top: 10px;
     margin-bottom: 20px;
+    padding-top: 16px;
     background: #F7F7F7;
     border: 2px solid #FE9B20; /*px*/
     border-radius: 8px;
@@ -149,10 +151,14 @@
     font-size: 30px;
     h3 {
       font-weight: normal;
+      line-height: 56px;
       color: #9B9DA3;
     }
     p {
       color: #2F323A;
+    }
+    .order_sn_num {
+      line-height: 56px;
     }
     .order_sn_text {
       margin-top: 20px;
