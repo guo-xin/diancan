@@ -244,7 +244,6 @@
     .name {
       font-size: 30px;
       color: #2f323a;
-      line-height: 30px;
     }
     .price {
       margin-top: 24px;

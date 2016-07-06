@@ -360,7 +360,7 @@
       .title {
         color: #4d4d4d;
         font-size: 32px;
-        line-height: 32px;
+        /*line-height: 32px;*/
         color: #2f323a;
       }
 
