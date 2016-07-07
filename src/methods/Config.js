@@ -64,6 +64,6 @@ module.exports = {
   /**
    * 常量 key
    */
-  STORE_CART: 'STORE_CART',  // 购物车
+  STORE_CART: 'STORE_CART_v2',  // 购物车
   OPENID: 'diancan_openid_' + appid
 }
