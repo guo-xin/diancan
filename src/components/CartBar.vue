@@ -28,11 +28,14 @@
           <li v-for="goods in cart">
             <div>
               <div class="name one_text">{{goods.name}}</div>
-              <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}</div>
+              <div class="goods-info">
+                <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}</span><span class="spec">{{goods.spec_list[goods._specIndex].name}}</span>
+              </div>
             </div>
             <!--商品选择-->
             <goods-select class="goods-select-container"
                           :goods="goods"
+                          :activate="goods._specIndex"
                           :plus="plus"
                           :minus="minus"></goods-select>
           </li>
@@ -72,8 +75,9 @@
         let price = 0
         let cart = this.$root.cart
         cart.forEach((goods, index) => {
-          count += goods._count
-          price += goods._count * goods.txamt
+          let spec = goods.spec_list[goods._specIndex]
+          count += spec._count
+          price += spec._count * spec.txamt
         })
         return {
           count,
@@ -245,10 +249,17 @@
       font-size: 30px;
       color: #2f323a;
     }
+    .goods-info {
+      margin-top: 12px;
+    }
     .price {
-      margin-top: 24px;
+      margin-right: 18px;
       font-size: 34px;
       color: #fe9b20;
+    }
+    .spec {
+      font-size: 26px;
+      color: #8A8C92;
     }
     .goods-select-container {
       position: absolute;

@@ -30,7 +30,7 @@
                   </div>
                   <div class="l_auto list-content">
                     <h4 class="title one_text">{{goods.name}}</h4>
-                    <p class="description"></p>
+                    <p class="description">{{goods.spec_list[0]._count}}</p>
                     <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                   </div>
                 </div>
@@ -100,10 +100,6 @@
       }
     },
     created () {
-//      MOCK Data
-//      this.groupList = Api.goods_list.goods
-//      this.$set('groupList', Api.goods_list.goods)
-//      this.goodsList = this.groupList[0].goods_list
     },
     ready () {
     },
@@ -120,9 +116,9 @@
         args.format = 'jsonp'
         this.$http({
 //          url: Config.apiHost + 'diancan/c/goods_list',
-//          url: 'http://172.100.111.215:9300/diancan/c/goods_list',
-          url: '/static/api/goods_list.json',
-//          method: 'JSONP',
+          url: 'http://172.100.111.215:9300/diancan/c/goods_list',
+//          url: '/static/api/goods_list.json',
+          method: 'JSONP',
           data: args
         }).then(function (response) {
           // success callback
@@ -195,15 +191,16 @@
           scroller._xscroll.scrollTop()
         })
       },
-      plusHandler (event, goods) {
-        this.addCartHandler(goods, true)
+      plusHandler (event, goods, specIndex) {
+        this.addCartHandler(goods, specIndex, true)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
-      minusHandler (goods) {
-        this.addCartHandler(goods, false)
+      minusHandler (event, goods, specIndex) {
+        this.addCartHandler(goods, specIndex, false)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
-      addCartHandler (goods, type) {
+      addCartHandler (goods, specIndex, type) {
+        console.log('specIndex_type_goods:', specIndex, type, goods)
         type = type ? 1 : -1
         let index = -1
         let i = -1
@@ -214,10 +211,13 @@
           return g.cate_id === goods.cate_id
         })
         this.groupList[index].goods_list.find((g, _index) => {
-          if (g.id === goods.id) {
+          let spec = g.spec_list.find((spec, _specIndex) => {
+            return spec.id === goods.spec_list[specIndex].id
+          })
+          if (spec) {
             i = _index
           }
-          return g.id === goods.id
+          return spec
         })
 
         if (index < 0) {
@@ -226,15 +226,15 @@
 
         // up group
         let oldGoods = this.groupList[index].goods_list[i]
-        oldGoods._count = oldGoods._count || 0
-        let newCount = oldGoods._count + type
+        let newCount = (oldGoods.spec_list[specIndex]._count || 0) + type
         if (newCount < 0) {
           return
         }
-        let newGoods = Object.assign({}, oldGoods, {_count: newCount})
+        oldGoods.spec_list[specIndex]._count = newCount
+        let newGoods = Object.assign({}, oldGoods)
         this.groupList[index].goods_list.$set(i, newGoods)
 
-        this.$dispatch('on-changeCart', newGoods, this.mchnt_id)
+        this.$dispatch('on-changeCart', newGoods, specIndex, this.mchnt_id)
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0

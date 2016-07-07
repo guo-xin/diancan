@@ -43,21 +43,25 @@
       'on-toast' (msg) {
         this.msg = msg
       },
-      'on-changeCart' (goods, mchntId) {
+      'on-changeCart' (goods, specIndex, mchntId) {
+        let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
         let index = -1
-
+        let spec = goods.spec_list[specIndex]
         this.cart.find((g, _index) => {
-          if (g.id === goods.id) {
+          let isfind = g.spec_list.find(_spec => {
+            return _spec.id === spec.id
+          })
+          if (isfind) {
             index = _index
           }
-          return g.id === goods.id
+          return isfind
         })
         if (index < 0) {  // 新增
-          goods._count = 1
-          this.cart.push(goods)
+          spec._count = 1
+          this.cart.push(divGoods)
         } else {
-          if (goods._count) { // 修改数量
-            this.cart.$set(index, goods)
+          if (spec._count) { // 修改数量
+            this.cart.$set(index, divGoods)
           } else {  // 移除
             this.cart.splice(index, 1)
           }

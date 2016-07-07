@@ -1,12 +1,12 @@
 <template>
   <div class="l-r item-add show-all">
-    <div class="btn-touch" v-show="goods._count" @click.stop="minus(goods)">
+    <div class="btn-touch" v-show="count" @click.stop="minus($event, goods, activate)">
       <span class="l-c-c btn-minus">
       <i class="iconfont">&#xe601;</i>
     </span>
     </div>
-    <span class="item-count" v-show="goods._count">{{goods._count}}</span>
-    <div class="btn-touch" @click.stop="plus($event, goods)">
+    <span class="item-count" v-show="count">{{count}}</span>
+    <div class="btn-touch" @click.stop="plus($event, goods, activate)">
       <span class="l-c-c btn-plus">
       <i class="iconfont">&#xe600;</i>
     </span>
@@ -19,9 +19,23 @@
    * 商品选择
    */
   export default {
-    props: ['goods', 'minus', 'plus'],
+    props: {
+      goods: Object,
+      activate: {
+        type: Number,
+        default: 0
+      },
+      minus: Function,
+      plus: Function
+    },
     data () {
-      return {}
+      return {
+      }
+    },
+    computed: {
+      count () {
+        return this.goods.spec_list[0]._count
+      }
     }
   }
 </script>
