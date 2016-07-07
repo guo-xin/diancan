@@ -13,11 +13,12 @@
           单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
         </div>
       </section>
-      
+
       <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, activateIndex)">加入购物车</button>
       <!--商品选择-->
       <goods-select v-show="spec._count" class="goods-select-container"
                     :goods="goods"
+                    :activate="activateIndex"
                     :plus="plus"
                     :minus="minus"></goods-select>
     </div>
@@ -67,6 +68,7 @@
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, .7);
+    z-index: 112;
   }
 
   .spec {

@@ -47,15 +47,15 @@
         let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
         let index = -1
         let spec = goods.spec_list[specIndex]
+//        console.log(spec.id)
         this.cart.find((g, _index) => {
-          let isfind = g.spec_list.find(_spec => {
-            return _spec.id === spec.id
-          })
+          let isfind = g.spec_list[g._specIndex].id === spec.id
           if (isfind) {
             index = _index
           }
           return isfind
         })
+//        console.log('index', index, divGoods)
         if (index < 0) {  // 新增
           spec._count = 1
           this.cart.push(divGoods)

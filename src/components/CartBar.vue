@@ -114,6 +114,7 @@
     bottom: 0;
     width: 100%;
     height: 104px;
+    z-index: 111;
   }
 
   .shopmenu-cart-bar {

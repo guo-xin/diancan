@@ -34,7 +34,7 @@
     },
     computed: {
       count () {
-        return this.goods.spec_list[0]._count
+        return this.goods.spec_list[this.activate]._count
       }
     }
   }
