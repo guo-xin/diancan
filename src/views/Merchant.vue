@@ -30,7 +30,7 @@
                   </div>
                   <div class="l_auto list-content">
                     <h4 class="title one_text">{{goods.name}}</h4>
-                    <p class="description">{{goods.spec_list[0]._count}}</p>
+                    <p class="old-price text-line-through" v-show="goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
                     <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                   </div>
                 </div>
@@ -43,7 +43,6 @@
                 <div v-else class="l-c-c goods-select-container spec-btn"><button @click="showSpecHandler(goods)">选择规格</button></div>
               </li>
             </ul>
-            <!--<div style="height: 50px"></div>-->
           </div>
         </scroller>
       </div>
@@ -173,7 +172,6 @@
             let cartGoods = cart.find(g => {
               let spec = goods.spec_list.find((spec, _index) => {
                 if (spec.id === g.spec_list[g._specIndex].id) {
-                  console.log(_index)
                   specIndex = _index
                 }
                 return spec.id === g.spec_list[g._specIndex].id
@@ -399,6 +397,11 @@
         line-height: 34px;
       }
 
+      .old-price {
+        font-size: 26px;
+        line-height: 34px;
+        color: #8A8C92;
+      }
       .price {
         font-size: 30px;
         color: #fe9b20;
