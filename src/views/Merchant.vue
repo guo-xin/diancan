@@ -23,7 +23,7 @@
           <div class="shopmenu-list">
             <no-data v-if="!goodsList.length" class="no-data"></no-data>
             <ul class="listgroup" v-else>
-              <li v-for="goods in goodsList" track-by="id" class="list-item">
+              <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
                   <div class="list-img">
                     <div :style="{'background-image': 'url(' + goods.img + '_120s)'}"></div>
@@ -31,14 +31,16 @@
                   <div class="l_auto list-content">
                     <h4 class="title one_text">{{goods.name}}</h4>
                     <p class="description"></p>
-                    <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}</p>
+                    <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                   </div>
                 </div>
                 <!--商品选择-->
-                <goods-select class="goods-select-container"
+                <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
                               :goods="goods"
                               :plus="plusHandler"
-                              :minus="minusHandler"></goods-select>
+                              :minus="minusHandler">
+                </goods-select>
+                <div v-else class="l-c-c goods-select-container spec-btn"><button @click="showSpecHandler(goods)">选择规格</button></div>
               </li>
             </ul>
             <!--<div style="height: 50px"></div>-->
@@ -46,6 +48,13 @@
         </scroller>
       </div>
     </div>
+
+    <!--选择规格-->
+    <select-spec :visible.sync="showSpec"
+                 :goods="selectSpecGoods"
+                 :plus="plusHandler"
+                 :minus="minusHandler">
+    </select-spec>
 
     <!--购物车-->
     <!--transition="totop1"-->
@@ -61,6 +70,7 @@
   import NoData from '../components/NoData'
   import Loading from '../components/loading/Loading'
   import GoodsSelect from '../components/GoodsSelect'
+  import SelectSpec from '../components/SelectSpec'
   import CartBar from '../components/CartBar'
 
   import Config from '../methods/Config'
@@ -71,7 +81,7 @@
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec
     },
     data () {
       return {
@@ -79,7 +89,9 @@
         address: '',    // 桌号
         selectIndex: 0, // 激活分类
         groupList: [],  // 分类列表
-        goodsList: []   // 商品列表
+        goodsList: [],  // 商品列表
+        showSpec: false,
+        selectSpecGoods: null
       }
     },
     computed: {
@@ -107,8 +119,10 @@
 //        }
         args.format = 'jsonp'
         this.$http({
-          url: Config.apiHost + 'diancan/c/goods_list',
-          method: 'JSONP',
+//          url: Config.apiHost + 'diancan/c/goods_list',
+//          url: 'http://172.100.111.215:9300/diancan/c/goods_list',
+          url: '/static/api/goods_list.json',
+//          method: 'JSONP',
           data: args
         }).then(function (response) {
           // success callback
@@ -232,6 +246,10 @@
       },
       getStorage () {
         return JSON.parse(window.sessionStorage.getItem(this.getKey()))
+      },
+      showSpecHandler (goods) {
+        this.showSpec = true
+        this.selectSpecGoods = goods
       }
     },
     events: {
@@ -393,5 +411,23 @@
   .totop1-enter, .totop1-leave {
     transform: translateY(100%);
     /*opacity: 0;*/
+  }
+
+  .spec-btn {
+    /*position: absolute;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+
+    width: 196px;
+    height: 100px;
+    button {
+      width: 156px;
+      height: 60px;
+      border: 2px solid #C2C2C2;  /**/
+      border-radius: 30px;
+      background-color: #fff;
+      font-size: 30px;
+      color: #FE9B20;
+    }
   }
 </style>
