@@ -237,7 +237,8 @@
         if (newCount < 0) {
           return
         }
-        oldGoods.spec_list[specIndex]._count = newCount
+        let spec = Object.assign({}, oldGoods.spec_list[specIndex], {_count: newCount})
+        this.groupList[index].goods_list[i].spec_list.$set(specIndex, spec)
         let newGoods = Object.assign({}, oldGoods)
         this.groupList[index].goods_list.$set(i, newGoods)
 

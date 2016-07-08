@@ -4,9 +4,9 @@
       <div class="head line">{{goods.name}}</div>
       <section class="body">
         <ul class="spec-list line">
-          <li v-for="spec in goods.spec_list"
+          <li v-for="_spec in goods.spec_list"
               :class="{'activate': $index===activateIndex}"
-              @click.stop.prevent="selectSpec($index)">{{spec.name}}
+              @click.stop.prevent="selectSpec($index)">{{_spec.name}}
           </li>
         </ul>
         <div class="price">
@@ -32,24 +32,19 @@
     props: ['visible', 'goods', 'plus', 'minus'],
     data () {
       return {
-        activateIndex: 0,
-        spec: null
+        activateIndex: 0
       }
     },
     created () {
     },
-    watch: {
-      'visible' () {
-        if (this.visible) {
-          this.spec = this.goods.spec_list[this.activateIndex]
-          console.log(this.spec)
-        }
+    computed: {
+      spec () {
+        return this.goods.spec_list[this.activateIndex]
       }
     },
     methods: {
       selectSpec ($index) {
         this.activateIndex = $index
-        this.spec = this.goods.spec_list[$index]
       },
       nullFunction () {
       }
