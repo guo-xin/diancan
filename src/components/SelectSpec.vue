@@ -1,6 +1,7 @@
 <template>
   <div class="container" v-if="visible" @click.stop.prevent="visible=false">
     <div class="spec" @click.stop.prevent="nullFunction">
+      <div class="close" @click.stop.prevent="visible=false"><i class="iconfont">&#xe604;</i></div>
       <div class="head line">{{goods.name}}</div>
       <section class="body">
         <ul class="spec-list line">
@@ -14,7 +15,9 @@
         </div>
       </section>
 
-      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, activateIndex)">加入购物车</button>
+      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, activateIndex)">
+        加入购物车
+      </button>
       <!--商品选择-->
       <goods-select v-show="spec._count" class="goods-select-container"
                     :goods="goods"
@@ -74,6 +77,18 @@
     width: 100%;
     background-color: #fff;
     border-radius: 6px;
+  }
+
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    text-align: right;
+    i {
+      font-size: 50px;
+      font-weight: normal;
+      color: #D8D8D8;
+    }
   }
 
   .head {
