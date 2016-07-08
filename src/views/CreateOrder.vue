@@ -128,8 +128,8 @@
           let spec = goods.spec_list[goods._specIndex]
           return {
             id: spec.id,
-            count: spec._count,
-            cate_id: goods.cate_id
+            count: spec._count
+            // cate_id: goods.cate_id
           }
         })
         let args = {
