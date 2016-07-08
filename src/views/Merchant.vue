@@ -25,7 +25,7 @@
             <ul class="listgroup" v-else>
               <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
-                  <div class="list-img">
+                  <div class="list-img" @click.stop="showDetailHandler(goods)">
                     <div :style="{'background-image': 'url(' + goods.img + '_120s)'}"></div>
                   </div>
                   <div class="l_auto list-content">
@@ -40,7 +40,7 @@
                               :plus="plusHandler"
                               :minus="minusHandler">
                 </goods-select>
-                <div v-else class="l-c-c goods-select-container spec-btn"><button @click="showSpecHandler(goods)">选择规格</button></div>
+                <div v-else class="l-c-c goods-select-container spec-btn"><button @click.stop="showSpecHandler(goods)">选择规格</button></div>
               </li>
             </ul>
           </div>
@@ -54,6 +54,9 @@
                  :plus="plusHandler"
                  :minus="minusHandler">
     </select-spec>
+
+    <goods-detail :visible.sync="showDetail"
+                  :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
     <!--transition="totop1"-->
@@ -71,16 +74,15 @@
   import GoodsSelect from '../components/GoodsSelect'
   import SelectSpec from '../components/SelectSpec'
   import CartBar from '../components/CartBar'
+  import GoodsDetail from '../components/GoodsDetail'
 
   import Config from '../methods/Config'
-
-  //  import Api from '../api/mock'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail
     },
     data () {
       return {
@@ -90,7 +92,9 @@
         groupList: [],  // 分类列表
         goodsList: [],  // 商品列表
         showSpec: false,
-        selectSpecGoods: null
+        selectSpecGoods: null,
+        showDetail: false,
+        selectDetail: null
       }
     },
     computed: {
@@ -251,8 +255,12 @@
         return JSON.parse(window.sessionStorage.getItem(this.getKey()))
       },
       showSpecHandler (goods) {
-        this.showSpec = true
         this.selectSpecGoods = goods
+        this.showSpec = true
+      },
+      showDetailHandler (goods) {
+        this.selectDetail = goods
+        this.showDetail = true
       }
     },
     events: {
