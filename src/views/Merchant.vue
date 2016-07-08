@@ -168,21 +168,17 @@
         return goods.map(group => {
           let groupCount = 0
           group.goods_list = group.goods_list.map(goods => {
-            let specIndex = -1
-            let cartGoods = cart.find(g => {
-              let spec = goods.spec_list.find((spec, _index) => {
-                if (spec.id === g.spec_list[g._specIndex].id) {
-                  specIndex = _index
-                }
+            goods.spec_list.map((spec, _index) => {
+              let cartGoods = cart.find(g => {
                 return spec.id === g.spec_list[g._specIndex].id
               })
+              if (cartGoods) {
+                let count = cartGoods.spec_list[cartGoods._specIndex]._count
+                spec._count = count
+                groupCount += count
+              }
               return spec
             })
-            if (cartGoods) {
-              let count = cartGoods.spec_list[cartGoods._specIndex]._count
-              goods.spec_list[specIndex]._count = count
-              groupCount += count
-            }
             return goods
           })
           group._count = groupCount
