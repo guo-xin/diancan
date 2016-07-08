@@ -30,7 +30,8 @@
                   </div>
                   <div class="l_auto list-content">
                     <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
-                    <p class="old-price text-line-through" v-show="goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
+                    <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
+                    <p v-else class="old-price"></p>
                     <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                   </div>
                 </div>
@@ -402,6 +403,7 @@
 
       .old-price {
         font-size: 26px;
+        height: 34px;
         line-height: 34px;
         color: #8A8C92;
       }
