@@ -253,6 +253,13 @@
           })
         }, (response) => {
           // error callback
+          this.$router.replace({
+            name: 'orderDetail',
+            params: {
+              'order_id': this.orderId,
+              'mchnt_id': this.mchnt_id
+            }
+          })
         })
       }
     }
