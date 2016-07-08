@@ -18,7 +18,10 @@
       <li v-for="group in order.goods_list">
         <!--<h2>{{group.cate}}</h2>-->
         <div class="l-r goods" v-for="goods in group.goods">
-          <div class="l_auto name">{{goods.name}}</div>
+          <div class="l_auto">
+            <div class="name">{{goods.name}}</div>
+            <div class="specname">{{goods.spec_name}}</div>
+          </div>
           <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.count}}</span>
           </div>
         </div>
@@ -186,6 +189,11 @@
       font-size: 30px;
       line-height: 30px;
       color: #2F323A;
+    }
+    .specname {
+      margin-top: 15px;
+      font-size: 26px;
+      color: #8A8C92;
     }
     .price {
       width: 210px;
