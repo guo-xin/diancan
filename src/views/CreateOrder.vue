@@ -12,8 +12,11 @@
     <ul class="goods-list">
       <li v-for="goods in cart">
         <div class="l-r">
-          <div class="l_auto name">{{goods.name}}</div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods._count}}</span>
+          <div class="l_auto">
+            <div class="name">{{goods.name}}</div>
+            <div class="specname">{{goods.spec_list[goods._specIndex].name}}</div>
+          </div>
+          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.spec_list[goods._specIndex]._count}}</span>
           </div>
         </div>
       </li>
@@ -92,8 +95,9 @@
         let price = 0
         let cart = this.$root.cart
         cart.forEach((goods, index) => {
-          count += goods._count
-          price += goods._count * goods.txamt
+          let spec = goods.spec_list[goods._specIndex]
+          count += spec._count
+          price += spec._count * spec.txamt
         })
         return {
           count,
@@ -121,9 +125,10 @@
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
         let goodsItem = cart.map((goods) => {
+          let spec = goods.spec_list[goods._specIndex]
           return {
-            id: goods.id,
-            count: goods._count,
+            id: spec.id,
+            count: spec._count,
             cate_id: goods.cate_id
           }
         })
@@ -321,6 +326,11 @@
       font-size: 30px;
       line-height: 30px;
       color: #2f323a;
+    }
+    .specname {
+      margin-top: 15px;
+      font-size: 26px;
+      color: #8A8C92;
     }
     .price {
       width: 210px;

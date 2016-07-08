@@ -118,9 +118,8 @@
 //        }
         args.format = 'jsonp'
         this.$http({
-//          url: Config.apiHost + 'diancan/c/goods_list',
-          url: 'http://172.100.111.215:9300/diancan/c/goods_list',
-//          url: '/static/api/goods_list.json',
+          url: Config.apiHost + 'diancan/c/goods_list',
+          // url: '/static/api/goods_list.json',
           method: 'JSONP',
           data: args
         }).then(function (response) {
