@@ -1,9 +1,9 @@
 <template>
   <div class="c-goods-detail" v-if="visible" @click.stop.prevent="closeHandler()">
-    <div class="l-c-c main">
+    <div class="l-c-c main" v-if="visible" transition="zoomInOut">
       <div>
         <div class="close" @click.stop.prevent="closeHandler()"><i class="iconfont">&#xe604;</i></div>
-        <div class="img"><img :src="goods.img"></div>
+        <div class="img" :style="{'background-image': 'url(' + goods.img + '_120s)'}"><img :src="goods.img"></div>
         <h2>{{goods.name}}</h2>
         <p>{{goods.spec_list[specIndex].descr}}</p>
       </div>
@@ -29,6 +29,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+  @import "../styles/base/animate";
   .c-goods-detail {
     position: fixed;
     top: 0;
@@ -63,6 +64,8 @@
     height: 690px;
     border-radius: 12px;
     overflow: hidden;
+    background-size: contain;
+    background-repeat: no-repeat;
     img {
       width: 100%;
       height: 100%;
