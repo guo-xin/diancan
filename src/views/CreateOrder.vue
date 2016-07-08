@@ -61,7 +61,6 @@
       activate (transition) {
         // let params = transition.from.params || {}
         let params = this.$route.params
-//        console.log(params)
         this.mchnt_id = params.mchnt_id
         this.address = params.address && params.address !== ':address' ? params.address : ''
         this.isEditAddress = !this.address

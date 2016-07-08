@@ -41,7 +41,6 @@ let setTitle = (title) => {
 //     var len = url.indexOf('?')
 //     var str = url.slice(len + 1)
 //     let strs = str.split('&')
-//     console.log(strs)
 //     for (var i = 0; i < strs.length; i++) {
 //       var _key = strs[i].split('=')[0]
 //       _key && (Request[_key] = strs[i].split('=')[1])
@@ -59,7 +58,6 @@ let getRequestParams = function (url) {
     // var len = url.indexOf('?')
     // var str = url.slice(len + 1)
     let strs = str.split('&')
-    // console.log(strs)
     for (var i = 0; i < strs.length; i++) {
       var _key = strs[i].split('=')[0]
       _key && (Request[_key] = strs[i].split('=')[1])

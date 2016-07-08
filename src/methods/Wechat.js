@@ -106,7 +106,6 @@ wx && wx.error((res) => {
 })
 
 const runActionQueue = () => {
-  // console.log(actionQueue)
   for (let index in actionQueue) {
     let actionObj = actionQueue[index]
     /* eslint no-eval: "error" */

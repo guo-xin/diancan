@@ -203,7 +203,6 @@
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
       addCartHandler (goods, specIndex, type) {
-        console.log('specIndex_type_goods:', specIndex, type, goods)
         type = type ? 1 : -1
         let index = -1
         let i = -1
