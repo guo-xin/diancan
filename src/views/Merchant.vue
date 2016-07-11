@@ -41,7 +41,7 @@
                               :plus="plusHandler"
                               :minus="minusHandler">
                 </goods-select>
-                <div v-else class="l-c-c goods-select-container spec-btn"><button @click.stop="showSpecHandler(goods)">选择规格</button></div>
+                <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
               </li>
             </ul>
           </div>
@@ -248,6 +248,9 @@
         let newGroup = Object.assign({}, oldGroup, {_count: oldGroup._count + type})
         this.groupList.$set(index, newGroup)
       },
+      hasSelect (goods) {
+        return !!goods.spec_list.find(spec => spec._count)
+      },
       setStorage (data) {
         window.sessionStorage.setItem(this.getKey(), JSON.stringify(data))
       },
@@ -419,6 +422,14 @@
     position: absolute;
     right: 0;
     bottom: 0;
+  }
+
+  .select {
+    button {
+      border: 0 !important;
+      background-color: #FE9B20 !important;
+      color: #fff !important;
+    }
   }
 
   .totop1-transition {
