@@ -178,6 +178,7 @@
                 return spec.id === g.spec_list[g._specIndex].id
               })
               if (cartGoods) {
+                goods._lastSpec = goods._lastSpec || _index
                 let count = cartGoods.spec_list[cartGoods._specIndex]._count
                 spec._count = count
                 groupCount += count
