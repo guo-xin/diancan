@@ -6,7 +6,7 @@
       <section class="body">
         <ul class="spec-list line">
           <li v-for="_spec in goods.spec_list"
-              :class="{'activate': $index===activateIndex}"
+              :class="{'activate': $index===goods._lastSpec}"
               @click.stop.prevent="selectSpec($index)">{{_spec.name}}
           </li>
         </ul>
@@ -15,13 +15,13 @@
         </div>
       </section>
 
-      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, activateIndex)">
+      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, lastSpec)">
         加入购物车
       </button>
       <!--商品选择-->
       <goods-select v-show="spec._count" class="goods-select-container"
                     :goods="goods"
-                    :activate="activateIndex"
+                    :activate="lastSpec"
                     :plus="plus"
                     :minus="minus"></goods-select>
     </div>
@@ -35,19 +35,21 @@
     props: ['visible', 'goods', 'plus', 'minus'],
     data () {
       return {
-        activateIndex: 0
       }
     },
     created () {
     },
     computed: {
+      lastSpec () {
+        return this.goods._lastSpec
+      },
       spec () {
-        return this.goods.spec_list[this.activateIndex]
+        return this.goods.spec_list[this.goods._lastSpec]
       }
     },
     methods: {
       selectSpec ($index) {
-        this.activateIndex = $index
+        this.$dispatch('on-selectSpec', this.goods, $index)
       },
       nullFunction () {
       }

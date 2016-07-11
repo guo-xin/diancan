@@ -51,7 +51,7 @@
 
     <!--选择规格-->
     <select-spec :visible.sync="showSpec"
-                 :goods="selectSpecGoods"
+                 :goods.sync="selectSpecGoods"
                  :plus="plusHandler"
                  :minus="minusHandler">
     </select-spec>
@@ -172,6 +172,7 @@
         return goods.map(group => {
           let groupCount = 0
           group.goods_list = group.goods_list.map(goods => {
+            goods._lastSpec = 0
             goods.spec_list.map((spec, _index) => {
               let cartGoods = cart.find(g => {
                 return spec.id === g.spec_list[g._specIndex].id
@@ -267,6 +268,9 @@
       }
     },
     events: {
+      'on-selectSpec' (goods, specIndex) {
+        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
+      },
       'on-cleanCart' (mchntId) {
         let data = this.getStorage() || {}
         let goods = data.goods || []
