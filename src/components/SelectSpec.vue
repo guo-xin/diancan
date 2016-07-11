@@ -49,6 +49,7 @@
     },
     methods: {
       selectSpec ($index) {
+        this.goods._lastSpec = $index
         this.$dispatch('on-selectSpec', this.goods, $index)
       },
       nullFunction () {

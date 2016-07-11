@@ -60,7 +60,6 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <!--transition="totop1"-->
     <cart-bar :plus="plusHandler" :minus="minusHandler" v-if="cart.length" ></cart-bar>
   </div>
 </template>
@@ -275,6 +274,12 @@
       'on-cleanCart' (mchntId) {
         let data = this.getStorage() || {}
         let goods = data.goods || []
+        goods.map(group => {
+          return group.goods_list.map(goods => {
+            goods._lastSpec = 0
+            return goods
+          })
+        })
 
         this.$set('groupList', goods)
         this.$set('goodsList', goods[this.selectIndex].goods_list)
