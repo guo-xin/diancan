@@ -269,7 +269,7 @@
         let goods = data.goods || []
 
         this.$set('groupList', goods)
-        this.$set('goodsList', goods[0].goods_list)
+        this.$set('goodsList', goods[this.selectIndex].goods_list)
         return true
       }
     }
