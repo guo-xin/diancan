@@ -19,7 +19,7 @@ module.exports = {
       'src': path.resolve(__dirname, '../src'),
       'assets': path.resolve(__dirname, '../src/assets'),
       'components': path.resolve(__dirname, '../src/components'),
-      'vux-components': 'vux/src/components'
+      'vux-components': 'vux/src/components/'
     }
   },
   resolveLoader: {
@@ -90,7 +90,7 @@ module.exports = {
       remPrecision: 6         // rem precision (default: 6)
     })],
     autoprefixer: {
-      browsers: ['Android >= 2.3', 'ChromeAndroid > 1%', 'iOS >= 6'],
+      browsers: ['Android >= 2.3', 'iOS >= 6'],
       cascade: false  // 不美化输出 css
     }
   }
