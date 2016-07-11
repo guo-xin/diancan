@@ -3,7 +3,7 @@
     <div class="l-c-c main" v-if="visible" transition="zoomInOut">
       <div>
         <div class="close" @click.stop.prevent="closeHandler()"><i class="iconfont">&#xe604;</i></div>
-        <div class="img" :style="{'background-image': 'url(' + goods.img + '_120s)'}"><img :src="goods.img"></div>
+        <div class="img" :style="{'background-image': 'url(' + goods.img + '_120s)'}"><img :src="goods.img + '_700m'"></div>
         <h2>{{goods.name}}</h2>
         <p>{{goods.spec_list[specIndex].descr}}</p>
       </div>

@@ -100,7 +100,7 @@
   }
 
   .line {
-    border-bottom: 2px solid #E5E5E5;
+    border-bottom: 2px solid #E5E5E5; /*px*/
   }
 
   .spec-list {
@@ -119,7 +119,7 @@
     font-size: 30px;
 
     color: #FE9B20;
-    border: 2px solid #C2C2C2;
+    border: 2px solid #C2C2C2;  /*px*/
 
     &.activate {
       background-color: #FE9B20;
