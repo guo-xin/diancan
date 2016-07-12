@@ -12,6 +12,7 @@
         </ul>
         <div class="price">
           单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
+          <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
         </div>
       </section>
 
@@ -139,6 +140,11 @@
     color: #2F323A;
     span {
       color: #FE9B20;
+    }
+    .orgtxamt {
+      margin-left: 5px;
+      font-size: 26px;
+      color: #8A8C92;
     }
   }
 
