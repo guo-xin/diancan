@@ -5,8 +5,8 @@
         <div class="close" @click.stop.prevent="closeHandler()"><i class="iconfont">&#xe604;</i></div>
         <div class="img imgbox">
           <div class="img" :style="{'background-image': 'url(' + goods.img + '_120s)'}">
-            <!--<img :src="goods.img + '_700m'">-->
-            <div class="img" :style="{'background-image': 'url(' + goods.img + '_700m)'}"></div>
+            <img :src="goods.img ? goods.img + '_700m' : '../assets/default_food_pic_big.png' ">
+            <!--<div class="img" :style="{'background-image': 'url(' + goods.img + '_700m)'}"></div>-->
           </div>
         </div>
         <h2>{{goods.name}}</h2>
@@ -73,8 +73,8 @@
     height: 690px;
     border-radius: 12px;
     overflow: hidden;
-    /*background-size: contain;*/
-    background-size: cover;
+    background-size: contain;
+    /*background-size: cover;*/
     background-repeat: no-repeat;
     img {
       width: 100%;
