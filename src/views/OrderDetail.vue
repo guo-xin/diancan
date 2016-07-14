@@ -11,7 +11,7 @@
     </section>
     <section class="order_sn">
       <div class="l-c-c order_sn_num"><span>取餐号</span>{{order.orderinfo.order_sn}}</div>
-      <p class="order_sn_text">请留意/厅叫号，及时取餐哦～</p>
+      <p class="order_sn_text">请留意餐厅叫号，及时取餐哦～</p>
     </section>
     <section class="show_detail" :class="{'activate': hasDetail}" @click="hasDetail=!hasDetail">查看订单详情<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAQBAMAAADzFNLhAAAAJ1BMVEUAAACLjZOLjJOLjZOLjZSNjZWLoqKKjpSLkJSLjZONjZSMj5OKjJIHsrhbAAAADHRSTlMA5dCuWR0LhTeETEldKZHPAAAAb0lEQVQI12NAB9yCDnA2i+AGBsYzx+H8mjMCQP4ZMyg3+QyQz3XmzKEAMJdV58yZBQwMjWfOSAB5EAZU2AFkGEghVNtJIDUHblANkAUUhVgEVRkK1QUzSRBqKswmqGFwl8ANgxoJMwxmpJIDA1YAADiDMgJvsIRuAAAAAElFTkSuQmCC"></section>
     <div v-show="hasDetail">
