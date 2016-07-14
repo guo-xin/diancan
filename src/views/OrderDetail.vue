@@ -189,8 +189,13 @@
     text-align: center;
     font-size: 30px;
     color: #8A8C92;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .icon {
       margin-left: 20px;
+      width: 30px;
+      height: 16px;
       transition: all .3s ease-in-out;
     }
     &.activate .icon {
