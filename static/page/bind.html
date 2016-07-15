@@ -1,0 +1,231 @@
+## -*- coding: utf-8 -*-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>点餐二维码绑定</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <link href="https://res.wx.qq.com/open/libs/weui/0.4.3/weui.min.css" rel="stylesheet">
+  <style>
+    body {background-color: #fbf9fe;}
+    .info {padding: 15px; background-color: #fe9b20;}
+    .name {display: none;}
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <p class="info">请为开通点餐功能的商户绑定点餐二维码</p>
+
+  <div class="weui_cells_title">商户信息</div>
+  <div class="weui_cells weui_cells_form">
+    <div class="weui_cell">
+      <div class="weui_cell_hd"><label class="weui_label">注册手机号</label></div>
+      <div class="weui_cell_bd weui_cell_primary">
+        <input id="merchant_phone" class="weui_input" type="tel" pattern="[0-9]{11}" maxlength="11"
+               placeholder="商户注册手机号"/>
+      </div>
+    </div>
+    <div class="weui_cell">
+      <div class="weui_cell_hd"><label class="weui_label">餐厅桌号</label></div>
+      <div class="weui_cell_bd weui_cell_primary">
+        <input id="address" class="weui_input" type="text" placeholder="餐厅桌号（选填）"/>
+      </div>
+    </div>
+    <div class="weui_cell name" id="merchant_name">
+      <div class="weui_cell_hd"><label class="weui_label">商户名称</label></div>
+      <div class="weui_cell_bd weui_cell_primary">
+        <input class="weui_input" type="text" placeholder="商户名称" disabled/>
+      </div>
+    </div>
+  </div>
+
+  <div class="weui_cells_title">业务员信息</div>
+  <div class="weui_cells weui_cells_form">
+    <div class="weui_cell">
+      <div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+      <div class="weui_cell_bd weui_cell_primary">
+        <input id="salesman_phone" class="weui_input" type="tel" pattern="[0-9]{11}" maxlength="11"
+               placeholder="业务员手机号"/>
+      </div>
+    </div>
+    <div class="weui_cell name" id="salesman_name">
+      <div class="weui_cell_hd"><label class="weui_label">姓名</label></div>
+      <div class="weui_cell_bd weui_cell_primary">
+        <input class="weui_input" type="text" placeholder="业务员姓名" disabled/>
+      </div>
+    </div>
+  </div>
+
+  <div class="weui_btn_area">
+    <a class="weui_btn weui_btn_primary" id="bind_btn" href="javascript:" id="showTooltips">绑定</a>
+  </div>
+
+</div>
+
+<!-- loading toast -->
+<div id="loading_toast" class="weui_loading_toast" style="display:none;">
+  <div class="weui_mask_transparent"></div>
+  <div class="weui_toast">
+    <div class="weui_loading">
+      <div class="weui_loading_leaf weui_loading_leaf_0"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_1"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_2"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_3"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_4"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_5"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_6"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_7"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_8"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_9"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_10"></div>
+      <div class="weui_loading_leaf weui_loading_leaf_11"></div>
+    </div>
+    <p class="weui_toast_content">数据加载中</p>
+  </div>
+</div>
+
+<!-- dialog-->
+<div class="weui_dialog_alert" id="dialog-alert" style="display: none;">
+  <div class="weui_mask"></div>
+  <div class="weui_dialog">
+    <div class="weui_dialog_hd"><strong class="weui_dialog_title">温馨提示</strong></div>
+    <div class="weui_dialog_bd"></div>
+    <div class="weui_dialog_ft">
+      <a href="javascript:;" class="weui_btn_dialog primary" id="dialog-alert_ok">确定</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="display: none;">
+  <div class="weui_mask_transparent"></div>
+  <div class="weui_toast">
+    <i class="weui_icon_toast"></i>
+    <p class="weui_toast_content">已完成</p>
+  </div>
+</div>
+
+<script src="//cdn.bootcss.com/zepto/1.1.6/zepto.min.js"></script>
+<script>
+  var host = 'https://o.qfpay.com';
+  var domain = 'https://o.qfpay.com';
+
+  //  var host = 'https://qtapi.qa.qfpay.net';
+  //  var domain = 'https://qtapi.qa.qfpay.net';
+
+  // 获取 url 请求参数
+  var getRequestParams = function (url) {
+    url = url ? url : location.search;
+    url = decodeURIComponent(url);
+    var Request = {};
+    if (url.indexOf("?") != -1) {
+      var str = url.substr(1);
+      strs = str.split("&");
+      for (var i = 0; i < strs.length; i++) {
+        var _key = strs[i].split("=")[0];
+        Request[_key] = strs[i].split("=")[1];
+      }
+    }
+    return Request;
+  };
+
+  $(function () {
+    var $loadingToast = $('#loading_toast');
+    var $merchantPhone = $('#merchant_phone');
+    var $salesmanPhone = $('#salesman_phone');
+    var $merchantName = $('#merchant_name');
+    var $salesmanName = $('#salesman_name');
+    var $alert = $('#dialog-alert');
+
+    var userid = '';    // 商户id
+    // var opuid = '';     // 操作员id
+    var salesman = '';  // 操作员姓名
+
+    $('#dialog-alert_ok').on('click', function () {
+      $alert.hide();
+    });
+    var queryMobile = function (mobile, callSuccess, callFail) {
+      var reg = /^1(3|4|5|8|7)\d{9}$/;
+      if (!reg.test(mobile)) {
+        return;
+      }
+
+      $.ajax({
+        url: host + '/diancan/check_mobile',
+        type: 'GET',
+        dataType: 'json',
+        data: {
+          mobile: mobile,
+          format: 'cors'
+        },
+        success: function (data) {
+          if (data.respcd !== '0000') {
+            $('#dialog-alert .weui_dialog_bd').text(data.respmsg);
+            $alert.show();
+            callFail && callFail(data);
+            return
+          }
+          callSuccess(data.data);
+        }
+      });
+    };
+    $merchantPhone.on('blur', function () {
+      queryMobile($merchantPhone.val(), function (data) {
+        userid = data.userid;
+        $merchantName.find('input').val(data.nickname);
+        $merchantName.removeClass('name');
+      }, function () {
+        $merchantName.find('input').val('');
+      });
+    });
+    $salesmanPhone.on('blur', function () {
+      queryMobile($salesmanPhone.val(), function (data) {
+        salesman = data.name;
+        $salesmanName.find('input').val(data.name);
+        $salesmanName.removeClass('name');
+      }, function () {
+        $salesmanName.find('input').val('');
+        $salesmanPhone.focus();
+      });
+    });
+
+    $('#bind_btn').on('click', function () {
+      var merchantPhone = $merchantPhone.val();
+      var salesmanPhone = $salesmanPhone.val();
+      var address = $('#address').val() || '';
+
+      if (!merchantPhone || !salesmanPhone) {
+        return;
+      }
+      $loadingToast.show();
+      var code = getRequestParams().code;
+      $.ajax({
+        url: host + '/diancan/bind',
+        type: 'POST',
+        data: {
+          code: code,   // 绑定时传入的code
+          mobile: merchantPhone, // 绑定商户的手机号
+          userid: userid, // 商户id
+          salesman_mobile: salesmanPhone,  // 业务员手机号
+          salesman: salesman, // 操作员姓名
+          address: address, // 桌号
+          format: 'cors'
+        },
+        success: function (data) {
+          $loadingToast.hide();
+          if (data.respcd !== '0000') {
+            $('#dialog-alert .weui_dialog_bd').text(data.respmsg);
+            $alert.show();
+            return
+          }
+          $('#toast').show();
+          window.location.href = domain + '/dc/?/#!/merchant/' + userid + '/' + address;
+        }
+      })
+    });
+  });
+
+</script>
+
+</body>
+</html>
