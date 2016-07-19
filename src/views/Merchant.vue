@@ -207,10 +207,10 @@
                 g._lastSpec = g._lastSpec || _index
               }
             }
+            cate._count += count
           }
-          cate._count += count
           if (!hasFind) {
-            let name = cartGoods.name + '-' + cartGoods.spec_list[cartGoods._specIndex].name
+            let name = cartGoods.name + '(' + cartGoods.spec_list[cartGoods._specIndex].name + ')'
             delArr.push(name)
             delCart.push(index)
             console.log(cart)
