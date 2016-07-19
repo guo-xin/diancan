@@ -10,7 +10,7 @@ var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.build.env
 
-var prod = process.argv[2] || '"production"';
+var prod = ('"' + process.argv[2] + '"') || '"production"';
 
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
