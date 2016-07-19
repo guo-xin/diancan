@@ -1,27 +1,23 @@
 # diancan
 
-> A Vue.js project
+- development:
 
-## Build Setup
+    - 说明:开发阶段
+    - 执行命令:npm run-script dev
 
-``` bash
-# install dependencies
-npm install
+    > 热加载; ESlint语法检查; scss -> css -> postcss[px2rem, autoprefixer]; javascript es6 -> es5; 样式内联, 资源未压缩;
 
-# serve with hot reload at localhost:8080
-npm run dev
 
-# build for production with minification
-npm run build
+- production
 
-# run unit tests
-npm run unit
+    - 说明:生产环境构建
+    - 执行命令:npm run-script build
 
-# run e2e tests
-npm run e2e
+    > scss -> css -> postcss[px2rem, autoprefixer]; javascript es6 -> es5; 图片<10000 -> base64; 资源压缩; URL加MD5
 
-# run all tests
-npm test
-```
+- testing
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+    - 说明:测试环境构建
+    - 执行命令:npm run-script build_test
+
+    > 同 production; API 地址请求为`测试环境`
