@@ -66,6 +66,10 @@
         }
         this.saveCart(mchntId)
       },
+      'on-saveCart' (mchntId, cart) {
+        this.$set('cart', cart || [])
+        this.saveCart(mchntId)
+      },
       'on-getCart' (mchntId) {
         this.$set('cart', Store.get(this.getKey(mchntId)) || [])
       },

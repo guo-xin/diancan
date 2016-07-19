@@ -166,29 +166,62 @@
         return STORAGEKEY + '_' + this.mchnt_id
       },
       mergeGoods (goods) {
-        let cart = this.cart
-
-        return goods.map(group => {
-          let groupCount = 0
-          group.goods_list = group.goods_list.map(goods => {
-            goods._lastSpec = 0
-            goods.spec_list.map((spec, _index) => {
-              let cartGoods = cart.find(g => {
-                return spec.id === g.spec_list[g._specIndex].id
-              })
-              if (cartGoods) {
-                goods._lastSpec = goods._lastSpec || _index
-                let count = cartGoods.spec_list[cartGoods._specIndex]._count
-                spec._count = count
-                groupCount += count
-              }
+        goods.map(cate => {
+          cate._count = 0
+          cate.goods_list.map(g => {
+            g._lastSpec = 0
+            g.spec_list.map(spec => {
+              spec._count = 0
               return spec
             })
-            return goods
+            return g
           })
-          group._count = groupCount
-          return group
+          return cate
         })
+
+        let cart = this.cart
+        let delArr = []
+        let delCart = []
+        cart.forEach((cartGoods, index) => {
+          let hasFind = false
+          let count = 0
+          let cate = goods.find(cate => {
+            return cartGoods.cate_id === cate.cate_id
+          })
+          if (cate) {
+            let g = cate.goods_list.find(g => {
+              return g.unionid === cartGoods.unionid
+            })
+            let _index = 0
+            if (g) {
+              let spec = g.spec_list.find((spec, _i) => {
+                if (cartGoods.spec_list[cartGoods._specIndex].id) {
+                  _index = _i
+                }
+                return spec.id === cartGoods.spec_list[cartGoods._specIndex].id
+              })
+              if (spec) {
+                hasFind = true
+                count = cartGoods.spec_list[cartGoods._specIndex]._count || 0
+                spec._count = count
+                g._lastSpec = g._lastSpec || _index
+              }
+            }
+          }
+          cate._count += count
+          if (!hasFind) {
+            let name = cartGoods.name + '-' + cartGoods.spec_list[cartGoods._specIndex].name
+            delArr.push(name)
+            delCart.push(index)
+            console.log(cart)
+          }
+        })
+        delArr.length && this.$dispatch('on-toast', delArr.join(' ') + '已下架')
+        delCart.reverse().forEach(item => {
+          cart.splice(item, 1)
+        })
+        this.$dispatch('on-saveCart', this.mchnt_id, cart)
+        return goods
       },
       select (index, item) {
         this.selectIndex = index
