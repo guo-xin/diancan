@@ -10,6 +10,8 @@ var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.build.env
 
+var prod = process.argv[2] || '"production"';
+
 var webpackConfig = merge(baseWebpackConfig, {
   module: {
     loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
@@ -29,7 +31,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   plugins: [
     // http://vuejs.github.io/vue-loader/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': env
+      'process.env': { NODE_ENV: prod }
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
