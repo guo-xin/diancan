@@ -34,7 +34,7 @@
     border-radius: 0.15rem;
     padding: .35rem .5rem;
     min-height: 81.5px;
-    background-color: #fd5359;
+    background-color: #fe9b20;
     color: #fff;
     text-align: center;
     animation-fill-mode: both;
