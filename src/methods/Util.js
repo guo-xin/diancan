@@ -48,7 +48,13 @@ let setTitle = (title) => {
 //   }
 //   return Request
 // }
-
+let isEmptyObject = function (obj) {
+  var value
+  for (value in obj) {
+    if (value) return false
+  }
+  return true
+}
 let getRequestParams = function (url) {
   url = url || window.location.search
   url = decodeURIComponent(url)
@@ -78,3 +84,4 @@ exports.isIOS = isIOS
 exports.getRequestParams = getRequestParams
 exports.checkEmail = checkEmail
 exports.setTitle = setTitle
+exports.isEmptyObject = isEmptyObject

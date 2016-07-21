@@ -1,6 +1,6 @@
 import 'lib-flexible'
-// import FastClick from 'fastclick'
-// window.FastClick = FastClick
+import FastClick from 'fastclick'
+window.FastClick = FastClick
 
 import 'core-js/fn/array/find'
 import 'core-js/fn/array/find-index'

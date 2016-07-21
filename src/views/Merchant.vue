@@ -3,7 +3,11 @@
     <div class="c-loading-container" v-if="$loadingRouteData">
       <loading :visible="$loadingRouteData"></loading>
     </div>
-
+    <div class="order-info" v-show="isEmptyInfo">
+      <p>你在 {{order_info.order_time | formatTime 'hh:mm'}} 提交了一个订单
+        <a @click="goDetail">查看取餐号</a>
+      </p>
+    </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
         <scroller class="scroller-left" lock-x v-ref:scrollerleft height="100%">
@@ -94,12 +98,16 @@
         showSpec: false,
         selectSpecGoods: null,
         showDetail: false,
-        selectDetail: null
+        selectDetail: null,
+        order_info: {} // 是否已存在订单
       }
     },
     computed: {
       cart () {
         return this.$root.cart
+      },
+      isEmptyInfo () {
+        return !Util.isEmptyObject(this.order_info)
       }
     },
     created () {
@@ -138,7 +146,12 @@
             mchnt_id: args.mchnt_id,
             address: args.address || null,
             groupList: goods,
-            goodsList: goods[0].goods_list
+            goodsList: goods[0].goods_list,
+            order_info: data.data.order_info
+//            order_info: {
+//              order_id: '6149736680771744597',
+//              order_time: 1469006994
+//            }
           })
 
           this.$nextTick(() => {
@@ -162,6 +175,9 @@
       }
     },
     methods: {
+      goDetail () {
+        this.$router.go({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
+      },
       getKey () {
         return STORAGEKEY + '_' + this.mchnt_id
       },
@@ -213,7 +229,6 @@
             let name = cartGoods.name + '(' + cartGoods.spec_list[cartGoods._specIndex].name + ')'
             delArr.push(name)
             delCart.push(index)
-            console.log(cart)
           }
         })
         delArr.length && this.$dispatch('on-toast', delArr.join(' ') + '已下架')
@@ -333,7 +348,29 @@
     background-color: #fff;
     z-index: 999;
   }
-
+  .order-info {
+    background-color: #FFEAD1;
+    line-height: 60px;
+    padding: 20px;
+    transition: all .5s linear;
+    height: 100px;
+    overflow: hidden;
+    p {
+      font-size: 30px;
+      color: #2F323A;
+      a {
+        display: block;
+        float: right;
+        padding: 16px 24px;
+        color: #fff;
+        text-align: center;
+        font-size: 30px;
+        border-radius: 6px;
+        background-color: #FE9B20;
+        line-height: 1;
+      }
+    }
+  }
   .no-data {
     height: 300px !important;
   }

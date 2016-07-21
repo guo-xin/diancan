@@ -1,7 +1,7 @@
 <template>
-  <div class="container" v-if="visible" @click.stop.prevent="visible=false">
+  <div class="container" v-show="visible" @click="visible=false">
     <div class="spec" v-if="visible" transition="zoomInOut" @click.stop.prevent="nullFunction">
-      <div class="close" @click.stop.prevent="visible=false"><i class="iconfont">&#xe604;</i></div>
+      <div class="close" @click="visible=false"><i class="iconfont">&#xe604;</i></div>
       <div class="head line">{{goods.name}}</div>
       <section class="body">
         <ul class="spec-list line">
