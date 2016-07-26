@@ -65,6 +65,9 @@
 
     <!--购物车-->
     <cart-bar :plus="plusHandler" :minus="minusHandler" v-if="cart.length" ></cart-bar>
+
+    <!--关店蒙层-->
+    <shop-close :display="isOpen" :info="merchantSetting"> </shop-close>
   </div>
 </template>
 
@@ -79,6 +82,7 @@
   import SelectSpec from '../components/SelectSpec'
   import CartBar from '../components/CartBar'
   import GoodsDetail from '../components/GoodsDetail'
+  import ShopClose from '../components/ShopClose.vue'
 
   import Config from '../methods/Config'
 
@@ -86,7 +90,7 @@
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose
     },
     data () {
       return {
@@ -99,7 +103,9 @@
         selectSpecGoods: null,
         showDetail: false,
         selectDetail: null,
-        order_info: {} // 是否已存在订单
+        order_info: {}, // 是否已存在订单
+        isOpen: true,
+        merchantSetting: {}
       }
     },
     computed: {
@@ -147,14 +153,21 @@
             mchnt_id: args.mchnt_id,
             address: args.address || null,
             groupList: goods,
-            goodsList: goods[0].goods_list,
-            order_info: data.data.order_info
+            goodsList: function () {
+              if (goods[0].goods_list) {
+                return goods[0].goods_list
+              } else {
+                return ''
+              }
+            },
+            order_info: data.data.order_info,
+            isOpen: data.data.sale_state === 0,
+            merchantSetting: data.data.merchant_setting
 //            order_info: {
 //              order_id: '6149736680771744597',
 //              order_time: 1469006994
 //            }
           })
-
           this.$nextTick(() => {
             document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
             document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
