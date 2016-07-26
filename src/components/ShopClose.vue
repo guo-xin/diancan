@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!display" class="close">
+  <div v-if="display" class="close">
     <div class="tip-pic"></div>
     <p class="tip">本店点餐系统开放时间</p>
     <p class="time">{{info.start_time}} - {{info.end_time}}</p>

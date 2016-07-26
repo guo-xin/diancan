@@ -153,15 +153,16 @@
             mchnt_id: args.mchnt_id,
             address: args.address || null,
             groupList: goods,
-            goodsList: function () {
-              if (goods[0].goods_list) {
+            isOpen: data.data.merchant_setting.sale_state === 0,
+//            goodsList: goods[0].goods_list,
+            goodsList: (function () {
+              if (goods.length !== 0) {
                 return goods[0].goods_list
               } else {
                 return ''
               }
-            },
+            })(),
             order_info: data.data.order_info,
-            isOpen: data.data.sale_state === 0,
             merchantSetting: data.data.merchant_setting
 //            order_info: {
 //              order_id: '6149736680771744597',
