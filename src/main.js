@@ -26,10 +26,10 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 
-// import Wechat from './methods/Wechat'
-// Wechat.verify()
-// Wechat.init()
-// Wechat.hideOptionMenu()
+import Wechat from './methods/Wechat'
+Wechat.verify()
+Wechat.init()
+Wechat.hideOptionMenu()
 
 router.map({
   '/merchant/:mchnt_id': {
