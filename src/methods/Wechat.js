@@ -34,17 +34,20 @@ exports.verify = function () {
     }
     return
   }
-  if (code) {
-    url = Config.apiHost + 'diancan/weixincallback?redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + '?') + '&code=' + code
-    window.location.replace(url)
-  } else {
-    window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
-    // window.location.href = 'https://o2.qfpay.com/trade/wechat/v1/get_weixin_code?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.redirect_uri + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    // url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-
-    url = Config.o2Host + 'trade/wechat/v1/get_weixin_code?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    window.location.replace(url)
-  }
+  // 获取商户 appid,component_appid,component_access_token
+  Vue.http.jsonp('http://172.100.111.215:9300/diancan/c/takeauthinfo?mchnt_id=11751&format=jsonp')
+    .then((response) => {
+      let data = response.data.data
+      if (code) {
+        url = `${Config.o2Host}diancan/weixincallback&code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname)
+      } else {
+        window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
+        url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+          encodeURIComponent(Config.o2Host + 'trade/wechat/v1/get_weixin_code') +
+          '&response_type=code&scope=SCOPE&state=' + encodeURIComponent(window.location.origin + window.location.pathname) + `&component_appid=${data.component_appid}#wechat_redirect`
+      }
+      window.location.replace(url)
+    })
 }
 
 /* global wx */
