@@ -23,8 +23,8 @@ exports.verify = function () {
   let url = ''
   let params = Util.getRequestParams(window.location.search)
   let code = params.code || ''
-  let openid = params.openid || window.localStorage.getItem(OPENID) || ''
-
+  // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
+  let openid = params.openid || ''
   if (openid) {
     window.localStorage.setItem(OPENID, openid)
     let redirectUri = window.localStorage.getItem('redirect_uri')
@@ -35,7 +35,7 @@ exports.verify = function () {
     return
   }
   // 获取商户 appid,component_appid,component_access_token
-  Vue.http.jsonp('http://172.100.111.215:9300/diancan/c/takeauthinfo?mchnt_id=11751&format=jsonp')
+  Vue.http.jsonp('https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=11751&format=jsonp')
     .then((response) => {
       let data = response.data.data
       if (code) {
