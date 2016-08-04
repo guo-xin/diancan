@@ -50,7 +50,8 @@ exports.verify = function (mchntId) {
             encodeURIComponent(window.location.href) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
-        window.alert('before jump',url)
+        window.alert('before jump', url)
+        console.log(url)
         window.location.replace(url)
       })
   })
