@@ -26,7 +26,7 @@ exports.verify = function () {
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
-    let mchtId = window.location.hash.split('/')[2] || window.localStorage.getItem('redirect_uri', '').split('/')[2]
+    let mchtId = window.location.hash.split('/')[2] || window.localStorage.getItem('redirect_uri').split('/')[2]
     window.alert(mchtId)
     window.alert(params.code)
     // 获取商户 appid,component_appid,component_access_token
@@ -58,6 +58,8 @@ exports.verify = function () {
         }
         window.alert(url)
         window.location.replace(url)
+      }, (res) => {
+        window.alert('请求失败')
       })
   })
 }
