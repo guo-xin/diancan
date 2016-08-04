@@ -16,7 +16,7 @@ let payHost = 'https://openapi.qfpay.com/'
 let apiHost = 'https://o.qfpay.com/'
 let o2Host = 'https://o2.qfpay.com/'  // 获取微信openid
 let wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
-let appid = 'wxeb6e671f5571abce'  // 公众号ID
+// let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
 if (debug) {
@@ -25,7 +25,7 @@ if (debug) {
   apiHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'
-  appid = 'wx087a3fc3f3757766'  // 公众号ID
+  // appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
 // 开发配置
@@ -40,7 +40,7 @@ module.exports = {
   payHost,
   o2Host,
   wxmpHost,
-  appid,
+  // appid,
   code: {
     OK: '0000', // 成功
     DBERR: '2000', // 数据库查询错误
@@ -64,6 +64,6 @@ module.exports = {
   /**
    * 常量 key
    */
-  STORE_CART: 'STORE_CART_v2',  // 购物车
-  OPENID: 'diancan_openid_' + appid
+  STORE_CART: 'STORE_CART_v2'  // 购物车
+  // OPENID: 'diancan_openid_' + appid
 }

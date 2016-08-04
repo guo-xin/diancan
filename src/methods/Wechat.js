@@ -17,34 +17,37 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 
-const OPENID = Config.OPENID
+// const OPENID = Config.OPENID
 
 exports.verify = function (mchntId) {
   let url = ''
+  let _this = this
   let params = Util.getRequestParams(window.location.search)
   let code = params.code || ''
   // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
   let openid = params.openid || ''
-  if (openid) {
-    window.localStorage.setItem(OPENID, openid)
-    let redirectUri = window.localStorage.getItem('redirect_uri')
-    if (redirectUri) {
-      window.localStorage.setItem('redirect_uri', '')
-      window.location.replace(decodeURIComponent(redirectUri))
-    }
-    return
-  }
+  window.alert(window.location.href)
   // 获取商户 appid,component_appid,component_access_token
   Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
     .then((response) => {
       let data = response.data.data
+      if (openid) {
+        let redirectUri = window.localStorage.getItem('redirect_uri')
+        if (redirectUri) {
+          window.localStorage.setItem('redirect_uri', '')
+          window.location.replace(decodeURIComponent(redirectUri))
+        }
+        // 商家appid
+        _this.$root.appid = data.component_appid
+        return
+      }
       if (code) {
         url = `${Config.o2Host}diancan/weixincallback&code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname)
       } else {
         window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
           encodeURIComponent(Config.o2Host + 'trade/wechat/v1/get_weixin_code') +
-          '&response_type=code&scope=snsapi_base&state=' + encodeURIComponent(window.location.href) + `&component_appid=${data.component_appid}#wechat_redirect`
+          '&response_type=code&scope=snsapi_base&state=' + encodeURIComponent(window.location.origin + window.location.pathname) + `&component_appid=${data.component_appid}#wechat_redirect`
       }
       window.location.replace(url)
     })
