@@ -26,12 +26,14 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 import Wechat from './methods/Wechat'
+window.alert('loaded!')
 Wechat.verify(window.location.hash.split('/')[2]).then(initRouter)
+window.alert('finished!')
 Wechat.init()
 Wechat.hideOptionMenu()
 
 function initRouter () {
-  console.log('init!')
+  window.alert('init!')
   router.map({
     '/merchant/:mchnt_id': {
       name: 'merchant',

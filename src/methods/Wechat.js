@@ -20,7 +20,9 @@ Vue.http.options.emulateJSON = true
 // const OPENID = Config.OPENID
 
 exports.verify = function (mchntId) {
+  window.alert('before pormise')
   return new Promise(function (resolve, reject) {
+    window.alert('enter promise')
     let url = ''
     let params = Util.getRequestParams(window.location.search)
     let code = params.code || ''
@@ -37,6 +39,7 @@ exports.verify = function (mchntId) {
           if (redirectUri) {
             window.localStorage.setItem('redirect_uri', '')
           }
+          window.alert('before resolve')
           resolve()
           return
         }
