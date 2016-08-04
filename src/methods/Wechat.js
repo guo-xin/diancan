@@ -42,12 +42,12 @@ exports.verify = function (mchntId) {
         return
       }
       if (code) {
-        url = `${Config.o2Host}diancan/weixincallback&code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname)
+        url = `${Config.o2Host}diancan/weixincallback&code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
       } else {
         window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
-          encodeURIComponent(Config.o2Host + 'trade/wechat/v1/get_weixin_code') +
-          '&response_type=code&scope=snsapi_base&state=' + encodeURIComponent(window.location.origin + window.location.pathname) + `&component_appid=${data.component_appid}#wechat_redirect`
+          encodeURIComponent(window.location.href) +
+          `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
       }
       window.location.replace(url)
     })
