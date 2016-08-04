@@ -9,7 +9,7 @@
   import Wechat from './methods/Wechat'
   import Util from './methods/Util'
   import {Store} from './methods/Store'
-  import {STORE_CART, OPENID} from './methods/Config'
+  import {STORE_CART} from './methods/Config'
   import Toast from './components/tips/Toast'
 
   export default {
