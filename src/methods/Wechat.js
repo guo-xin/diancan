@@ -41,16 +41,12 @@ exports.verify = function () {
           if (redirectUri) {
             window.localStorage.setItem('redirect_uri', '')
           }
-          window.alert(window.location.hash)
-          if (!window.location.hash) {
-            window.location.replace(window.location.href + window.localStorage.getItem('redirect_uri'))
-          }
           resolve()
           return
         }
         if (code) {
-          window.alert(window.location.hash)
-          url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
+          window.alert(window.location.href)
+          url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.href + window.localStorage.getItem('redirect_uri'))
         } else {
           window.alert(window.location.href)
           window.alert(window.location.hash)
