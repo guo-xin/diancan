@@ -25,8 +25,8 @@ Vue.http.options.xhr = {
   withCredentials: true
 }
 Vue.http.options.emulateJSON = true
-
 import Wechat from './methods/Wechat'
+Wechat.verify(window.location.hash.split('/')[2])
 Wechat.init()
 Wechat.hideOptionMenu()
 

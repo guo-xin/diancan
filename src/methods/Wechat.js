@@ -27,7 +27,6 @@ exports.verify = function (mchntId) {
   // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
   let openid = params.openid || ''
   // 获取商户 appid,component_appid,component_access_token
-  console.log(window.location.href)
   Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
     .then((response) => {
       let data = response.data.data

@@ -124,7 +124,6 @@
 //          window.alert('商户ID不存在')
 //          return
 //        }
-        Wechat.verify(args.mchnt_id)
         args.format = 'jsonp'
         args.openid = this.$root.user.open_id
         this.$http({
