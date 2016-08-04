@@ -54,7 +54,7 @@ exports.verify = function () {
         } else {
           window.alert(window.location.href)
           window.alert(window.location.hash)
-          window.localStorage.setItem('redirect_uri', window.location.search)
+          window.localStorage.setItem('redirect_uri', window.location.hash)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
             encodeURIComponent(window.location.origin + window.location.pathname) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
