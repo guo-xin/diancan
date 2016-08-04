@@ -39,17 +39,20 @@ exports.verify = function (mchntId) {
           if (redirectUri) {
             window.localStorage.setItem('redirect_uri', '')
           }
-          window.alert('before resolve')
           resolve()
           return
         }
         if (code) {
+          window.alert(window.location.search)
+          if (!window.location.search) {
+            window.location.replace(window.location.href + window.localStorage.getItem('redirect_uri'))
+          }
           url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
         } else {
           window.alert(window.location.href)
-          window.localStorage.setItem('redirect_uri', window.location.href)
+          window.localStorage.setItem('redirect_uri', window.location.search)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
-            encodeURIComponent(window.location.href) +
+            encodeURIComponent(window.location.origin + window.location.pathname) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
         window.alert(url)
