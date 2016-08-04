@@ -45,13 +45,13 @@ exports.verify = function (mchntId) {
         if (code) {
           url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
         } else {
+          window.alert(window.location.href)
           window.localStorage.setItem('redirect_uri', window.location.href)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
             encodeURIComponent(window.location.href) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
         window.alert(url)
-        console.log(url)
         window.location.replace(url)
       })
   })
