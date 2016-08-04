@@ -50,7 +50,7 @@ exports.verify = function (mchntId) {
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
         window.location.replace(url)
-    })
+      })
   })
 }
 
