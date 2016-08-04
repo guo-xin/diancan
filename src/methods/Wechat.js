@@ -44,7 +44,7 @@ exports.verify = function (mchntId) {
         window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
         url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
           encodeURIComponent(Config.o2Host + 'trade/wechat/v1/get_weixin_code') +
-          '&response_type=code&scope=snsapi_base&state=' + encodeURIComponent(window.location.origin + window.location.pathname) + `&component_appid=${data.component_appid}#wechat_redirect`
+          '&response_type=code&scope=snsapi_base&state=' + encodeURIComponent(window.location.href) + `&component_appid=${data.component_appid}#wechat_redirect`
       }
       window.location.replace(url)
     })
