@@ -44,13 +44,16 @@ exports.verify = function (mchntId) {
           return
         }
         if (code) {
+          window.alert('code jump')
           url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
         } else {
+          window.alert('before no data jump')
           window.localStorage.setItem('redirect_uri', window.location.href)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
             encodeURIComponent(window.location.href) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
+        window.alert('before jump')
         window.location.replace(url)
       })
   })
