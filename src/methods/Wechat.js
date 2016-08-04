@@ -21,12 +21,13 @@ Vue.http.options.emulateJSON = true
 
 exports.verify = function (mchntId) {
   return new Promise(function (resolve, reject) {
-    window.alert('enter promise')
     let url = ''
     let params = Util.getRequestParams(window.location.search)
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
+    window.alert(params)
+    window.alert(params.code)
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
       .then((response) => {
