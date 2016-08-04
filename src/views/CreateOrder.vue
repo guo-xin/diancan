@@ -135,7 +135,7 @@
         })
         let args = {
           openid: this.$root.user.open_id,
-          appid: this.appid,
+          appid: window.localStorage.getItem('appid'),
           mchnt_id: this.mchnt_id,
           address: this.address,
           note: this.note,

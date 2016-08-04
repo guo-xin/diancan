@@ -22,7 +22,6 @@ Vue.http.options.emulateJSON = true
 exports.verify = function (mchntId) {
   return new Promise(function (resolve, reject) {
     let url = ''
-    let _this = this
     let params = Util.getRequestParams(window.location.search)
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
@@ -32,12 +31,12 @@ exports.verify = function (mchntId) {
       .then((response) => {
         let data = response.data.data
         if (openid) {
+          // 商家appid
+          window.localStorage.setItem('appid', data.component_appid)
           let redirectUri = window.localStorage.getItem('redirect_uri')
           if (redirectUri) {
             window.localStorage.setItem('redirect_uri', '')
           }
-          // 商家appid
-          _this.$root.appid = data.component_appid
           resolve()
           return
         }
