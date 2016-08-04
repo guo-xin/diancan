@@ -19,17 +19,18 @@ Vue.http.options.emulateJSON = true
 
 // const OPENID = Config.OPENID
 
-exports.verify = function (mchntId) {
+exports.verify = function () {
   return new Promise(function (resolve, reject) {
     let url = ''
     let params = Util.getRequestParams(window.location.search)
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
-    window.alert(params)
+    let mchtId = window.location.hash.split('/')[2] || window.localStorage.getItem('redirect_uri', '').split('/')[2]
+    window.alert(mchtId)
     window.alert(params.code)
     // 获取商户 appid,component_appid,component_access_token
-    Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
+    Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
         let data = response.data.data
         if (openid) {
