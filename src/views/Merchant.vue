@@ -126,7 +126,7 @@
 //        }
         Wechat.verify(args.mchnt_id)
         args.format = 'jsonp'
-//        args.openid = this.$root.user.open_id
+        args.openid = this.$root.user.open_id
         this.$http({
           url: Config.apiHost + 'diancan/c/goods_list',
           // url: '/static/api/goods_list.json',

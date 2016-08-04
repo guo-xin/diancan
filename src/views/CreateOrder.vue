@@ -108,6 +108,7 @@
     methods: {
       createOrder () {  // 创建订单
         /**
+         * openid
          * appid      // 商户appid
          * mchnt_id   // 商户id
          * address    // 桌号
@@ -133,6 +134,7 @@
           }
         })
         let args = {
+          openid: this.$root.user.open_id,
           appid: this.appid,
           mchnt_id: this.mchnt_id,
           address: this.address,

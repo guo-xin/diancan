@@ -9,7 +9,7 @@
   import Wechat from './methods/Wechat'
 //  import Util from './Util'
   import {Store} from './methods/Store'
-  import {STORE_CART} from './methods/Config'
+  import {STORE_CART, OPENID} from './methods/Config'
   import Toast from './components/tips/Toast'
 
   export default {
@@ -18,6 +18,9 @@
     },
     data () {
       return {
+        user: {
+          open_id: ''  // oYkCztztAhQhfP9X3DEHz0X9q5Jk oCyV1t0g7oVLCWiQTy93JXWdiL1U
+        },
         appId: '',
         cart: [],
         msg: ''
@@ -28,7 +31,7 @@
     },
     methods: {
       setOpenId () {
-//        this.user.open_id = window.localStorage.getItem(OPENID) || ''
+        this.user.open_id = window.localStorage.getItem(OPENID) || ''
       },
       getKey (mchntId) {
         return STORE_CART + '_' + mchntId
