@@ -26,16 +26,15 @@ exports.verify = function (mchntId) {
   let code = params.code || ''
   // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
   let openid = params.openid || ''
-  window.alert(window.location.href)
   // 获取商户 appid,component_appid,component_access_token
   Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
     .then((response) => {
       let data = response.data.data
+      alert(openid)
       if (openid) {
         let redirectUri = window.localStorage.getItem('redirect_uri')
         if (redirectUri) {
           window.localStorage.setItem('redirect_uri', '')
-          window.location.replace(decodeURIComponent(redirectUri))
         }
         // 商家appid
         _this.$root.appid = data.component_appid
