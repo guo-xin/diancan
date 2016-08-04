@@ -30,7 +30,7 @@ exports.verify = function (mchntId) {
   Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
     .then((response) => {
       let data = response.data.data
-      alert(openid)
+      console.log(params)
       if (openid) {
         let redirectUri = window.localStorage.getItem('redirect_uri')
         if (redirectUri) {
