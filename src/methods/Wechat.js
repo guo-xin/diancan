@@ -19,7 +19,7 @@ Vue.http.options.emulateJSON = true
 
 const OPENID = Config.OPENID
 
-exports.verify = function () {
+exports.verify = function (mchntId) {
   let url = ''
   let params = Util.getRequestParams(window.location.search)
   let code = params.code || ''
@@ -35,7 +35,7 @@ exports.verify = function () {
     return
   }
   // 获取商户 appid,component_appid,component_access_token
-  Vue.http.jsonp('https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=11751&format=jsonp')
+  Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
     .then((response) => {
       let data = response.data.data
       if (code) {
