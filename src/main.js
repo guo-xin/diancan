@@ -27,32 +27,33 @@ Vue.http.options.xhr = {
 Vue.http.options.emulateJSON = true
 import Wechat from './methods/Wechat'
 Wechat.verify(window.location.hash.split('/')[2])
+  .then(initRouter)
 Wechat.init()
 Wechat.hideOptionMenu()
 
-router.map({
-  '/merchant/:mchnt_id': {
-    name: 'merchant',
-    component: require('./views/Merchant')
-  },
-  '/merchant/:mchnt_id/:address': {
-    name: 'merchant',
-    component: require('./views/Merchant')
-  },
-  'create_order/:mchnt_id/:address': { // 创建订单
-    name: 'createOrder',
-    component: require('./views/CreateOrder')
-  },
-  'order_detail/:order_id/:mchnt_id': { // 订单详情: 订单id|商户id
-    name: 'orderDetail',
-    component: require('./views/OrderDetail')
-  },
-  '/about': { // 关于
-    name: 'about',
-    component: require('./views/About.vue')
-  }
-})
-
-router.start(App, '#app')
-
+function initRouter () {
+  router.map({
+    '/merchant/:mchnt_id': {
+      name: 'merchant',
+      component: require('./views/Merchant')
+    },
+    '/merchant/:mchnt_id/:address': {
+      name: 'merchant',
+      component: require('./views/Merchant')
+    },
+    'create_order/:mchnt_id/:address': { // 创建订单
+      name: 'createOrder',
+      component: require('./views/CreateOrder')
+    },
+    'order_detail/:order_id/:mchnt_id': { // 订单详情: 订单id|商户id
+      name: 'orderDetail',
+      component: require('./views/OrderDetail')
+    },
+    '/about': { // 关于
+      name: 'about',
+      component: require('./views/About.vue')
+    }
+  })
+  router.start(App, '#app')
+}
 /* eslint-disable no-new */

@@ -20,35 +20,38 @@ Vue.http.options.emulateJSON = true
 // const OPENID = Config.OPENID
 
 exports.verify = function (mchntId) {
-  let url = ''
-  let _this = this
-  let params = Util.getRequestParams(window.location.search)
-  let code = params.code || ''
-  // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
-  let openid = params.openid || ''
-  // 获取商户 appid,component_appid,component_access_token
-  Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
-    .then((response) => {
-      let data = response.data.data
-      if (openid) {
-        let redirectUri = window.localStorage.getItem('redirect_uri')
-        if (redirectUri) {
-          window.localStorage.setItem('redirect_uri', '')
+  return new Promise(function (resolve, reject) {
+    let url = ''
+    let _this = this
+    let params = Util.getRequestParams(window.location.search)
+    let code = params.code || ''
+    // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
+    let openid = params.openid || ''
+    // 获取商户 appid,component_appid,component_access_token
+    Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchntId}&format=jsonp`)
+      .then((response) => {
+        let data = response.data.data
+        if (openid) {
+          let redirectUri = window.localStorage.getItem('redirect_uri')
+          if (redirectUri) {
+            window.localStorage.setItem('redirect_uri', '')
+          }
+          // 商家appid
+          _this.$root.appid = data.component_appid
+          resolve()
+          return
         }
-        // 商家appid
-        _this.$root.appid = data.component_appid
-        return
-      }
-      if (code) {
-        url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
-      } else {
-        window.localStorage.setItem('redirect_uri', window.location.href)
-        url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
-          encodeURIComponent(window.location.href) +
-          `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
-      }
-      window.location.replace(url)
+        if (code) {
+          url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.localStorage.getItem('redirect_uri'))
+        } else {
+          window.localStorage.setItem('redirect_uri', window.location.href)
+          url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+            encodeURIComponent(window.location.href) +
+            `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
+        }
+        window.location.replace(url)
     })
+  })
 }
 
 /* global wx */

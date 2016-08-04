@@ -79,7 +79,6 @@
   import SelectSpec from '../components/SelectSpec'
   import CartBar from '../components/CartBar'
   import GoodsDetail from '../components/GoodsDetail'
-  import Wechat from '../methods/Wechat'
   import Config from '../methods/Config'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
