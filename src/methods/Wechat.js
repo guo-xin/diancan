@@ -27,9 +27,6 @@ exports.verify = function () {
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
     let mchtId = window.location.hash.split('/')[2] || window.localStorage.getItem('redirect_uri').split('/')[2]
-    window.alert(mchtId)
-    window.alert(window.localStorage.getItem('redirect_uri'))
-    window.alert(params.code)
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
@@ -45,17 +42,13 @@ exports.verify = function () {
           return
         }
         if (code) {
-          window.alert(window.location.href)
           url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.href + window.localStorage.getItem('redirect_uri'))
         } else {
-          window.alert(window.location.href)
-          window.alert(window.location.hash)
           window.localStorage.setItem('redirect_uri', window.location.hash)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
             encodeURIComponent(window.location.origin + window.location.pathname) +
             `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
         }
-        window.alert(url)
         window.location.replace(url)
       }, (res) => {
         window.alert('请求失败')

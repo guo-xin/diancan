@@ -31,7 +31,6 @@ Wechat.init()
 Wechat.hideOptionMenu()
 
 function initRouter () {
-  window.alert('init!')
   router.map({
     '/merchant/:mchnt_id': {
       name: 'merchant',
