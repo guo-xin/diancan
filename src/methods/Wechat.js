@@ -31,7 +31,7 @@ exports.verify = function () {
       hashArray = window.location.hash.split('/')
       tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
     }
-    let LSArray, tempLSMchtId 
+    let LSArray, tempLSMchtId
     if (window.localStorage.getItem('redirect_uri')) {
       LSArray = window.localStorage.getItem('redirect_uri').split('/')
       tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
