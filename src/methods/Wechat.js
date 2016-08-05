@@ -27,8 +27,10 @@ exports.verify = function () {
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
     let hashArray = window.location.hash.split('/')
-    let tempMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
-    let mchtId = tempMchtId || window.localStorage.getItem('redirect_uri').split('/')[2]
+    let LSArray = window.localStorage.getItem('redirect_uri').split('/')
+    let tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+    let tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
+    let mchtId = tempHashMchtId || tempLSMchtId
     window.alert(hashArray)
     window.alert(mchtId)
     // 获取商户 appid,component_appid,component_access_token
