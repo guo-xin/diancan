@@ -7,9 +7,9 @@
 
 <script type="text/ecmascript-6">
   import Wechat from './methods/Wechat'
-//  import Util from './Util'
+  import Util from './methods/Util'
   import {Store} from './methods/Store'
-  import {STORE_CART, OPENID} from './methods/Config'
+  import {STORE_CART} from './methods/Config'
   import Toast from './components/tips/Toast'
 
   export default {
@@ -19,8 +19,9 @@
     data () {
       return {
         user: {
-          open_id: ''  // oYkCztztAhQhfP9X3DEHz0X9q5Jk oCyV1t0g7oVLCWiQTy93JXWdiL1U
+          open_id: ''
         },
+        appId: '',
         cart: [],
         msg: ''
       }
@@ -30,7 +31,8 @@
     },
     methods: {
       setOpenId () {
-        this.user.open_id = window.localStorage.getItem(OPENID) || ''
+        this.user.open_id = Util.getRequestParams(window.location.search).openid || ''
+        this.appId = window.localStorage.getItem('appid')
       },
       getKey (mchntId) {
         return STORE_CART + '_' + mchntId

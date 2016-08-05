@@ -109,6 +109,7 @@
       createOrder () {  // 创建订单
         /**
          * open_id
+         * appid      // 商户appid
          * mchnt_id   // 商户id
          * address    // 桌号
          * note       // 备注
@@ -117,10 +118,10 @@
          * goods_info // 商品信息 json
          */
 //        let args = this.$route.params
-        if (!(this.address = ('' + this.address).trim())) {
-          this.$dispatch('on-toast', '请输入桌号！')
-          return false
-        }
+//        if (!(this.address = ('' + this.address).trim())) {
+//          this.$dispatch('on-toast', '请输入桌号！')
+//          return false
+//        }
         this.btnText = '下单中'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
@@ -134,6 +135,7 @@
         })
         let args = {
           open_id: this.$root.user.open_id,
+          appid: window.localStorage.getItem('appid'),
           mchnt_id: this.mchnt_id,
           address: this.address,
           note: this.note,

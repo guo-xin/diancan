@@ -17,34 +17,58 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 
-const OPENID = Config.OPENID
+// const OPENID = Config.OPENID
 
 exports.verify = function () {
-  let url = ''
-  let params = Util.getRequestParams(window.location.search)
-  let code = params.code || ''
-  let openid = params.openid || window.localStorage.getItem(OPENID) || ''
-
-  if (openid) {
-    window.localStorage.setItem(OPENID, openid)
-    let redirectUri = window.localStorage.getItem('redirect_uri')
-    if (redirectUri) {
-      window.localStorage.setItem('redirect_uri', '')
-      window.location.replace(decodeURIComponent(redirectUri))
+  return new Promise(function (resolve, reject) {
+    let url = ''
+    let params = Util.getRequestParams(window.location.search)
+    let code = params.code || ''
+    // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
+    let openid = params.openid || ''
+    let hashArray, tempHashMchtId
+    if (window.location.hash) {
+      hashArray = window.location.hash.split('/')
+      tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
     }
-    return
-  }
-  if (code) {
-    url = Config.apiHost + 'diancan/weixincallback?redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + '?') + '&code=' + code
-    window.location.replace(url)
-  } else {
-    window.localStorage.setItem('redirect_uri', encodeURIComponent(window.location.href))
-    // window.location.href = 'https://o2.qfpay.com/trade/wechat/v1/get_weixin_code?appid=wx087a3fc3f3757766&redirect_uri=' + window.localStorage.redirect_uri + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    // url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-
-    url = Config.o2Host + 'trade/wechat/v1/get_weixin_code?appid=' + Config.appid + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-    window.location.replace(url)
-  }
+    let LSArray, tempLSMchtId
+    if (window.localStorage.getItem('redirect_uri')) {
+      LSArray = window.localStorage.getItem('redirect_uri').split('/')
+      tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
+    }
+    let mchtId = tempHashMchtId || tempLSMchtId
+    // 获取商户 appid,component_appid,component_access_token
+    Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
+      .then((response) => {
+        if (response.data.respcd === '0000') {
+          let data = response.data.data
+          if (openid) {
+            // 商家appid
+            window.localStorage.setItem('appid', data.component_appid)
+            let redirectUri = window.localStorage.getItem('redirect_uri')
+            if (redirectUri) {
+              window.localStorage.setItem('redirect_uri', '')
+            }
+            resolve()
+            return
+          }
+          if (code) {
+            url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + window.localStorage.getItem('redirect_uri'))
+          } else {
+            window.localStorage.setItem('redirect_uri', window.location.hash)
+            url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+              encodeURIComponent(window.location.origin + window.location.pathname) +
+              `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
+          }
+          window.location.replace(url)
+        } else {
+          window.alert(response.data.resperr)
+        }
+      }, (res) => {
+        window.alert('请求失败')
+      }
+    )
+  })
 }
 
 /* global wx */

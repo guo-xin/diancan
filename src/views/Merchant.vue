@@ -83,7 +83,6 @@
   import CartBar from '../components/CartBar'
   import GoodsDetail from '../components/GoodsDetail'
   import ShopClose from '../components/ShopClose.vue'
-
   import Config from '../methods/Config'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
@@ -131,7 +130,7 @@
 //          return
 //        }
         args.format = 'jsonp'
-        args.openid = this.$root.user.open_id
+        args.open_id = this.$root.user.open_id
         this.$http({
           url: Config.apiHost + 'diancan/c/goods_list',
           // url: '/static/api/goods_list.json',
