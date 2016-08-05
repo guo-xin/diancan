@@ -42,7 +42,7 @@ exports.verify = function () {
           return
         }
         if (code) {
-          url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.href + window.localStorage.getItem('redirect_uri'))
+          url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + window.localStorage.getItem('redirect_uri'))
         } else {
           window.localStorage.setItem('redirect_uri', window.location.hash)
           url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
