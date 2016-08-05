@@ -34,7 +34,7 @@ exports.verify = function () {
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
-        if (res.data.respcd === '0000') {
+        if (response.data.respcd === '0000') {
           let data = response.data.data
           if (openid) {
             // 商家appid
@@ -58,10 +58,10 @@ exports.verify = function () {
         } else {
           window.alert(response.data.resperr)
         }
-       
       }, (res) => {
         window.alert('请求失败')
-      })
+      }
+    )
   })
 }
 
