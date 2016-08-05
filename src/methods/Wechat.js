@@ -26,10 +26,16 @@ exports.verify = function () {
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
-    let hashArray = window.location.hash.split('/')
-    let LSArray = window.localStorage.getItem('redirect_uri').split('/')
-    let tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
-    let tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
+    let hashArray, tempHashMchtId
+    if (window.location.hash) {
+      hashArray = window.location.hash.split('/')
+      tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+    }
+    let LSArray, tempLSMchtId 
+    if (window.localStorage.getItem('redirect_uri')) {
+      LSArray = window.localStorage.getItem('redirect_uri').split('/')
+      tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
+    }
     let mchtId = tempHashMchtId || tempLSMchtId
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
