@@ -31,8 +31,6 @@ exports.verify = function () {
     let tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
     let tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
     let mchtId = tempHashMchtId || tempLSMchtId
-    window.alert(hashArray)
-    window.alert(mchtId)
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
