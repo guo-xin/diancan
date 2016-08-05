@@ -26,7 +26,10 @@ exports.verify = function () {
     let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     let openid = params.openid || ''
-    let mchtId = window.location.hash.split('/')[2] || window.localStorage.getItem('redirect_uri').split('/')[2]
+    let hashArray = window.location.hash.split('/')
+    let tempMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+    let mchtId = tempMchtId || window.localStorage.getItem('redirect_uri').split('/')[2]
+    window.alert(mchtId)
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
