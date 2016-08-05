@@ -118,10 +118,10 @@
          * goods_info // 商品信息 json
          */
 //        let args = this.$route.params
-        if (!(this.address = ('' + this.address).trim())) {
-          this.$dispatch('on-toast', '请输入桌号！')
-          return false
-        }
+//        if (!(this.address = ('' + this.address).trim())) {
+//          this.$dispatch('on-toast', '请输入桌号！')
+//          return false
+//        }
         this.btnText = '下单中'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
