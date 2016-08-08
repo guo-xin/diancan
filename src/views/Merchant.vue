@@ -30,7 +30,7 @@
               <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
                   <div class="list-img" @click.stop="showDetailHandler(goods)">
-                    <div :style="{'background-image': 'url(' + goods.img + '_120s)'}"></div>
+                    <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120)'}"></div>
                   </div>
                   <div class="l_auto list-content">
                     <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
