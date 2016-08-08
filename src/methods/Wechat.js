@@ -56,9 +56,15 @@ exports.verify = function () {
             url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + window.localStorage.getItem('redirect_uri'))
           } else {
             window.localStorage.setItem('redirect_uri', window.location.hash)
-            url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
-              encodeURIComponent(window.location.origin + window.location.pathname) +
-              `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
+            if (!data.appid) {
+              url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+                encodeURIComponent(window.location.origin + window.location.pathname) +
+                `&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`
+            } else {
+              url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+                encodeURIComponent(window.location.origin + window.location.pathname) +
+                `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
+            }
           }
           window.location.replace(url)
         } else {
