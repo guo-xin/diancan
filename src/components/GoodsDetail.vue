@@ -5,8 +5,8 @@
         <div class="close" @click.stop.prevent="closeHandler()"><i class="iconfont">&#xe604;</i></div>
         <div class="img imgbox">
           <div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120)'}">
-            <img :src="goods.img ? goods.img + '?imageView2/1/w/700/h/700' : '../assets/default_food_pic_big.png' ">
-            <!--<div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/700/h/700)'}"></div>-->
+            <img :src="goods.img ? goods.img + '?imageView2/1/w/400/h/400' : '../assets/default_food_pic_big.png' ">
+            <!--<div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/400/h/400)'}"></div>-->
           </div>
         </div>
         <h2>{{goods.name}}</h2>
