@@ -38,7 +38,7 @@ exports.verify = function () {
     }
     let mchtId = tempHashMchtId || tempLSMchtId
     // 获取商户 appid,component_appid,component_access_token
-    Vue.http.jsonp(`https://o.qa.qfpay.net/diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
+    Vue.http.jsonp(`${Config.apiHost}diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
         if (response.data.respcd === '0000') {
           let data = response.data.data
