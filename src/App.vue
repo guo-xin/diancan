@@ -31,6 +31,7 @@
     },
     methods: {
       setOpenId () {
+        window.alert(window.localStorage.getItem('openid'), 1)
         this.user.open_id = window.localStorage.getItem('openid') || ''
         this.appId = window.localStorage.getItem('appid') || ''
       },

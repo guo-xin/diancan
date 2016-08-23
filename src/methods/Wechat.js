@@ -45,6 +45,7 @@ exports.verify = function () {
               if (res.data.respcd === '0000') {
                 window.localStorage.setItem('appid', data.appid)
                 window.localStorage.setItem('openid', data.openid)
+                window.alert(window.localStorage.getItem('openid'), 1)
                 resolve()
               } else {
                 url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
