@@ -43,9 +43,8 @@ exports.verify = function () {
           Vue.http.jsonp(`${Config.apiHost}diancan/weixincallback?format=jsonp&appid=${data.appid}`)
             .then((res) => {
               if (res.data.respcd === '0000') {
-                window.localStorage.setItem('appid', data.appid)
-                window.localStorage.setItem('openid', data.openid)
-                window.alert(window.localStorage.getItem('openid'), 1)
+                window.localStorage.setItem('dc_appid', res.data.data.appid)
+                window.localStorage.setItem('dc_openid', res.data.data.openid)
                 resolve()
               } else {
                 url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
