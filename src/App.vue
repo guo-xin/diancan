@@ -31,8 +31,8 @@
     },
     methods: {
       setOpenId () {
-        this.user.open_id = Util.getRequestParams(window.location.search).openid || ''
-        this.appId = window.localStorage.getItem('appid')
+        this.user.open_id = window.localStorage.getItem('openid') || ''
+        this.appId = window.localStorage.getItem('appid') || ''
       },
       getKey (mchntId) {
         return STORE_CART + '_' + mchntId
