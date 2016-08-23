@@ -7,7 +7,7 @@
 
 <script type="text/ecmascript-6">
   import Wechat from './methods/Wechat'
-  import Util from './methods/Util'
+//  import Util from './methods/Util'
   import {Store} from './methods/Store'
   import {STORE_CART} from './methods/Config'
   import Toast from './components/tips/Toast'

@@ -22,10 +22,6 @@ Vue.http.options.emulateJSON = true
 exports.verify = function () {
   return new Promise(function (resolve, reject) {
     let url = ''
-    // let params = Util.getRequestParams(window.location.search)
-    // let code = params.code || ''
-    // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
-    // let openid = params.openid || ''
     let hashArray, tempHashMchtId
     if (window.location.hash) {
       window.localStorage.setItem('redirect_uri', window.location.hash)
