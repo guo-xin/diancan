@@ -5,8 +5,8 @@
       <div class="content">
         <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
         <div>
-          <p class="goods-name">{{item.ordername}} <span>{{item.txamt}}</span></p>
-          <p class="goods-time">购买时间: {{item.pay_time}} <span></span></p>
+          <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
+          <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}} <span></span></p>
         </div>
       </div>
     </li>
@@ -59,6 +59,7 @@
         font-size: 30px;
         color: #2F323A;
         border-top: 2px solid #E5E5E5;
+        margin: 0 auto;
         span {
           color: #8A8C92;
           float: right;
@@ -72,6 +73,7 @@
           line-height: 108px;
           font-size: 34px;
           color: #8A8C92;
+          border-bottom: 2px solid #E5E5E5;
           em {
             font-style: normal;
             color: #2F323A;
@@ -84,12 +86,21 @@
         > div {
           margin: 0 30px;
           height: 144px;
-          line-height: 144px;
           .goods-name {
-
+            font-size: 34px;
+            color: #2F323A;
+            margin: 0;
+            padding: 30px 0 24px;
+            span {
+              float: right;
+              font-size: 30px;
+              color: #8A8C92;
+            }
           }
           .goods-time {
-
+            font-size: 26px;
+            color: #8A8C92;
+            margin: 0 auto 30px;
           }
         }
       }
@@ -108,7 +119,7 @@
       return {
         init: true,
         mId: Util.getRequestParams().mchnt_id || '',
-        openId: Util.getRequestParams().openid || '',
+        openId: window.localStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
@@ -157,8 +168,8 @@
             this.requestData.page += 1
           }
           this.$http({
-//          url: Config.o_host + 'diancan/c/order_list',
-            url: 'http://172.100.111.215:9300/diancan/c/order_list',
+            url: Config.apiHost + 'diancan/c/order_list',
+//            url: 'http://172.100.111.215:9300/diancan/c/order_list',
             data: _this.requestData,
             method: 'JSONP'
           }).then(function (response) {
