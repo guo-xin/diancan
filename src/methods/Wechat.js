@@ -28,6 +28,7 @@ exports.verify = function () {
     // let openid = params.openid || ''
     let hashArray, tempHashMchtId
     if (window.location.hash) {
+      window.localStorage.setItem('redirect_uri', window.location.hash)
       hashArray = window.location.hash.split('/')
       tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
     }
@@ -44,8 +45,8 @@ exports.verify = function () {
         if (response.data.respcd === '0000') {
           let data = response.data.data
           Vue.http.jsonp(`${Config.apiHost}diancan/weixincallback?format=jsonp&appid=${data.appid}`)
-            .then((response) => {
-              if (response.data.respcd === '0000') {
+            .then((res) => {
+              if (res.data.respcd === '0000') {
                 resolve()
               } else {
                 url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
