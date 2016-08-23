@@ -6,11 +6,11 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Wechat from './methods/Wechat'
-  import Util from './methods/Util'
-  import {Store} from './methods/Store'
-  import {STORE_CART} from './methods/Config'
-  import Toast from './components/tips/Toast'
+  import Wechat from '../../methods/Wechat'
+  import Util from '../../methods/Util'
+  import {Store} from '../../methods/Store'
+  import {STORE_CART} from '../../methods/Config'
+  import Toast from '../../components/tips/Toast'
 
   export default {
     components: {
@@ -90,8 +90,8 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  @import "styles/main.scss";
-  @import "styles/iconfont/iconfont.css";
+  @import "../../styles/main.scss";
+  @import "../../styles/iconfont/iconfont.css";
   /*@import '~vux/dist/vux.css';*/
 
   html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {

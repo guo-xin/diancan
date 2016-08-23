@@ -4,12 +4,16 @@ var utils = require('./utils')
 var projectRoot = path.resolve(__dirname, '../')
 
 module.exports = {
-  entry: {
-    app: './src/main.js'
-  },
+  // entry: {
+  //   app: './src/main.js'
+  // },
+  // entry: { index: './src/pages/index', list: './src/pages/list' },
+  entry: utils.entry,
   output: {
-    path: config.build.assetsRoot,
-    publicPath: config.build.assetsPublicPath,
+    // path: config.build.assetsRoot,
+    // publicPath: config.build.assetsPublicPath,
+    path: config.assetsRoot,
+    publicPath: config.publicPath || config.assetsPublicPath,
     filename: '[name].js'
   },
   resolve: {
@@ -58,13 +62,15 @@ module.exports = {
       {
         test: /\.html$/,
         loader: 'vue-html'
+        // loader: 'html'
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url',
         query: {
           limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
+          // name: utils.assetsPath('img/[name].[hash:7].[ext]')
+          name: utils.assetsPath('[name].[hash:7].[ext]')
         }
       },
       {
@@ -90,7 +96,7 @@ module.exports = {
       remPrecision: 6         // rem precision (default: 6)
     })],
     autoprefixer: {
-      browsers: ['Android >= 2.3', 'iOS >= 6'],
+      browsers: ["Android >= 2.3", "iOS >= 4"],
       cascade: false  // 不美化输出 css
     }
   }
