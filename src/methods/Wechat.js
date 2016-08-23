@@ -57,8 +57,9 @@ exports.verify = function () {
           } else {
             window.localStorage.setItem('redirect_uri', window.location.hash)
             if (!data.component_appid) {
-              url = `${Config.o2Host}trade/wechat/v1/get_weixin_code?appid=${data.appid}&redirect_uri=` +
-                encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+              url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
+              // url = `${Config.o2Host}trade/wechat/v1/get_weixin_code?appid=${data.appid}&redirect_uri=` +
+              //   encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
             } else {
               url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
                 encodeURIComponent(window.location.origin + window.location.pathname) +
