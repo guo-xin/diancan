@@ -23,9 +23,9 @@ exports.verify = function () {
   return new Promise(function (resolve, reject) {
     let url = ''
     let params = Util.getRequestParams(window.location.search)
-    let code = params.code || ''
+    // let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
-    let openid = params.openid || ''
+    // let openid = params.openid || ''
     let hashArray, tempHashMchtId
     if (window.location.hash) {
       hashArray = window.location.hash.split('/')
@@ -52,8 +52,7 @@ exports.verify = function () {
                 window.location.replace(url)
               }
             })
-
-
+          
           // if (openid) {
           //   // 商家appid
           //   window.localStorage.setItem('appid', data.component_appid)
