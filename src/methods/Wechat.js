@@ -37,36 +37,48 @@ exports.verify = function () {
       tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
     }
     let mchtId = tempHashMchtId || tempLSMchtId
+
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`${Config.apiHost}diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
       .then((response) => {
         if (response.data.respcd === '0000') {
           let data = response.data.data
-          if (openid) {
-            // 商家appid
-            window.localStorage.setItem('appid', data.component_appid)
-            let redirectUri = window.localStorage.getItem('redirect_uri')
-            if (redirectUri) {
-              window.localStorage.setItem('redirect_uri', '')
-            }
-            resolve()
-            return
-          }
-          if (code) {
-            url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + window.localStorage.getItem('redirect_uri'))
-          } else {
-            window.localStorage.setItem('redirect_uri', window.location.hash)
-            if (!data.component_appid) {
-              url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
-              // url = `${Config.o2Host}trade/wechat/v1/get_weixin_code?appid=${data.appid}&redirect_uri=` +
-              //   encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-            } else {
-              url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
-                encodeURIComponent(window.location.origin + window.location.pathname) +
-                `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
-            }
-          }
-          window.location.replace(url)
+          Vue.http.jsonp(`${Config.apiHost}diancan/weixincallback?format=jsonp&appid=${data.appid}`)
+            .then((response) => {
+              if (response.data.respcd === '0000') {
+                resolve()
+              } else {
+                url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
+                window.location.replace(url)
+              }
+            })
+
+
+          // if (openid) {
+          //   // 商家appid
+          //   window.localStorage.setItem('appid', data.component_appid)
+          //   let redirectUri = window.localStorage.getItem('redirect_uri')
+          //   if (redirectUri) {
+          //     window.localStorage.setItem('redirect_uri', '')
+          //   }
+          //   resolve()
+          //   return
+          // }
+          // if (code) {
+          //   url = `${Config.apiHost}diancan/weixincallback?code=${code}&appid=${data.appid}&component_appid=${data.component_appid}&component_access_token=${data.component_access_token}` + '&redirect_url=' + encodeURIComponent(window.location.origin + window.location.pathname + window.localStorage.getItem('redirect_uri'))
+          // } else {
+          //   window.localStorage.setItem('redirect_uri', window.location.hash)
+          //   if (!data.component_appid) {
+          //     url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
+          //     // url = `${Config.o2Host}trade/wechat/v1/get_weixin_code?appid=${data.appid}&redirect_uri=` +
+          //     //   encodeURIComponent(window.location.origin + window.location.pathname) + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+          //   } else {
+          //     url = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${data.appid}&redirect_uri=` +
+          //       encodeURIComponent(window.location.origin + window.location.pathname) +
+          //       `&response_type=code&scope=snsapi_base&state=STATE&component_appid=${data.component_appid}#wechat_redirect`
+          //   }
+          // }
+          // window.location.replace(url)
         } else {
           window.alert(response.data.resperr)
         }
