@@ -22,7 +22,7 @@ Vue.http.options.emulateJSON = true
 exports.verify = function () {
   return new Promise(function (resolve, reject) {
     let url = ''
-    let params = Util.getRequestParams(window.location.search)
+    // let params = Util.getRequestParams(window.location.search)
     // let code = params.code || ''
     // let openid = params.openid || window.localStorage.getItem(OPENID) || ''
     // let openid = params.openid || ''
@@ -52,7 +52,6 @@ exports.verify = function () {
                 window.location.replace(url)
               }
             })
-          
           // if (openid) {
           //   // 商家appid
           //   window.localStorage.setItem('appid', data.component_appid)
@@ -87,9 +86,7 @@ exports.verify = function () {
     )
   })
 }
-
 /* global wx */
-
 const DEBUG = false
 const jsApiList = [
   'checkJsApi',
