@@ -9,11 +9,7 @@ console.error('构建环境：', NODE_ENV || 'development', ':', prod || 'defaul
 
 var config = require('./dev.env');
 if (NODE_ENV === 'production') {
-  if (prod === 'online') {
-    config = require('./prod.online.env')
-  } else {
-    config = require('./prod.env');
-  }
+  config = require('./prod.env');
 }
 
 module.exports = config

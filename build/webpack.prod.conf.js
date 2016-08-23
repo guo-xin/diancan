@@ -5,7 +5,7 @@ var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-
+var prod = '"' + (process.argv[2] || 'production') + '"';
 var prodWebpackConfig = {
   module: {
     // loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
@@ -30,7 +30,7 @@ var prodWebpackConfig = {
     // http://vuejs.github.io/vue-loader/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: '"production"'
+        NODE_ENV: { NODE_ENV: prod }
       },
       // RUN_ENV: JSON.stringify('production')
       RUN_ENV: JSON.stringify(utils.env)
