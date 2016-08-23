@@ -3,7 +3,7 @@
  * Created by aidenZou on 16/6/17.
  */
 
-import Util from './Util'
+// import Util from './Util'
 import Config from './Config'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
