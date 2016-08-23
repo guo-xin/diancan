@@ -85,7 +85,7 @@
         }
         > div {
           margin: 0 30px;
-          height: 144px;
+          padding-bottom: 30px;
           .goods-name {
             font-size: 34px;
             color: #2F323A;
@@ -100,7 +100,7 @@
           .goods-time {
             font-size: 26px;
             color: #8A8C92;
-            margin: 0 auto 30px;
+            margin: 0;
           }
         }
       }
