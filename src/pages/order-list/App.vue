@@ -1,6 +1,6 @@
 <template>
   <ul v-if="!noData">
-    <li v-for="item in responseData.list">
+    <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
       <h2 v-if="item.shop_name">{{item.shop_name}} <span>堂食</span></h2>
       <div class="content">
         <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
@@ -178,6 +178,9 @@
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
+              res.data.order_list.map(function (item) {
+                item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
+              })
               _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
               if (res.data.order_list.length === 0) {
                 _this.noData = true
@@ -191,6 +194,10 @@
             }
           })
         }
+      },
+      jumpUrl (url) {
+        console.log(url)
+        window.location.href = url
       }
     }
   }
