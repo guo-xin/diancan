@@ -30,7 +30,7 @@ var prodWebpackConfig = {
     // http://vuejs.github.io/vue-loader/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: { NODE_ENV: prod }
+        NODE_ENV: prod
       },
       // RUN_ENV: JSON.stringify('production')
       RUN_ENV: JSON.stringify(utils.env)

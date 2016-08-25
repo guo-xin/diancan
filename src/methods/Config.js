@@ -4,7 +4,7 @@
  * production: 生产环境（默认）
  */
 
-// const debug = process.env.NODE_ENV !== 'production'
+const debug = process.env.NODE_ENV !== 'production'
 
 // 生产环境,线上配置
 // let host = 'http://wx.qfpay.com/'
@@ -19,14 +19,14 @@ let wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
 // let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
 // 测试配置
-// if (debug) {
-//   rootHost = 'https://o.qa.qfpay.net/dc/'
-//   payHost = 'https://openapi.qa.qfpay.net/'
-//   apiHost = 'https://o.qa.qfpay.net/'
-//   o2Host = 'https://o2.qa.qfpay.net/'
-//   wxmpHost = 'https://wxmp.qa.qfpay.net/'
-//   // appid = 'wx087a3fc3f3757766'  // 公众号ID
-// }
+if (debug) {
+  rootHost = 'https://o.qa.qfpay.net/dc/'
+  payHost = 'https://openapi.qa.qfpay.net/'
+  apiHost = 'https://o.qa.qfpay.net/'
+  o2Host = 'https://o2.qa.qfpay.net/'
+  wxmpHost = 'https://wxmp.qa.qfpay.net/'
+  // appid = 'wx087a3fc3f3757766'  // 公众号ID
+}
 
 // 开发配置
 // if (ENV === 'development') {
