@@ -26,7 +26,7 @@
       }
     },
     ready () {
-      if (!window.location.hash) {
+      if (window.location.hash === '#!/') {
         let url = window.location.origin + window.location.pathname + window.location.search + window.localStorage.getItem('redirect_uri')
         window.location.replace(url)
       }
