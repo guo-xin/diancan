@@ -47,7 +47,7 @@ exports.verify = function () {
                 window.localStorage.setItem('dc_openid', res.data.data.openid)
                 resolve()
               } else {
-                url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname)
+                url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
                 window.location.replace(url)
               }
             })
