@@ -28,7 +28,7 @@ Vue.http.options.emulateJSON = true
 import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initRouter)
 Wechat.init()
-// Wechat.hideOptionMenu()
+Wechat.hideOptionMenu()
 
 function initRouter () {
   router.map({
