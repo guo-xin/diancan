@@ -68,6 +68,7 @@ const jsApiList = [
   'showAllNonBaseMenuItem',
   'hideMenuItems',
   'showMenuItems',
+  'scanQRCode',
   'onMenuShareTimeline',
   'onMenuShareAppMessage',
   'onMenuShareQQ',
