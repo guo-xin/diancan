@@ -22,7 +22,7 @@ let wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
 if (debug) {
   rootHost = 'https://o.qa.qfpay.net/dc/'
   payHost = 'https://openapi.qa.qfpay.net/'
-  apiHost = 'https://o.qa.qfpay.net/'
+  apiHost = 'https://o.qfpay.com/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'
   // appid = 'wx087a3fc3f3757766'  // 公众号ID

@@ -27,6 +27,7 @@ Vue.http.options.xhr = {
 Vue.http.options.emulateJSON = true
 import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initRouter)
+// initRouter()
 Wechat.init()
 Wechat.hideOptionMenu()
 
@@ -36,7 +37,7 @@ function initRouter () {
       name: 'merchant',
       component: require('../../views/Merchant')
     },
-    '/merchant/:mchnt_id/:address': {
+    '/merchant/:mchnt_id/:address/:expire_time': {
       name: 'merchant',
       component: require('../../views/Merchant')
     },

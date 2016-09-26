@@ -67,7 +67,9 @@
     <cart-bar :plus="plusHandler" :minus="minusHandler" v-if="cart.length" ></cart-bar>
 
     <!--关店蒙层-->
-    <shop-close :display="isOpen" :info="merchantSetting"> </shop-close>
+    <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
+    <!--扫描二维码蒙层-->
+    <scan-qrcode :display="isExpire"></scan-qrcode>
   </div>
 </template>
 
@@ -83,13 +85,14 @@
   import CartBar from '../components/CartBar'
   import GoodsDetail from '../components/GoodsDetail'
   import ShopClose from '../components/ShopClose.vue'
+  import ScanQrcode from '../components/ScanQrcode.vue'
   import Config from '../methods/Config'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode
     },
     data () {
       return {
@@ -103,7 +106,8 @@
         showDetail: false,
         selectDetail: null,
         order_info: {}, // 是否已存在订单
-        isOpen: true,
+        isClose: false,
+        isExpire: false,
         merchantSetting: {}
       }
     },
@@ -139,7 +143,10 @@
         }).then(function (response) {
           // success callback
           let data = response.data
-          if (data.respcd !== Config.code.OK) {
+          if (data.respcd === '4000') {
+            this.isExpire = true
+            return
+          } else if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.respmsg)
             // transition.abort()
             return
@@ -152,7 +159,7 @@
             mchnt_id: args.mchnt_id,
             address: args.address || null,
             groupList: goods,
-            isOpen: data.data.merchant_setting.sale_state === 0,
+            isClose: data.data.merchant_setting.sale_state === 0,
 //            goodsList: goods[0].goods_list,
             goodsList: (function () {
               if (goods.length !== 0) {
