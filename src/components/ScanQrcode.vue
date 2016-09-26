@@ -5,7 +5,7 @@
       <p>请扫一扫桌上的二维码，开始点餐</p>
       <img src="../assets/bear.svg" alt="小熊">
     </div>
-    <a @click.prenvet="scan" class="scan">扫描二维码</a>
+    <a @click.prevent="scan" class="scan">扫描二维码</a>
   </div>
 </template>
 <style lang="scss" rel="stylesheet/scss" scoped>
