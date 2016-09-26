@@ -15,7 +15,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: 2000;
     background-color: #f7f7f7;
     .head {
       margin: 200px auto 60px;
