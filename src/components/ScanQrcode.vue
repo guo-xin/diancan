@@ -1,5 +1,5 @@
 <template>
-  <div v-if="display" class="go-scan">
+  <div v-show="display" class="go-scan">
     <div class="head">
       <p>对不起，我们还不清楚你坐在哪个位置</p>
       <p>请扫一扫桌上的二维码，开始点餐</p>
@@ -60,10 +60,7 @@
     props: ['display'],
     methods: {
       scan () {
-        wx.scanQRCode({
-          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-          scanType: ['qrCode', 'barCode'] // 可以指定扫二维码还是一维码，默认二者都有
-        })
+        this.$dispatch('on-qr')
       }
     }
   }

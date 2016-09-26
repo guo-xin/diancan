@@ -88,6 +88,9 @@
       },
       'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
         Wechat.onMenuShareAppMessage(args)
+      },
+      'on-qr' () {
+        Wechat.onScanQRcode()
       }
     }
   }
