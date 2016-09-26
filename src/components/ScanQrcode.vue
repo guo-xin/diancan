@@ -55,7 +55,6 @@
   }
 </style>
 <script type="text/ecmascript-6">
-  /* global wx*/
   export default {
     props: ['display'],
     methods: {
