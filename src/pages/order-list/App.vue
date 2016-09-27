@@ -76,7 +76,7 @@
           border-bottom: 2px solid #E5E5E5;
           em {
             font-style: normal;
-            color: #2F323A;
+            color: #FE9B20;
           }
           span {
             float: right;
