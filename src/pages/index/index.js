@@ -29,17 +29,23 @@ import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initRouter)
 // initRouter()
 Wechat.init()
-// Wechat.hideOptionMenu()
+Wechat.hideOptionMenu()
 
 function initRouter () {
   router.map({
     '/merchant/:mchnt_id': {
       name: 'merchant',
-      component: require('../../views/Merchant')
-    },
-    '/merchant/:mchnt_id/:address/:expire_time': {
-      name: 'merchant',
-      component: require('../../views/Merchant')
+      component: require('../../views/Merchant'),
+      subRoutes: {
+        '/:address': {
+          component: require('../../views/Merchant'),
+          subRoutes: {
+            '/:expire_time': {
+              component: require('../../views/Merchant')
+            }
+          }
+        }
+      }
     },
     'create_order/:mchnt_id/:address': { // 创建订单
       name: 'createOrder',
