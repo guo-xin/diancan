@@ -24,7 +24,7 @@ if (debug) {
   payHost = 'https://openapi.qa.qfpay.net/'
   apiHost = 'https://o.qfpay.com/'
   o2Host = 'https://o2.qa.qfpay.net/'
-  wxmpHost = 'https://wxmp.qa.qfpay.net/'
+  wxmpHost = 'https://wxmp.qfpay.com/'
   // appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 

@@ -30,7 +30,7 @@ Wechat.verify().then(initRouter)
 // initRouter()
 Wechat.init()
 Wechat.hideOptionMenu()
-
+Wechat.noResize()
 function initRouter () {
   router.map({
     '/merchant/:mchnt_id': {

@@ -179,3 +179,18 @@ exports.onScanQRcode = () => {
     scanType: ['qrCode', 'barCode'] // 可以指定扫二维码还是一维码，默认二者都有
   })
 }
+
+/* global WeixinJSBridge */
+function handleFontSize () {
+  WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize': 0 })
+  WeixinJSBridge.on('menu:setfont', function () {
+    WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize': 0 })
+  })
+}
+exports.noResize = () => {
+  if (!isReady) {
+    actionQueue.push('handleFontSize()')
+    return
+  }
+  handleFontSize()
+}
