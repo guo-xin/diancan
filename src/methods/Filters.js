@@ -1,6 +1,12 @@
 /**
  * Created by aidenZou on 16/5/5.
  */
+/**
+ * 消除货币单位后多余的00000
+ */
+exports.noZeroCurrency = (number) => {
+  return Number(number)
+}
 
 /**
  * 格式化货币

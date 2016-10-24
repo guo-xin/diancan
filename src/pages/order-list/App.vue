@@ -1,16 +1,41 @@
 <template>
-  <ul v-if="!noData">
-    <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
-      <h2 v-if="item.shop_name">{{item.shop_name}} <span>堂食</span></h2>
-      <div class="content">
-        <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
-        <div>
-          <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
-          <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}} <span></span></p>
+  <div>
+    <ul v-if="!noData">
+      <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
+        <div v-if="item.order_type==3" class="{{this.theme(item.delivery_state)}}">
+          <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
+          <div class="content">
+            <p>外卖单号 <em>{{item.order_id}}</em>
+              <i v-if="item.delivery_state==4">已退款</i>
+              <i v-if="item.delivery_state==3">已送达</i>
+              <i v-if="item.delivery_state==2">已发货</i>
+              <i v-if="item.delivery_state==1">已接单</i>
+              <i v-if="item.delivery_state==0">已付款</i>
+            </p>
+            <div>
+              <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span>
+              </p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}}
+                <span v-if="item.order_state == 3">已退款</span>
+                <span v-if="item.order_state == 2" class="success">支付成功</span>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </li>
-  </ul>
+        <div v-else>
+          <h2 v-if="item.shop_name">{{item.shop_name}} <span>堂食</span></h2>
+          <div class="content">
+            <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
+            <div>
+              <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}} <span></span></p>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
   <div v-if="noData" class="no-data">
     <img src="assets/no_data.png" alt="">
     <p>暂无数据</p>
@@ -46,6 +71,42 @@
     }
   }
   ul {
+    li {
+      > div {
+        border-top: 2px solid #e5e5e5;
+        border-bottom: 2px solid #e5e5e5;
+      }
+    }
+  }
+  .border0 {
+    border-top: 2px solid #FE9B20;
+    border-bottom: 2px solid #FE9B20;
+    p > i {
+      color: #FE9B20;
+    }
+  }
+  .border1 {
+    border-top: 2px solid #FD5359;
+    border-bottom: 2px solid #FD5359;
+    p > i {
+      color: #FD5359;
+    }
+  }
+  .border2 {
+    border-top: 2px solid #4A90E2;
+    border-bottom: 2px solid #4A90E2;
+    p > i {
+      color: #4A90E2;
+    }
+  }
+  .border3 {
+    border-top: 2px solid #60AA0F;
+    border-bottom: 2px solid #60AA0F;
+    p > i {
+      color: #60AA0F;
+    }
+  }
+  ul {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -58,7 +119,6 @@
         padding: 0 30px;
         font-size: 30px;
         color: #2F323A;
-        border-top: 2px solid #E5E5E5;
         margin: 0 auto;
         span {
           color: #8A8C92;
@@ -82,6 +142,11 @@
             float: right;
             color: #8A8C92;
           }
+          i {
+            font-style: normal;
+            float: right;
+            font-size: 34px;
+          }
         }
         > div {
           margin: 0 30px;
@@ -101,6 +166,23 @@
             font-size: 26px;
             color: #8A8C92;
             margin: 0;
+            span {
+              float: right;
+              position: relative;
+              &.success {
+                &:before {
+                  content: '';
+                  position: absolute;
+                  display: block;
+                  left: -16px;
+                  top: 8px;
+                  width: 12px;
+                  height: 12px;
+                  border-radius: 12px;
+                  background-color: #7ED321;
+                }
+              }
+            }
           }
         }
       }
@@ -168,8 +250,8 @@
             this.requestData.page += 1
           }
           this.$http({
-            url: Config.apiHost + 'diancan/c/order_list',
-//            url: 'http://172.100.111.215:9300/diancan/c/order_list',
+//            url: Config.apiHost + 'diancan/c/order_list',
+            url: 'http://172.100.111.215:9300/diancan/c/order_list',
             data: _this.requestData,
             method: 'JSONP'
           }).then(function (response) {
@@ -179,7 +261,11 @@
             _this.loading = false
             if (res.respcd === '0000') {
               res.data.order_list.map(function (item) {
-                item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
+                if (item.order_type === 3) {
+                  item.url = `${Config.apiHost}dc/take-out.html#!/order_detail/${item.order_id}/${item.mchnt_id}`
+                } else {
+                  item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
+                }
               })
               _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
               if (res.data.order_list.length === 0) {
@@ -198,6 +284,15 @@
       jumpUrl (url) {
         console.log(url)
         window.location.href = url
+      },
+      theme (id) {
+        switch (id) {
+        // 0 橘色 1 红色 2 蓝色 3 绿色
+          case 0: return 'border0'
+          case 1: return 'border1'
+          case 2: return 'border2'
+          case 3: return 'border3'
+        }
       }
     }
   }

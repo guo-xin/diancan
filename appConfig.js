@@ -20,5 +20,11 @@ exports.pages = [
     template: 'src/pages/order-list/index.ejs',
     title: '好近点餐',
     chunks: 'vue_vue-resource'
+  },
+  {
+    filename: 'take-out',
+    template: 'src/pages/take-out/index.ejs',
+    title: '好近外卖',
+    chunks: 'vue_vue-resource'
   }
 ]
