@@ -3,12 +3,11 @@ var merge = require('webpack-merge')
 var utils = require('./utils')
 var baseWebpackConfig = require('./webpack.base.conf')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-
+var prod = '"' + (process.argv[2] || 'production') + '"';
 // add hot-reload related code to entry chunks
 Object.keys(baseWebpackConfig.entry).forEach(function (name) {
   baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name])
 })
-
 var devWebpackConfig = {
   module: {
     loaders: utils.styleLoaders()
@@ -17,6 +16,9 @@ var devWebpackConfig = {
   devtool: '#eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: prod
+      },
       RUN_ENV: JSON.stringify(utils.env)
     }),
     // https://github.com/glenjamin/webpack-hot-middleware#installation--usage

@@ -5,8 +5,8 @@
   "author": "aidenZou <aidenzou@gmail.com>",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "build": "node build/build.js",
+    "dev": "node build/dev-server.js development",
+    "build": "node build/build.js production",
     "build_test": "node build/build.js buildtest",
     "test": "",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
