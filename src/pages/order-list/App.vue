@@ -250,8 +250,8 @@
             this.requestData.page += 1
           }
           this.$http({
-//            url: Config.apiHost + 'diancan/c/order_list',
-            url: 'http://172.100.111.215:9300/diancan/c/order_list',
+            url: Config.apiHost + 'diancan/c/order_list',
+//            url: 'http://172.100.111.215:9300/diancan/c/order_list',
             data: _this.requestData,
             method: 'JSONP'
           }).then(function (response) {
