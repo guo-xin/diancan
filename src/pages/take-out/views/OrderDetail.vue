@@ -46,7 +46,7 @@
         </li>
       </ul>
       <div class="b-top count">
-        <div class="extra-info" v-if="order.orderinfo.shipping_fee">
+        <div class="extra-info">
           <p>配送费 <span class="free">￥<i>{{order.orderinfo.shipping_fee | formatCurrency}}</i></span></p>
         </div>
         <div class="l-r count-amt">
@@ -197,7 +197,7 @@
   .extra-info {
     padding-left: 0;
     p {
-      padding: 28px 30px 28px 0;
+      padding: 30px 30px 40px 0;
       font-size: 30px;
       color: #2F323A;
       span {
@@ -261,7 +261,7 @@
       align-items: center;
       height: 144px;
       li {
-        width: 120px;
+        width: 125px;
         p {
           text-align: center;
           color: #FFFFFF;
@@ -374,15 +374,15 @@
     }
   }
   .count-amt {
-    padding: 0 30px 0 0;
+    padding: 0 30px 30px 0;
     .allPrice {
       font-size: 40px;
       color: #FE9B20;
     }
     .name {
       margin-right: 5px;
-      font-size: 30px;
-      line-height: 30px;
+      font-size: 34px;
+      line-height: 1;
       color: #2F323A;
     }
   }

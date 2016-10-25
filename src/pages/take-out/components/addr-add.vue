@@ -6,7 +6,7 @@
       </li>
       <li>
         <span>联系电话</span>
-        <em><input type="text" id="mobile" v-model="info.mobile" placeholder="你的手机号"/></em>
+        <em><input type="text" id="mobile" v-model="info.mobile" placeholder="你的手机号" maxlength="11"></em>
       </li>
       <li class="choose-city" @click="goChoose">
         <span>省,市,区</span>
@@ -108,7 +108,7 @@
     margin-bottom: 40px;
     li {
       height: 1.173rem;
-      line-height: 1.113rem;
+      padding: 24px 0;
       padding-right: .4rem;
       color: $lightBlack;
       font-size: .4rem;
@@ -128,7 +128,7 @@
       input {
         border: none;
         font-size: $fr3;
-        height: 100%;
+        /*height: 100%;*/
         //line-height: 1.113rem;
         width: 6.5rem;
       }
