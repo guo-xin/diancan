@@ -71,7 +71,7 @@
     },
     created () {
       this.$watch('$root.cart', function (val) {
-        this.$root.deliver.needFee = this.cartData.price < this.$root.deliver.freeDeliverFee
+        this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
         this.refresh()
       })
     },

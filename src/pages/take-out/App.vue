@@ -26,7 +26,7 @@
         msg: '',
         deliver: {
           isFee: false,
-          needFee: true,
+          needFee: false,
           originFee: 0,
           freeDeliverFee: 0,
           startDeliveryFee: 0

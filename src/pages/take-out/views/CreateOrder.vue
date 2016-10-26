@@ -76,7 +76,9 @@
         // let params = transition.from.params || {}
         let params = this.$route.params
         this.mchnt_id = params.mchnt_id
-
+        this.$watch('$root.cart', function (val) {
+          this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
+        })
         if (this.cart.length) {
           this.$http({
             url: Config.dcHost + 'diancan/c/get_addr',
@@ -92,7 +94,6 @@
                 return
               }
               this.hasAddress = true
-              console.log(_data)
               this.$root.current_addr = _data
             }
           })
@@ -132,8 +133,8 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
-        if (this.$root.deliver.isFee && this.$root.deliver.needFee) {
-          payAmt += this.$root.deliver.originFee
+        if (this.deliver.isFee && this.deliver.needFee) {
+          payAmt += this.deliver.originFee
         }
         return payAmt
       },
@@ -155,7 +156,6 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        console.log(this.$root.current_addr)
         if (!this.$root.current_addr.addr_id) {
           this.$dispatch('on-toast', '请添加配送地址!')
           return
@@ -171,7 +171,6 @@
             // cate_id: goods.cate_id
           }
         })
-        console.log(this.payAmt)
         let args = {
           open_id: this.$root.user.open_id,
           appid: window.localStorage.getItem('dc_appid'),

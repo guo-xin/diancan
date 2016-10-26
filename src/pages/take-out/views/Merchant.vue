@@ -5,7 +5,7 @@
     </div>
     <div class="order-info" v-show="isEmptyInfo">
       <p>你在 {{order_info.order_time | formatTime 'hh:mm'}} 提交了一个订单
-        <a @click="goDetail">查看取餐号</a>
+        <a @click="goDetail">查看订单</a>
       </p>
     </div>
     <div id="c-restaurant-content-box" class="l-r">
@@ -161,7 +161,6 @@
             deliver.freeDeliverFee = mSet.min_shipping_fee
             deliver.startDeliveryFee = mSet.start_delivery_fee
           }
-          this.$root.merchantSetting =
           this.setStorage(data.data)
           this.$dispatch('on-getCart', this.mchnt_id)
           let goods = this.mergeGoods(data.data.goods)
