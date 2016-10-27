@@ -65,7 +65,7 @@
         // let params = transition.from.params || {}
         let params = this.$route.params
         this.mchnt_id = params.mchnt_id
-        this.address = params.address && params.address !== ':address' ? params.address : ''
+        this.address = params.address && params.address !== ':address' ? decodeURIComponent(params.address) : ''
         this.isEditAddress = !this.address
 
         if (this.cart.length) {
@@ -77,7 +77,7 @@
             name: 'merchant',
             params: {
               'mchnt_id': this.mchnt_id,
-              'address': this.address
+              'address': encodeURIComponent(this.address)
             }
           })
           return
