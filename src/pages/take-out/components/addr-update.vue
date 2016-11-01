@@ -147,10 +147,12 @@
       input {
         border: none;
         font-size: $fr3;
-        height: 100%;
-        padding: 24px 0;
-        //line-height: 1.113rem;
+        padding: 0;
+        vertical-align: text-bottom;
         width: 6.5rem;
+        &:active {
+          border: none;
+        }
       }
     }
   }

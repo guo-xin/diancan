@@ -143,9 +143,7 @@
       input {
         border: none;
         font-size: $fr3;
-        /*height: 100%;*/
         padding: 0;
-        //line-height: 1.113rem;
         vertical-align: text-bottom;
         width: 6.5rem;
         &:active {
