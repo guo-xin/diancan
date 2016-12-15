@@ -154,7 +154,7 @@
           this.mchnt_id = args.mchnt_id
           this.$root.mchnt_id = args.mchnt_id
           let mSet = data.data.merchant_setting
-          if (mSet.shipping_fee) {
+          if (mSet.shipping_fee !== undefined) {
             let deliver = this.$root.deliver
             deliver.isFee = true
             deliver.originFee = mSet.shipping_fee
