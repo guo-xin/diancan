@@ -12,7 +12,7 @@
             <span>总价&nbsp;¥&nbsp;</span>{{cartData.price | formatCurrency}}
           </div>
           <div v-if="deliver.isFee">
-            <i :class="{'free': cartData.price >= deliver.freeDeliverFee}">配送费 <em>¥ {{deliver.originFee | formatCurrency}}</em>（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费）</i>
+            <i :class="{'free': cartData.price >= deliver.freeDeliverFee}">配送费 <em>¥ {{deliver.originFee | formatCurrency}}</em>（<span v-if="deliver.freeDeliverFee">满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}</span>免配送费）</i>
           </div>
         </div>
       </div>
