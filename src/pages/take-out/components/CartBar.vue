@@ -45,7 +45,8 @@
                           :goods="goods"
                           :activate="goods._specIndex"
                           :plus="plus"
-                          :minus="minus"></goods-select>
+                          :minus="minus"
+                          :diy="diy"></goods-select>
           </li>
         </ul>
         </scroller>
@@ -57,13 +58,13 @@
 <script type="text/ecmascript-6">
   /* global _hmt */
   import Scroller from 'vux-components/scroller'
-  import GoodsSelect from '../components/GoodsSelect'
+  import GoodsSelect from '../../../components/GoodsSelect'
   import NoData from '../components/NoData'
   export default {
     components: {
       Scroller, GoodsSelect, NoData
     },
-    props: ['plus', 'minus', 'deliver'],
+    props: ['plus', 'minus', 'deliver', 'diy'],
     data () {
       return {
         visibleList: false

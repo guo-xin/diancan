@@ -21,10 +21,11 @@
       </button>
       <!--商品选择-->
       <goods-select v-show="spec._count" class="goods-select-container"
-                    :goods="goods"
+                    :goods.sync="goods"
                     :activate="lastSpec"
                     :plus="plus"
-                    :minus="minus"></goods-select>
+                    :minus="minus"
+                    :diy="diy"></goods-select>
     </div>
   </div>
 </template>
@@ -33,7 +34,7 @@
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
-    props: ['visible', 'goods', 'plus', 'minus'],
+    props: ['visible', 'goods', 'plus', 'minus', 'diy'],
     data () {
       return {
       }

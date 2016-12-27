@@ -20,14 +20,14 @@
     </div>
     <div>
       <section class="delivery-info">
-        <h3>送餐信息</h3>
+        <h3>配送信息</h3>
         <ul>
           <li>
             <i>联系人</i>
             <span>{{order.orderinfo.customer_info.contact_name}} {{order.orderinfo.customer_info.mobile}}</span>
           </li>
           <li>
-            <i>送餐地址</i>
+            <i>配送地址</i>
             <span>{{order.orderinfo.customer_info.detail_addr}}</span>
           </li>
         </ul>

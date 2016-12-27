@@ -5,7 +5,7 @@
         <div v-if="item.order_type==3" class="{{this.theme(item.delivery_state)}}">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
-            <p>外卖单号 <em>{{item.order_sn}}</em>
+            <p>外送单号 <em>{{item.order_sn}}</em>
               <i v-if="item.delivery_state==4">已退款</i>
               <i v-if="item.delivery_state==3">已送达</i>
               <i v-if="item.delivery_state==2">已发货</i>

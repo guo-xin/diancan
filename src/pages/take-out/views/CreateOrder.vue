@@ -12,7 +12,7 @@
     <section class="info">
       <div class="address">
         <div v-if="!hasAddress" class="empty-address" @click.prevent="goAddAddress">
-          <img src="../assets/btn_add.svg" alt="" class="address-add">新增送餐地址
+          <img src="../assets/btn_add.svg" alt="" class="address-add">新增配送地址
           <img src="../assets/btn_arrow.svg" alt="" class="address-arrow">
         </div>
         <div v-else class="address-content">
@@ -28,7 +28,7 @@
       </div>
       <div class="l-r row info-remark">
         <span class="text">备注</span>
-        <input class="l_auto remarks" type="text" v-model="note" maxlength="30" placeholder="可填写口味要求或忌口等信息"/>
+        <input class="l_auto remarks" type="text" v-model="note" maxlength="30" placeholder="可填写您的其他要求"/>
       </div>
     </section>
     <ul class="goods-list">

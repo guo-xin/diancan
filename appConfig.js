@@ -24,7 +24,7 @@ exports.pages = [
   {
     filename: 'take-out',
     template: 'src/pages/take-out/index.ejs',
-    title: '好近外卖',
+    title: '好近外送',
     chunks: 'vue_vue-resource'
   }
 ]

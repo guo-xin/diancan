@@ -43,7 +43,8 @@
                 <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
                               :goods="goods"
                               :plus="plusHandler"
-                              :minus="minusHandler">
+                              :minus="minusHandler"
+                              :diy="diyHandler">
                 </goods-select>
                 <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
               </li>
@@ -57,14 +58,15 @@
     <select-spec :visible.sync="showSpec"
                  :goods.sync="selectSpecGoods"
                  :plus="plusHandler"
-                 :minus="minusHandler">
+                 :minus="minusHandler"
+                 :diy="diyHandler">
     </select-spec>
 
     <goods-detail :visible.sync="showDetail"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" v-if="cart.length" ></cart-bar>
+    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" v-if="cart.length" ></cart-bar>
 
     <!--关店蒙层-->
     <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
@@ -276,16 +278,27 @@
           scroller._xscroll.scrollTop()
         })
       },
-      plusHandler (event, goods, specIndex) {
+      plusHandler (events, goods, specIndex) {
         this.addCartHandler(goods, specIndex, true)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
-      minusHandler (event, goods, specIndex) {
+      minusHandler (events, goods, specIndex) {
         this.addCartHandler(goods, specIndex, false)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
+      diyHandler (events, goods, specIndex, number) {
+        this.addCartHandler(goods, specIndex, number)
+        _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
+      },
       addCartHandler (goods, specIndex, type) {
-        type = type ? 1 : -1
+        let isDIY = false
+        if (type === true) {
+          type = 1
+        } else if (type === false) {
+          type = -1
+        } else {
+          isDIY = true
+        }
         let index = -1
         let i = -1
         this.groupList.find((g, _index) => {
@@ -310,7 +323,7 @@
 
         // up group
         let oldGoods = this.groupList[index].goods_list[i]
-        let newCount = (oldGoods.spec_list[specIndex]._count || 0) + type
+        let newCount = isDIY ? type : (oldGoods.spec_list[specIndex]._count || 0) + type
         if (newCount < 0) {
           return
         }
@@ -323,7 +336,7 @@
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0
-        let newGroup = Object.assign({}, oldGroup, {_count: oldGroup._count + type})
+        let newGroup = Object.assign({}, oldGroup, {_count: isDIY ? type : oldGroup._count + type})
         this.groupList.$set(index, newGroup)
       },
       hasSelect (goods) {

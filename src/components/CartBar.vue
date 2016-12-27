@@ -37,7 +37,8 @@
                           :goods="goods"
                           :activate="goods._specIndex"
                           :plus="plus"
-                          :minus="minus"></goods-select>
+                          :minus="minus"
+                          :diy="diy"></goods-select>
           </li>
         </ul>
         </scroller>
@@ -55,7 +56,7 @@
     components: {
       Scroller, GoodsSelect, NoData
     },
-    props: ['plus', 'minus'],
+    props: ['plus', 'minus', 'diy'],
     data () {
       return {
         visibleList: false
