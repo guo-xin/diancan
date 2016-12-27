@@ -1,7 +1,7 @@
 <template>
   <div id="address-list">
     <div class="empty-address" @click.prevent="goAddAddress">
-      <img src="../assets/btn_add.svg" alt="" class="address-add">新增送餐地址
+      <img src="../assets/btn_add.svg" alt="" class="address-add">新增配送地址
       <img src="../assets/btn_arrow.svg" alt="" class="address-arrow">
     </div>
     <ul class="address-list">
