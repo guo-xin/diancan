@@ -18,7 +18,7 @@ exports.pages = [
   {
     filename: 'order-list',
     template: 'src/pages/order-list/index.ejs',
-    title: '好近点餐',
+    title: '我的订单',
     chunks: 'vue_vue-resource'
   },
   {
