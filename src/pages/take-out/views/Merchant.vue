@@ -193,7 +193,7 @@
           })
           const shopname = data.data.shopname
           let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
-          this.$dispatch('on-onMenuShareAppMessage', {title: '动一动手指，轻松点餐', desc: shopname + '不用排队，快来体验吧', link: shareLink})
+          this.$dispatch('on-onMenuShareAppMessage', {title: shopname + '好吃到爆，快来一起品尝', desc: '天涯海角有穷时，只有相思无尽处，万年的等待，只为你~', link: shareLink})
 
           Util.setTitle(shopname)
         }, function (response) {
