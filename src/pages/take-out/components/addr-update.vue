@@ -23,7 +23,7 @@
     <city-choose :visible="modalVisible"></city-choose>
   </form>
 </template>
-<script type="text/ecmascript-6">
+<script>
   import config from '../../../methods/Config'
   import cityChoose from './city-choose.vue'
   export default {
@@ -62,7 +62,7 @@
         this.$broadcast('getArea')
       },
       goAdd () {
-        const mobileReg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
+        const mobileReg = /^\d{11}$/
         if (!this.info.mobile.match(mobileReg)) {
           this.$dispatch('on-toast', '请输入正确的手机号!')
           return false
