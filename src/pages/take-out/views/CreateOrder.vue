@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
   /* global _hmt */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
