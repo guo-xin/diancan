@@ -46,7 +46,6 @@
   /* global _hmt */
   /* eslint-disable */
   import Config from '../methods/Config'
-  import dialog from '../components/dialog'
   import { isWX } from '../methods/Util'
 
   export default {
