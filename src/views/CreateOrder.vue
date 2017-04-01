@@ -60,7 +60,7 @@
         btnText: '确认下单'
       }
     },
-    created: {
+    created() {
       this.$http({
         url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
         type: 'get',
