@@ -57,7 +57,7 @@
 
 <script>
   /* global _hmt */
-  /* eslint-diasble  */
+  /* eslint-disable  */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
   import alert from '../components/alert/alert.vue'
