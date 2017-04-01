@@ -236,6 +236,7 @@
             _this.orderPaySuccess()
           }
         })
+      },
 
 
       //   if (typeof WeixinJSBridge === 'undefined') {
