@@ -235,7 +235,7 @@
           success: function(res) {
             _this.orderPaySuccess()
           }
-        })
+        }))
       },
 
 
