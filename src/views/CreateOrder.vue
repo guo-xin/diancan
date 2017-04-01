@@ -224,7 +224,7 @@
           return
         }
         if (typeof payParams !== undefined) {
-          payParams.timestamp = payParams.timeStamp
+          payParams.timestamp = parseInt(payParams.timeStamp)
           delete payParams.timeStamp
           delete payParams.appId
           alert(JSON.stringify(payParams))
@@ -234,7 +234,13 @@
         let _this = this
         wx.chooseWXPay(Object.assign({}, payParams, {
           success: function(res) {
-            _this.orderPaySuccess()
+            if(res.err_msg === 'get_brand_wcpay_request:ok') {
+              _this.orderPaySuccess()
+            } else if(res.err_msg === 'get_brand_wcpay_request:cancel') {
+              alert('cancel success');
+            } else {
+              alert('pay fail')
+            }
           }
         }))
       },
