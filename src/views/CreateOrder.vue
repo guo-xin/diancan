@@ -48,7 +48,7 @@
   /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
-  import alert from '../components/alert'
+  import alert from '../components/alert/alert.vue'
 
   export default {
     components: {
