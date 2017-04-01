@@ -65,7 +65,7 @@
         url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
         type: 'get',
         data: {
-          url: location.href,
+          url: window.location.href,
           format: 'cors'
         }
       }).then(function(res) {
