@@ -44,7 +44,7 @@
       </li>
     </ul>
     <div class="extra-info" v-if="deliver.isFee">
-      <h4>补充信息2222222</h4>
+      <h4>补充信息</h4>
       <p>配送费（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费） <span :class="{'free': cartData.price >= deliver.freeDeliverFee}">￥<i>{{deliver.originFee | formatCurrency}}</i></span></p>
     </div>
     <div class="l-r-lr order-bar">
@@ -250,15 +250,15 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-              window.alert(JSON.stringify(res))
+              // window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单，即可正常使用。';
+                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单即可正常使用。';
                 _this.alertVisible = true;
                 _this.btnText = '支付失败';
               } else {
-                window.alert(res.err_msg)
+                // window.alert(res.err_msg)
                 _this.orderPayFail()
               }
               return
