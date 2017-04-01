@@ -214,7 +214,7 @@
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.alertTip = '无法唤起微信支付！请关闭页面，重新下单，即可正常使用。';
+                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单，即可正常使用。';
                 _this.alertVisible = true;
               } else {
                 _this.orderPayFail()
