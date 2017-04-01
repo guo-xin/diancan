@@ -60,6 +60,29 @@
         btnText: '确认下单'
       }
     },
+    created: {
+      this.$http({
+        url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
+        type: 'get',
+        data: {
+          url: location.href,
+          format: 'cors'
+        }
+      }).then(function(res) {
+        var data = res.data;
+        if(data.respcd === '0000') {
+          var WXconfig = data.data;
+          wx.config({
+            debug: true,
+            appId: WXconfig.appId,
+            timestamp: WXconfig.timestamp,
+            signature: WXconfig.signature,
+            nonceStr: WXconfig.nonceStr,
+            jsApiList: ['chooseWXPay']
+          });
+        };
+      });
+    },
     route: {
       activate (transition) {
         // let params = transition.from.params || {}
@@ -199,36 +222,36 @@
           this.btnText = '确认下单'
           return
         }
-        let _this = this
-        let onBridgeReady = () => {
-          window.WeixinJSBridge.invoke(
-            'getBrandWCPayRequest', payParams,
-            function (res) {
-              window.alert(JSON.stringify(res))
-              if (res.err_msg === 'get_brand_wcpay_request:ok') {
-                _this.orderPaySuccess()
-              } else {
-                _this.orderPayFail()
-              }
-              return
-            }
-          )
-        }
-
-        if (typeof WeixinJSBridge === 'undefined') {
-          window.alert(0)
-          if (document.addEventListener) {
-            window.alert(1)
-            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
-          } else if (document.attachEvent) {
-            document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
-            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
-          }
+        if(typeof payParams !== undefined) {
+          payParams.timestamp = payParams.timeStamp
+          delete payParams.timeStamp
+          delete payParams.appId
+          alert(payParams);
         } else {
-          window.alert(3)
-          onBridgeReady()
+          alert('支付参数为空');
         }
-      },
+        let _this = this
+        wx.chooseWXPay(Object.assign({}, payParams, {
+          success: function(res) {
+            _this.orderPaySuccess()
+          }
+        })
+
+
+      //   if (typeof WeixinJSBridge === 'undefined') {
+      //     window.alert(0)
+      //     if (document.addEventListener) {
+      //       window.alert(1)
+      //       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+      //     } else if (document.attachEvent) {
+      //       document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
+      //       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+      //     }
+      //   } else {
+      //     window.alert(3)
+      //     onBridgeReady()
+      //   }
+      // },
       orderPaySuccess () {  // 订单支付成功
         this.$dispatch('on-cleanCart', this.mchnt_id)
         this.queryOrder()
