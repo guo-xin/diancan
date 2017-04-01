@@ -60,7 +60,7 @@
   /* eslint-disable  */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
-  import alert from '../../../../components/alert/alert.vue'
+  import alert from '../../../components/alert/alert.vue'
 
   export default {
     components: {
@@ -250,7 +250,7 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-//              window.alert(JSON.stringify(res))
+              window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
@@ -258,6 +258,7 @@
                 _this.alertVisible = true;
                 _this.btnText = '支付失败';
               } else {
+                window.alert(res.err_msg)
                 _this.orderPayFail()
               }
               return
