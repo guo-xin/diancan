@@ -216,16 +216,16 @@
         }
 
         if (typeof WeixinJSBridge === 'undefined') {
-          alert(0);
+          window.alert(0)
           if (document.addEventListener) {
-            alert(1);
+            window.alert(1)
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
           } else if (document.attachEvent) {
             document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
             document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
           }
         } else {
-          alert(3);
+          window.alert(3)
           onBridgeReady()
         }
       },
