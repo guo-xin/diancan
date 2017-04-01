@@ -44,6 +44,7 @@
 
 <script type="text/ecmascript-6">
   /* global _hmt */
+  /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
 
