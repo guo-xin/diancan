@@ -60,7 +60,7 @@
         btnText: '确认下单'
       }
     },
-    created() {
+    created () {
       this.$http({
         url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
         type: 'get',
@@ -226,9 +226,9 @@
           payParams.timestamp = payParams.timeStamp
           delete payParams.timeStamp
           delete payParams.appId
-          alert(payParams);
+          alert(payParams)
         } else {
-          alert('支付参数为空');
+          alert('支付参数为空')
         }
         let _this = this
         wx.chooseWXPay(Object.assign({}, payParams, {
