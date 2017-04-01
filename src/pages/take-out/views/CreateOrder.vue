@@ -51,6 +51,7 @@
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{payAmt | formatCurrency}}</div>
       <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
+    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
   </div>
 </template>
 
@@ -58,11 +59,16 @@
   /* global _hmt */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
+  import alert from '../components/alert/alert.vue'
 
   export default {
-    components: {},
+    components: {
+      alert
+    },
     data () {
       return {
+        alertVisible: false,
+        alertTip: '',
         mchnt_id: '',       // 商户ID
         hasAddress: false,
         note: '',           // 备注
@@ -246,6 +252,10 @@
 //              window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
+              } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
+                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单，即可正常使用。';
+                _this.alertVisible = true;
+                _this.btnText = '支付失败';
               } else {
                 _this.orderPayFail()
               }
