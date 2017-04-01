@@ -79,9 +79,9 @@
             signature: WXconfig.signature,
             nonceStr: WXconfig.nonceStr,
             jsApiList: ['chooseWXPay']
-          });
-        };
-      });
+          })
+        }
+      })
     },
     route: {
       activate (transition) {
