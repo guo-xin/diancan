@@ -204,7 +204,7 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-//              window.alert(JSON.stringify(res))
+             window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else {
