@@ -227,7 +227,7 @@
           payParams.timestamp = payParams.timeStamp
           delete payParams.timeStamp
           delete payParams.appId
-          alert(payParams)
+          alert(JSON.stringify(payParams))
         } else {
           alert('支付参数为空')
         }
