@@ -208,6 +208,7 @@
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else {
+                window.alert(res.err_msg)
                 _this.orderPayFail()
               }
               return
