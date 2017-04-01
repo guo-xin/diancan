@@ -225,6 +225,7 @@
         }
         if (typeof payParams !== undefined) {
           payParams.timestamp = parseInt(payParams.timeStamp)
+          alert(typeof payParams.timestamp);
           delete payParams.timeStamp
           delete payParams.appId
           alert(JSON.stringify(payParams))
