@@ -39,6 +39,7 @@
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{cartData.price | formatCurrency}}</div>
       <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
+    <alert alertTitle="温馨提示" :alertTip="alertTip" :alertVisible="visible"></alert>
   </div>
 </template>
 
@@ -47,12 +48,16 @@
   /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
+  import alert from '../components/alert'
 
   export default {
-    components: {},
+    components: {
+      alert
+    },
     data () {
       return {
         visible: false,
+        alertTip: '',
         mchnt_id: '',       // 商户ID
         address: '',        // 桌号
         isEditAddress: '',  // 是否可以编辑桌号
@@ -209,7 +214,8 @@
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                alert('无法唤起微信支付！请关闭页面，重新下单，即可正常使用');
+                _this.alertTip = '无法唤起微信支付！请关闭页面，重新下单，即可正常使用';
+                _this.visible = true;
               } else {
                 _this.orderPayFail()
               }
