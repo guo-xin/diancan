@@ -57,6 +57,7 @@
 
 <script>
   /* global _hmt */
+  /* esling-diasble  */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
   import alert from '../components/alert/alert.vue'
