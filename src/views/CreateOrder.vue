@@ -204,7 +204,7 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-//              window.alert(JSON.stringify(res))
+             window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else {
@@ -216,13 +216,16 @@
         }
 
         if (typeof WeixinJSBridge === 'undefined') {
+          alert(0);
           if (document.addEventListener) {
+            alert(1);
             document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
           } else if (document.attachEvent) {
             document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
             document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
           }
         } else {
+          alert(3);
           onBridgeReady()
         }
       },
