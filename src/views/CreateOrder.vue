@@ -39,7 +39,7 @@
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{cartData.price | formatCurrency}}</div>
       <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
-    <alert alertTitle="温馨提示" :alertTip="alertTip" :alertVisible="visible"></alert>
+    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
   </div>
 </template>
 
@@ -56,7 +56,7 @@
     },
     data () {
       return {
-        visible: false,
+        alertVisible: false,
         alertTip: '',
         mchnt_id: '',       // 商户ID
         address: '',        // 桌号
@@ -215,7 +215,7 @@
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
                 _this.alertTip = '无法唤起微信支付！请关闭页面，重新下单，即可正常使用';
-                _this.visible = true;
+                _this.alertVisible = true;
               } else {
                 _this.orderPayFail()
               }
