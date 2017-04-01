@@ -44,6 +44,7 @@
 
 <script type="text/ecmascript-6">
   /* global _hmt */
+  /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
 
@@ -69,8 +70,8 @@
           format: 'cors'
         }
       }).then(function(res) {
-        var data = res.data;
-        if(data.respcd === '0000') {
+        var data = res.data
+        if (data.respcd === '0000') {
           var WXconfig = data.data;
           wx.config({
             debug: true,
@@ -222,7 +223,7 @@
           this.btnText = '确认下单'
           return
         }
-        if(typeof payParams !== undefined) {
+        if (typeof payParams !== undefined) {
           payParams.timestamp = payParams.timeStamp
           delete payParams.timeStamp
           delete payParams.appId
