@@ -60,7 +60,7 @@
   /* eslint-disable  */
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
-  import alert from '../components/alert/alert.vue'
+  import alert from '../../../components/alert/alert.vue'
 
   export default {
     components: {
