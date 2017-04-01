@@ -39,9 +39,6 @@
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{cartData.price | formatCurrency}}</div>
       <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
-    <dialog :visible="visible" type="alert" title="温馨提示">
-      <p>无法唤起微信支付！请关闭页面，重新下单，即可正常使用</p>
-    </dialog>
   </div>
 </template>
 
@@ -210,11 +207,10 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-             window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.visible = true;
+                alert('无法唤起微信支付！请关闭页面，重新下单，即可正常使用');
               } else {
                 _this.orderPayFail()
               }
