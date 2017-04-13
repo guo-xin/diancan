@@ -10,6 +10,6 @@ module.exports = merge(prodEnv, {
   assetsSubDirectory: 'static',
   assetsPublicPath: process.env.NODE_ENV === 'production' ? '/dc/' : '/',
   productionSourceMap: true,
-  port: 8080,
+  port: 80,
   proxyTable: {}
 })

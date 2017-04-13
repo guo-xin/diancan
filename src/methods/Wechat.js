@@ -68,6 +68,7 @@ const jsApiList = [
   'showAllNonBaseMenuItem',
   'hideMenuItems',
   'showMenuItems',
+  'getLocation',
   'scanQRCode',
   'onMenuShareTimeline',
   'onMenuShareAppMessage',
@@ -137,6 +138,31 @@ exports.hideOptionMenu = () => {
   }
   wx.hideOptionMenu()
   // push()
+}
+
+// 获取地理位置接口
+exports.getLocation = () => {
+  if (!isReady) {
+    actionQueue.push('wx.getLocation()')
+    return
+  }
+  wx.getLocation({
+    success: function (res) {
+      let args = {
+        format: 'jsonp',
+        key: '9eb1cfce5386a0d7ad316255968c78bd',  // 高德web服务 经纬度转地址 http://lbs.amap.com/dev/key/app
+        location: `${res.longitude},${res.latitude}` // '116.480881,39.989410'
+      }
+      Vue.http.jsonp('http://restapi.amap.com/v3/geocode/regeo', args)
+        .then((response) => {
+          if (response.data.info === 'OK') {
+            let formattedAddress = response.data.regeocode.formatted_address
+            window.localStorage.setItem('formatted_address', formattedAddress)
+            console.log(window.localStorage.getItem('formatted_address'))
+          }
+        })
+    }
+  })
 }
 
 // 分享给朋友
