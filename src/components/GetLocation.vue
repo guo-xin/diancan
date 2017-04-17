@@ -1,5 +1,5 @@
 <template>
-  <header><strong><i></i>{{formattedAddress}}</strong><button @click="getLocation()" type="button">重新定位</button></header>
+  <header><strong :class="{placeholder: formattedAddress === '未获取到地理位置'}"><i></i>{{formattedAddress}}</strong><button @click="getLocation()" type="button">重新定位</button></header>
 </template>
 
 <script type="text/ecmascript-6">
@@ -11,17 +11,16 @@
       }
     },
     created () {
-      this.formattedAddress = window.localStorage.getItem('formatted_address')
+      this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
     },
     computed: {
 
     },
     methods: {
       getLocation () {
-        this.formattedAddress = ''
         this.$dispatch('on-getLocation')
         let _t = setTimeout(() => {
-          this.formattedAddress = window.localStorage.getItem('formatted_address')
+          this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
           clearTimeout(_t)
         }, 800)
       }
@@ -60,6 +59,9 @@
       padding-right: 10px;
       line-height: 1.5;
       position: relative;
+      &.placeholder {
+        color: #8A8C92;
+      }
     }
     button {
       font-size: 28px;
