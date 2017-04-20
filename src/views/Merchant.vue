@@ -1,5 +1,4 @@
 <template>
-  <get-Location></get-Location>
   <div class="">
     <div class="c-loading-container" v-if="$loadingRouteData">
       <loading :visible="$loadingRouteData"></loading>
@@ -89,14 +88,13 @@
   import GoodsDetail from '../components/GoodsDetail'
   import ShopClose from '../components/ShopClose.vue'
   import ScanQrcode from '../components/ScanQrcode.vue'
-  import GetLocation from '../components/GetLocation.vue'
   import Config from '../methods/Config'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode, GetLocation
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode
     },
     data () {
       return {

@@ -1,5 +1,5 @@
 <template>
-  <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" id="test" src='https://m.amap.com/picker/?center=116.3972,39.9696&key=608d75903d29ad471362f8c58c550daf'></iframe>
+  <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" id="test" :src="$route.query.src"></iframe>
 </template>
 
 <script type="text/ecmascript-6">
@@ -48,10 +48,19 @@
     created () {
       this.resetViewport()
     },
+    beforeDestroy () {
+      let element = document.getElementById("m")
+      element.parentNode.removeChild(element)
+    },
     methods: {
       resetViewport () {
-        var viewport = document.querySelector('meta[name=viewport]')
-        viewport.setAttribute('content', 'initial-scale=1.0')
+        let m = document.createElement('meta')
+        m.id = 'm'
+        m.setAttribute('name', 'viewport')
+        m.setAttribute('content', 'initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0')
+        let viewport = document.querySelector('meta[name=viewport]')
+        viewport.parentNode.insertBefore(m, viewport.nextSibling)
+        // viewport.setAttribute('content', 'initial-scale=1.0')
       }
     }
   }

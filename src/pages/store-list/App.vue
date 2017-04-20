@@ -1,21 +1,21 @@
 <template>
-  <get-Location v-ref:location></get-Location>
+  <get-Location v-ref:locationbar></get-Location>
   <ul v-if="!noData">
     <li v-for="item in responseData.list" @click='jumpUrl(item.userid)'>
       <figure>
-        <img :src="item.head_img" alt="店铺图片">
+        <img :src="item.head_img + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         <time>{{item.start_time}} - {{item.end_time}}营业</time>
         <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
       </figure>
       <div>
         <h3>{{item.shopname}}</h3>
         <p class="address">{{item.address}}</p>
-        <p class="distance"><strong><i></i>{{item.min_shipping_dist}}m</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
+        <p v-if="item.max_shipping_dist" class="distance"><strong><i></i>{{item.max_shipping_dist}}m</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
         <footer>
           <p>
-            <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee}}元 </span>
-            <span v-if="item.shipping_fee">配送费{{item.shipping_fee}}元</span><span v-else>免配送费</span><br/>
-            <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee}}元免配送费</span>
+            <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
+            <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
+            <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
           </p>
           <a href="tel:{{item.telephone}}"><i></i></a>
         </footer>
@@ -32,7 +32,6 @@
 </template>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
-
   html {
     height: 100%;
   }
@@ -184,6 +183,11 @@
         p {
           flex: 1;
           line-height: 48px;
+          span {
+            &:first-child {
+              margin-right: 20px;
+            }
+          }
         }
         i {
           width: 48px;
@@ -205,7 +209,7 @@
   export default {
     data () {
       return {
-        mId: Util.getRequestParams().mchnt_id || '',
+        mId: Util.getUrlRouteParams('merchant') || '',
         openId: window.localStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
@@ -266,10 +270,10 @@
             _this.loading = false
             if (res.respcd === '0000') {
               _this.responseData.list = _this.responseData.list.concat(res.data.mchnts)
-              if (res.data.order_list.length === 0) {
+              if (res.data.mchnts.length === 0) {
                 _this.noData = true
               }
-              if (res.data.order_list.length < 10) {
+              if (res.data.mchnts.length < 10) {
                 _this.loaded = true
               }
             } else {
@@ -280,11 +284,6 @@
       },
       jumpUrl (mchntId) {
         window.location.href = `${Config.apiHost}dc/?/#!/merchant/${mchntId}`
-      }
-    },
-    events: {
-      'on-getLocation' () {  // 获取地理位置接口
-        Wechat.getLocation()
       }
     }
   }

@@ -148,6 +148,8 @@ exports.getLocation = () => {
   }
   wx.getLocation({
     success: function (res) {
+      window.localStorage.setItem('longitude', res.longitude)
+      window.localStorage.setItem('latitude', res.latitude)
       let args = {
         format: 'jsonp',
         key: '9eb1cfce5386a0d7ad316255968c78bd',  // 高德web服务 经纬度转地址 http://lbs.amap.com/dev/key/app
@@ -158,7 +160,6 @@ exports.getLocation = () => {
           if (response.data.info === 'OK') {
             let formattedAddress = response.data.regeocode.formatted_address
             window.localStorage.setItem('formatted_address', formattedAddress)
-            console.log(window.localStorage.getItem('formatted_address'))
           }
         })
     }

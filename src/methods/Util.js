@@ -31,23 +31,20 @@ let setTitle = (title) => {
   }
 }
 
-// 获取 url 请求参数
-// let getRequestParams = function (url) {
-//   url = url || window.location.href
-//   url = decodeURIComponent(url)
-//   var Request = {}
-//   if (url.indexOf('?') !== -1) {
-//     // var str = url.substr(1)
-//     var len = url.indexOf('?')
-//     var str = url.slice(len + 1)
-//     let strs = str.split('&')
-//     for (var i = 0; i < strs.length; i++) {
-//       var _key = strs[i].split('=')[0]
-//       _key && (Request[_key] = strs[i].split('=')[1])
-//     }
-//   }
-//   return Request
-// }
+let getUrlRouteParams = function (param) {
+  let url = window.location.href
+  url = decodeURIComponent(url)
+  let str = url.substring(url.indexOf('!/') + 2, url.length)
+  let strs = str.split('/')
+  let Request = ''
+  for (let i = 0; i < strs.length; i++) {
+    if (strs[i] === param) {
+      Request = strs[i + 1]
+    }
+  }
+  return Request
+}
+
 let isEmptyObject = function (obj) {
   var value
   for (value in obj) {
@@ -81,6 +78,7 @@ let checkEmail = function (email) {
 exports.isWX = isWX()
 exports.isAPP = isAPP()
 exports.isIOS = isIOS
+exports.getUrlRouteParams = getUrlRouteParams
 exports.getRequestParams = getRequestParams
 exports.checkEmail = checkEmail
 exports.setTitle = setTitle

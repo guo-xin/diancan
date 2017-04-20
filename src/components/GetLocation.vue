@@ -3,8 +3,8 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import Wechat from '../methods/Wechat'
   export default {
-    props: ['plus'],
     data () {
       return {
         formattedAddress: ''
@@ -18,7 +18,7 @@
     },
     methods: {
       getLocation () {
-        this.$dispatch('on-getLocation')
+        Wechat.getLocation()
         let _t = setTimeout(() => {
           this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
           clearTimeout(_t)

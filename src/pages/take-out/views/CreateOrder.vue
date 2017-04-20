@@ -483,6 +483,7 @@
     height: 92px;
     line-height: 92px;
     background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
+    background-size: 18px 34px;
     border-top: 2px solid $lightGray;
     border-bottom: 2px solid $lightGray;
     padding-left: 24px;
@@ -491,6 +492,8 @@
     color: $black;
     img {
       margin-right: 20px;
+      width: 40px;
+      height: 40px;
     }
     img, span {
       vertical-align: middle;

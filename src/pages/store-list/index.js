@@ -26,8 +26,8 @@ import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initVue)
 // initVue()
 Wechat.init()
-Wechat.hideOptionMenu()
 Wechat.getLocation()
+Wechat.hideOptionMenu()
 
 function initVue () {
   /* eslint-disable no-new */
