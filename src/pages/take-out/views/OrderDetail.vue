@@ -114,7 +114,7 @@
 //      this.$set('order', Api.order_detail)
     },
     ready () {
-      document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
+      // document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
     },
     route: {
       data (transition) {

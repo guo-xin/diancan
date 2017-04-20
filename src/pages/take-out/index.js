@@ -49,6 +49,10 @@ function initRouter () {
       name: 'addressAdd',
       component: require('./components/addr-add.vue')
     },
+    '/address/marker': {
+      name: 'addressMarker',
+      component: require('./components/MapMarker.vue')
+    },
     '/address/update': {
       name: 'addressUpdate',
       component: require('./components/addr-update.vue')

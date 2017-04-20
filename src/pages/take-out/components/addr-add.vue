@@ -9,33 +9,33 @@
         <em><input type="text" id="mobile" v-model="info.mobile" placeholder="你的手机号" maxlength="11"></em>
       </li>
       <li class="choose-city" @click="goChoose">
-        <span>省,市,区</span>
-        <em><i>{{areaName}}</i></em>
-        <input type="hidden" v-model="info.area_id"/>
+        <span>配送地址</span>
+        <em><i>{{info.location}}</i></em>
+        <input type="hidden" v-model="info.longitude"/>
+        <input type="hidden" v-model="info.latitude"/>
       </li>
       <li>
-        <span>配送地址</span>
-        <input type="text" v-model="info.detail_addr" placeholder="填写详细地址"/>
+        <span>详细门牌号</span>
+        <input type="text" v-model="info.detail_addr" placeholder="填写详细门牌号"/>
       </li>
     </ul>
     <a class="save" @click.prevent="goAdd">保存</a>
-    <city-choose :visible="modalVisible"></city-choose>
   </form>
 </template>
 <script>
   import config from '../../../methods/Config'
-  import cityChoose from './city-choose.vue'
   export default {
     data () {
       return {
         loadingData: false,
-        modalVisible: false,
-        areaName: '',
         info: {
           contact_name: '',
           mobile: '',
-          area_id: '',
-          detail_addr: ''
+          detail_addr: '',
+          location: '',
+          longitude: 0,
+          latitude: 0,
+          adcode: 0
         },
         cors: {
           format: 'cors'
@@ -43,16 +43,30 @@
       }
     },
     route: {
-      data () {
+      data (transition) {
+        Object.assign(this.info, this.$root.tempAddr)
+        this.getAdcode()
+        transition.next()
       }
-    },
-    components: {
-      cityChoose
     },
     methods: {
       goChoose () {
-        this.modalVisible = true
-        this.$broadcast('getArea')
+        this.$router.go({
+          path: '/address/marker'
+        })
+      },
+      getAdcode () {
+        this.$http({
+          url: 'http://restapi.amap.com/v3/geocode/regeo',
+          method: 'JSONP',
+          data: {
+            format: 'jsonp',
+            key: '9eb1cfce5386a0d7ad316255968c78bd',
+            location: `${this.info.longitude},${this.info.latitude}`
+          }
+        }).then(function (res) {
+          this.info.adcode = res.data.regeocode.addressComponent.adcode
+        })
       },
       goAdd () {
         const mobileReg = /^\d{11}$/
@@ -60,16 +74,16 @@
           this.$dispatch('on-toast', '请输入正确的手机号')
           return false
         }
-        if (!this.info.area_id) {
-          this.$dispatch('on-toast', '请选择地区')
+        if (!this.info.contact_name) {
+          this.$dispatch('on-toast', '请输入联系人姓名')
+          return false
+        }
+        if (!this.info.location) {
+          this.$dispatch('on-toast', '请输入配送选址')
           return false
         }
         if (!this.info.detail_addr) {
-          this.$dispatch('on-toast', '请输入详细地址')
-          return false
-        }
-        if (!this.info.contact_name) {
-          this.$dispatch('on-toast', '请输入联系人姓名')
+          this.$dispatch('on-toast', '请输入详细门牌号')
           return false
         }
         if (!this.loadingData) {
@@ -81,20 +95,11 @@
           }).then(function (res) {
             this.loadingData = false
             if (res.data.respcd === '0000') {
+              window.sessionStorage.removeItem('info')
               window.history.go(-1)
             }
           })
         }
-      }
-    },
-    events: {
-      'gotAreaId' (id, str) {
-        this.areaName = str.join(' ')
-        this.info.area_id = id
-        this.modalVisible = false
-      },
-      'hideModal' () {
-        this.modalVisible = false
       }
     }
   }
@@ -172,4 +177,5 @@
       border: .03rem solid $orange;
     }
   }
+
 </style>
