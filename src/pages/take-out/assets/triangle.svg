@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="12px" viewBox="0 0 13 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43 (38999) - http://www.bohemiancoding.com/sketch -->
+    <title>Triangle</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="获取到地理位置" transform="translate(-268.000000, -852.000000)">
+            <g id="店铺1-copy-4" transform="translate(1.000000, 765.000000)">
+                <g id="特1">
+                    <g id="icon-提示" transform="translate(267.000000, 86.000000)">
+                        <path d="M5.55484419,1.76429084 C6.07683933,0.789899915 6.92648315,0.796101888 7.44515581,1.76429084 L12.0548442,10.3690425 C12.5768393,11.3434334 12.1064574,12.1333333 10.9972399,12.1333333 L2.00276013,12.1333333 C0.896666251,12.1333333 0.426483154,11.3372314 0.945155807,10.3690425 L5.55484419,1.76429084 Z" id="Triangle" fill="#FD5359"></path>
+                        <text id="!" font-family=".PingFangSC-Medium, .PingFang SC" font-size="9" font-weight="400" fill="#FFFFFF">
+                            <tspan x="5.02666931" y="10.8666667">!</tspan>
+                        </text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

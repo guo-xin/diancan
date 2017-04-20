@@ -11,16 +11,15 @@
     </section>
     <section class="info">
       <div class="address">
-        <div v-if="!hasAddress" class="empty-address" @click.prevent="goAddAddress">
+        <div v-if="!hasAddress" class="address-title" @click.prevent="goAddAddress">
           <img src="../assets/btn_add.svg" alt="" class="address-add">新增配送地址
-          <img src="../assets/btn_arrow.svg" alt="" class="address-arrow">
         </div>
         <div v-else class="address-content">
           <a @click.prevent="goList">
             <ul id="{{current_addr.addr_id}}">
               <li>{{current_addr.contact_name}} {{current_addr.mobile}}</li>
-              <li>{{current_addr.parent_area[0].name}} {{current_addr.parent_area[1].name}} {{current_addr.parent_area[2].name}}</li>
-              <li>{{current_addr.detail_addr}}</li>
+              <li>{{current_addr.location}} {{current_addr.detail_addr}}</li>
+              <li><em v-if="item.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
             </ul>
             <img src="../assets/btn_arrow_orange.svg" alt="">
           </a>
@@ -91,7 +90,8 @@
             url: Config.dcHost + 'diancan/c/get_addr',
             method: 'JSONP',
             data: {
-              format: 'jsonp'
+              format: 'jsonp',
+              userid: this.mchnt_id
             }
           }).then(function (res) {
             if (res.data.respcd === '0000') {
@@ -330,7 +330,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "../scss/mixins";
+  @import "../../../styles/base/_base";
   .create-order-view {
     background-color: #f7f7f7;
     padding-bottom: 104px;
@@ -479,10 +479,27 @@
     }
   }
 
+  .address-title {
+    height: 92px;
+    line-height: 92px;
+    background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
+    border-top: 2px solid $lightGray;
+    border-bottom: 2px solid $lightGray;
+    padding-left: 24px;
+    margin-bottom: 18px;
+    font-size: 30px;
+    color: $black;
+    img {
+      margin-right: 20px;
+    }
+    img, span {
+      vertical-align: middle;
+    }
+  }
+
   .info {
     background-color: #ffffff;
     padding: 0;
-    @include empty-address;
     .address-content {
       padding: 0 34px;
       border-bottom: 2px dashed #FE9B20;
@@ -524,6 +541,19 @@
     .text {
       width: auto;
       margin-right: 30px;
+    }
+  }
+  .warn-tip {
+    color: #E73B48;
+    font-size: 24px;
+    i {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      margin-right: 8px;
+      vertical-align: text-bottom;
+      background: url("../assets/triangle.svg") center center no-repeat;
+      background-size: contain;
     }
   }
   .extra-info {

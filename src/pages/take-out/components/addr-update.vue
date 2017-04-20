@@ -9,57 +9,50 @@
         <em><input type="text" id="mobile" v-model="info.mobile" placeholder="你的手机号" maxlength="11"/></em>
       </li>
       <li class="choose-city" @click="goChoose">
-        <span>省,市,区</span>
-        <em><i>{{areaName}}</i></em>
-        <input type="hidden" v-model="info.area_id"/>
+        <span>配送地址</span>
+        <em><i>{{info.location}}</i></em>
+        <input type="hidden" v-model="info.longitude"/>
+        <input type="hidden" v-model="info.latitude"/>
       </li>
       <li>
-        <span>配送地址</span>
-        <input type="text" name="detailed_addr" placeholder="填写详细地址" v-model="info.detail_addr"/>
+        <span>详细门牌号</span>
+        <input type="text" placeholder="填写详细门牌号" v-model="info.detail_addr"/>
       </li>
     </ul>
     <a @click.prevent="goAdd" class="save">保存</a>
     <a @click.prevent="goDelete" class="delete">删除地址</a>
-    <city-choose :visible="modalVisible"></city-choose>
   </form>
 </template>
 <script>
   import config from '../../../methods/Config'
-  import cityChoose from './city-choose.vue'
   export default {
     data () {
       return {
-        modalVisible: false,
-        areaName: '',
         info: {
           contact_name: '',
           mobile: '',
-          area_id: '',
-          detail_addr: ''
+          detail_addr: '',
+          location: '',
+          longitude: 0,
+          latitude: 0,
+          adcode: 0
         },
         cors: {
           format: 'cors'
         }
       }
     },
-    components: {
-      cityChoose
-    },
     route: {
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
-        let areaArray = this.$root.tempAddr.parent_area
-        let newAreaArray = areaArray.map((value) => {
-          return value.name
-        })
-        this.areaName = newAreaArray.join(' ')
         transition.next()
       }
     },
     methods: {
       goChoose () {
-        this.modalVisible = true
-        this.$broadcast('getArea')
+        this.$router.go({
+          path: '/address/marker'
+        })
       },
       goAdd () {
         const mobileReg = /^\d{11}$/
@@ -82,23 +75,13 @@
           this.$http({
             url: config.dcHost + 'diancan/c/delete_addr',
             method: 'POST',
-            data: Object.assign(this.info, this.cors)
+            data: Object.assign({addr_id: this.info.addr_id}, this.cors)
           }).then(function (res) {
             if (res.data.respcd === '0000') {
               window.history.go(-1)
             }
           })
         }
-      }
-    },
-    events: {
-      'gotAreaId' (id, str) {
-        this.areaName = str.join(' ')
-        this.info.area_id = id
-        this.modalVisible = false
-      },
-      'hideModal' () {
-        this.modalVisible = false
       }
     }
   }
