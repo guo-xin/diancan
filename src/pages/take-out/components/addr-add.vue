@@ -103,6 +103,8 @@
             if (res.data.respcd === '0000') {
               window.sessionStorage.removeItem('info')
               window.history.go(-1)
+            } else {
+              window.alert(res.data.resperr)
             }
           })
         }

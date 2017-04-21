@@ -20,12 +20,15 @@
       </li>
     </ul>
     <a @click.prevent="goAdd" class="save">保存</a>
-    <a @click.prevent="goDelete" class="delete">删除地址</a>
+    <a @click.prevent="confirm" class="delete">删除地址</a>
   </form>
+  <confirm :visible.sync="visibleConfirm" title="确定删除地址？" confirm-event="on-deleteAddr"></confirm>
 </template>
 <script>
   import config from '../../../methods/Config'
+  import confirm from '../../../components/confirm/confirm'
   export default {
+    components: {confirm},
     data () {
       return {
         info: {
@@ -39,7 +42,8 @@
         },
         cors: {
           format: 'cors'
-        }
+        },
+        visibleConfirm: false
       }
     },
     route: {
@@ -76,18 +80,24 @@
           }
         })
       },
+      confirm () {
+        this.visibleConfirm = true
+      },
       goDelete () {
-        if (window.confirm('确定删除地址?')) {
-          this.$http({
-            url: config.dcHost + 'diancan/c/delete_addr',
-            method: 'POST',
-            data: Object.assign({addr_id: this.info.addr_id}, this.cors)
-          }).then(function (res) {
-            if (res.data.respcd === '0000') {
-              window.history.go(-1)
-            }
-          })
-        }
+        this.$http({
+          url: config.dcHost + 'diancan/c/delete_addr',
+          method: 'POST',
+          data: Object.assign({addr_id: this.info.addr_id}, this.cors)
+        }).then(function (res) {
+          if (res.data.respcd === '0000') {
+            window.history.go(-1)
+          }
+        })
+      }
+    },
+    events: {
+      'on-deleteAddr' () {
+        this.goDelete()
       }
     }
   }

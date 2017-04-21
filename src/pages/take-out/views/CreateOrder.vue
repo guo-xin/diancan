@@ -19,7 +19,7 @@
             <ul id="{{current_addr.addr_id}}">
               <li>{{current_addr.contact_name}} {{current_addr.mobile}}</li>
               <li>{{current_addr.location}} {{current_addr.detail_addr}}</li>
-              <li><em v-if="item.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
+              <li><em v-if="current_addr.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
             </ul>
             <img src="../assets/btn_arrow_orange.svg" alt="">
           </a>
@@ -322,7 +322,10 @@
       },
       goList () {
         this.$router.go({
-          path: '/address/list'
+          path: '/address/list',
+          query: {
+            'mchnt_id': this.mchnt_id
+          }
         })
       }
     }
@@ -520,9 +523,8 @@
               margin: 16px auto 6px;
             }
             &:nth-of-type(2) {
-              color: #8A8C92;
-              font-size: 26px;
-              margin-bottom: 6px;
+              color: #2F323A;
+              font-size: 30px;
             }
             &:nth-of-type(3) {
               color: #2F323A;

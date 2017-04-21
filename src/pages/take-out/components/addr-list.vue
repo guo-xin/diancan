@@ -3,7 +3,7 @@
     <img src="../assets/btn_add.svg"><span>新增配送地址</span>
   </div>
   <ul class="address-list">
-    <li id="{{id}}" v-for="item in addr" @click="goUpdate(item.addr_id)">
+    <li id="{{id}}" v-for="item in addr" @click="selectAddr(item.addr_id, item.overdist)">
       <i class="checked-icon" :class="{'active': $index==0}"></i>
       <p>
         <span>{{item.contact_name}} {{item.mobile}}</span>
@@ -13,6 +13,7 @@
       <a class="edit" @click.prevent.stop="goEdit(item.addr_id)"></a>
     </li>
   </ul>
+  <confirm :visible.sync="visibleConfirm" content="这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～" confirm-event="on-selectedAddr"></confirm>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../../../styles/main";
@@ -93,9 +94,13 @@
 </style>
 <script type="text/ecmascript-6">
   import config from '../../../methods/Config'
+  import confirm from '../../../components/confirm/confirm'
   export default {
+    components: {confirm},
     data () {
       return {
+        visibleConfirm: false,
+        currentAddrId: 0,
         cors: {
           format: 'cors'
         }
@@ -112,7 +117,8 @@
           url: config.dcHost + 'diancan/c/addr_list',
           method: 'JSONP',
           data: {
-            format: 'jsonp'
+            format: 'jsonp',
+            userid: this.$route.query.mchnt_id
           }
         }).then(function (res) {
           if (res.data.respcd === '0000') {
@@ -127,11 +133,19 @@
           path: '/address/add'
         })
       },
-      goUpdate (id) {
+      selectAddr (id, overdist) {
+        this.currentAddrId = id
+        if (overdist) {
+          this.visibleConfirm = true
+        } else {
+          this.selectedAddr()
+        }
+      },
+      selectedAddr () {
         this.$http({
           url: config.dcHost + 'diancan/c/modify_addr',
           method: 'post',
-          data: Object.assign({'addr_id': id}, this.cors)
+          data: Object.assign({'addr_id': this.currentAddrId}, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)
@@ -148,6 +162,11 @@
         }
         this.$root.tempAddr = addrInfo()
         this.$router.go({name: 'addressUpdate'})
+      }
+    },
+    events: {
+      'on-selectedAddr' () {
+        this.selectedAddr()
       }
     }
   }
