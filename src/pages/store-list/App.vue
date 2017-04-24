@@ -1,5 +1,5 @@
 <template>
-  <get-Location v-ref:locationbar></get-Location>
+  <get-Location></get-Location>
   <ul v-if="!noData">
     <li v-for="item in responseData.list" @click='jumpUrl(item.userid)'>
       <figure>
@@ -240,6 +240,7 @@
       this.getData()
     },
     ready () {
+      this.getCustomerAddr()
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop
@@ -251,6 +252,11 @@
       }
     },
     methods: {
+      getCustomerAddr () {
+        let longitude = window.localStorage.getItem('longitude')
+        let latitude = window.localStorage.getItem('latitude')
+        Wechat.getFormattedAddress(longitude, latitude)
+      },
       getData () {
         let _this = this
         if (!this.loaded) {
@@ -283,7 +289,7 @@
         }
       },
       jumpUrl (mchntId) {
-        window.location.href = `${Config.apiHost}dc/?/#!/merchant/${mchntId}`
+        window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
       }
     }
   }

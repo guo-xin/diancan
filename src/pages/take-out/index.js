@@ -29,7 +29,6 @@ import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initRouter)
 // initRouter()
 Wechat.init()
-Wechat.getLocation()
 Wechat.hideOptionMenu()
 Wechat.noResize()
 function initRouter () {

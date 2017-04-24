@@ -49,6 +49,10 @@
     route: {
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
+        if (this.info.location) {
+          let element = document.getElementById('m')
+          element.parentNode.removeChild(element)
+        }
         transition.next()
       }
     },

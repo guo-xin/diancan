@@ -48,10 +48,6 @@
     created () {
       this.resetViewport()
     },
-    beforeDestroy () {
-      let element = document.getElementById("m")
-      element.parentNode.removeChild(element)
-    },
     methods: {
       resetViewport () {
         let m = document.createElement('meta')

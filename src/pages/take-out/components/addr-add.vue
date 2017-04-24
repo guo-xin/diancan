@@ -46,6 +46,10 @@
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
         this.getAdcode()
+        if (this.info.location) {
+          let element = document.getElementById('m')
+          element.parentNode.removeChild(element)
+        }
         transition.next()
       }
     },
