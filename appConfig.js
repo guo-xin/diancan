@@ -12,7 +12,7 @@ exports.pages = [
   {
     filename: 'index',
     template: 'src/pages/index/index.ejs',
-    title: '好近点餐',
+    title:  '好近点餐',
     chunks: 'vue_vue-resource'
   },
   {

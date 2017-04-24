@@ -122,6 +122,9 @@
       }
     },
     created () {
+      if (Util.isWhiteLabel) {
+        Util.setTitle('微信点餐')
+      }
     },
     ready () {
     },

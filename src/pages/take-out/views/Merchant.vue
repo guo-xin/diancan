@@ -20,7 +20,7 @@
                 </div>
               </li>
               <li>
-                <div>v1.0.3</div>
+                <div>v1.0.4</div>
               </li>
             </ul>
           </div>
@@ -71,7 +71,7 @@
 
     <!--购物车-->
     <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
-      :closed="merchantSetting.sale_state === 0" :overtime="merchantSetting.overtime" :nodelivery="merchantSetting.delivery_open_state === 0"
+      :overtime="merchantSetting.overtime" :nodelivery="merchantSetting.delivery_open_state === 0"
       v-if="cart.length"></cart-bar>
 
     <!--扫描二维码蒙层-->
@@ -124,6 +124,9 @@
       }
     },
     created () {
+      if (Util.isWhiteLabel) {
+        Util.setTitle('微信外送')
+      }
     },
     ready () {
     },

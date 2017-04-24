@@ -167,12 +167,12 @@ exports.getFormattedAddress = (longitude, latitude) => {
   let args = {
     format: 'jsonp',
     key: '9eb1cfce5386a0d7ad316255968c78bd',  // 高德web服务 经纬度转地址 http://lbs.amap.com/dev/key/app
-    location: `${longitude},${latitude}` // '116.480881,39.989410'
+    location: `${latitude},${longitude}` // '116.480881,39.989410'
   }
-  Vue.http.jsonp('https://restapi.amap.com/v3/geocode/regeo', args)
+  Vue.http.jsonp('https://apis.map.qq.com/ws/geocoder/v1/', args)
     .then((response) => {
-      if (response.data.info === 'OK') {
-        let formattedAddress = response.data.regeocode.formatted_address
+      if (response.status === 0) {
+        let formattedAddress = response.result.formatted_addresses.recommend
         window.localStorage.setItem('formatted_address', formattedAddress)
       }
     })
