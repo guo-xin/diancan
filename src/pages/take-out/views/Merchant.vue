@@ -20,7 +20,7 @@
                 </div>
               </li>
               <li>
-                <div>v1.0.1</div>
+                <div>v1.0.2</div>
               </li>
             </ul>
           </div>

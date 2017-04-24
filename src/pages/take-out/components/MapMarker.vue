@@ -43,10 +43,14 @@
           window.history.go(-1)
         }
       }
-      window.addEventListener("message", listener, false)
+      window.addEventListener('message', listener, false)
     },
     created () {
       this.resetViewport()
+    },
+    beforeDestroy () {
+      let element = document.getElementById('m')
+      element.parentNode.removeChild(element)
     },
     methods: {
       resetViewport () {
@@ -56,7 +60,6 @@
         m.setAttribute('content', 'initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0')
         let viewport = document.querySelector('meta[name=viewport]')
         viewport.parentNode.insertBefore(m, viewport.nextSibling)
-        // viewport.setAttribute('content', 'initial-scale=1.0')
       }
     }
   }
