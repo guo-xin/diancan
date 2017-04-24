@@ -62,6 +62,7 @@
     },
     methods: {
       goChoose () {
+        this.$root.tempAddr = this.info
         let longitude = window.localStorage.getItem('longitude')
         let latitude = window.localStorage.getItem('latitude')
         let src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`

@@ -3,7 +3,7 @@
     <img src="../assets/btn_add.svg"><span>新增配送地址</span>
   </div>
   <ul class="address-list">
-    <li id="{{id}}" v-for="item in addr" @click="selectAddr(item.addr_id, item.overdist)">
+    <li id="{{id}}" v-for="item in addr" @click="selectedAddr(item.addr_id)">
       <i class="checked-icon" :class="{'active': $index==0}"></i>
       <p>
         <span>{{item.contact_name}} {{item.mobile}}</span>
@@ -13,7 +13,6 @@
       <a class="edit" @click.prevent.stop="goEdit(item.addr_id)"></a>
     </li>
   </ul>
-  <confirm :visible.sync="visibleConfirm" content="这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～" confirm-event="on-selectedAddr"></confirm>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../../../styles/main";
@@ -21,6 +20,7 @@
     height: 92px;
     line-height: 92px;
     background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
+    background-size: 18px 34px;
     border-top: 2px solid $lightGray;
     border-bottom: 2px solid $lightGray;
     padding-left: 24px;
@@ -28,6 +28,8 @@
     font-size: 30px;
     color: $black;
     img {
+      width: 46px;
+      height: 46px;
       margin-right: 20px;
     }
     img, span {
@@ -94,13 +96,9 @@
 </style>
 <script type="text/ecmascript-6">
   import config from '../../../methods/Config'
-  import confirm from '../../../components/confirm/confirm'
   export default {
-    components: {confirm},
     data () {
       return {
-        visibleConfirm: false,
-        currentAddrId: 0,
         cors: {
           format: 'cors'
         }
@@ -141,11 +139,11 @@
           this.selectedAddr()
         }
       },
-      selectedAddr () {
+      selectedAddr (id) {
         this.$http({
           url: config.dcHost + 'diancan/c/modify_addr',
           method: 'post',
-          data: Object.assign({'addr_id': this.currentAddrId}, this.cors)
+          data: Object.assign({'addr_id': id}, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)
@@ -162,11 +160,6 @@
         }
         this.$root.tempAddr = addrInfo()
         this.$router.go({name: 'addressUpdate'})
-      }
-    },
-    events: {
-      'on-selectedAddr' () {
-        this.selectedAddr()
       }
     }
   }

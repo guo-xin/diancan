@@ -48,9 +48,10 @@
     </div>
     <div class="l-r-lr order-bar">
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{payAmt | formatCurrency}}</div>
-      <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
+      <button class="btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
     <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
+    <confirm :visible.sync="visibleConfirm" content="这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～" confirm-event="on-selectedAddr"></confirm>
   </div>
 </template>
 
@@ -60,14 +61,15 @@
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
   import alert from '../../../components/alert/alert.vue'
-
+  import confirm from '../../../components/confirm/confirm'
   export default {
     components: {
-      alert
+      alert, confirm
     },
     data () {
       return {
         alertVisible: false,
+        visibleConfirm: false,
         alertTip: '',
         mchnt_id: '',       // 商户ID
         hasAddress: false,
@@ -153,6 +155,13 @@
       }
     },
     methods: {
+      overdist () {
+        if (this.current_addr.overdist) {
+          this.visibleConfirm = true
+        } else {
+          this.createOrder()
+        }
+      },
       createOrder () {  // 创建订单
         /**
          * open_id
@@ -327,6 +336,11 @@
             'mchnt_id': this.mchnt_id
           }
         })
+      }
+    },
+    events: {
+      'on-selectedAddr' () {
+        this.createOrder()
       }
     }
   }
