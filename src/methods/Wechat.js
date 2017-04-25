@@ -172,14 +172,14 @@ exports.getFormattedAddress = () => {
     output: 'jsonp'
   }
   Vue.http({
-    url: 'http://apis.map.qq.com/ws/geocoder/v1/',
+    url: 'https://apis.map.qq.com/ws/geocoder/v1/',
     method: 'JSONP',
     data: args
   }).then(function (response) {
     console.log('response')
     console.log(response)
     console.log(response.data)
-    if (response.status === 0) {
+    if (response.status === 200) {
       let formattedAddress = response.data.result.formatted_addresses.recommend
       window.localStorage.setItem('formatted_address', formattedAddress)
     }
