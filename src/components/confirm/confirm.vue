@@ -5,8 +5,8 @@
       <div v-if="title" class="weui_dialog_hd"><strong class="weui_dialog_title">{{title}}</strong></div>
       <div class="weui_dialog_bd">{{content}}</div>
       <div class="weui_dialog_ft">
-        <a href="javascript:;" class="weui_btn_dialog" @click="cancel">取消</a>
-        <a href="javascript:;" class="weui_btn_dialog primary" @click="confirm">确定</a>
+        <a href="javascript:;" class="weui_btn_dialog cancel" @click="cancel">取消</a>
+        <a href="javascript:;" class="weui_btn_dialog primary" @click="confirm">继续下单</a>
       </div>
     </div>
   </div>
@@ -72,9 +72,9 @@
     font-size: 34px;
   }
   .weui_dialog_bd {
-    padding: 0 40px;
+    padding: 0 30px;
     font-size: 30px;
-    margin: 20px 0;
+    margin: 30px 0 10px;
     color: #2F323A;
     word-wrap: break-word;
     word-break: break-all;
@@ -116,7 +116,11 @@
     -webkit-transform: scaleY(0.5);
     transform: scaleY(0.5);
   }
+  .weui_btn_dialog.cancel {
+    color: #8a8c92;
+  }
   .weui_btn_dialog.primary {
+    border-left: 2px solid #D5D5D6;
     color: #FE9B20;
   }
 </style>

@@ -8,7 +8,8 @@
       <p>
         <span>{{item.contact_name}} {{item.mobile}}</span>
         <strong>{{item.location}} {{item.detail_addr}}</strong>
-        <em v-if="item.overdist" class="warn-tip"><i></i>超出配送范围</em>
+        <em v-if="!item.longitude" class="warn-tip"><i></i>配送地址需要升级</em>
+        <em v-if="item.longitude && item.overdist" class="warn-tip"><i></i>超出配送范围</em>
       </p>
       <a class="edit" @click.prevent.stop="goEdit(item.addr_id)"></a>
     </li>
@@ -130,14 +131,6 @@
         this.$router.go({
           path: '/address/add'
         })
-      },
-      selectAddr (id, overdist) {
-        this.currentAddrId = id
-        if (overdist) {
-          this.visibleConfirm = true
-        } else {
-          this.selectedAddr()
-        }
       },
       selectedAddr (id) {
         this.$http({
