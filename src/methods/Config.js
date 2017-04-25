@@ -34,10 +34,10 @@ if (test) {
 if (dev) {
   rootHost = 'https://o.qa.qfpay.net/dc/'
   payHost = 'https://openapi.qa.qfpay.net/'
-  apiHost = 'https://o.qfpay.com/'
+  apiHost = 'https://o.qa.qfpay.net/'
   dcHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
-  wxmpHost = 'https://wxmp.qfpay.com/'
+  wxmpHost = 'https://wxmp.qa.qfpay.net/'
   // appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
