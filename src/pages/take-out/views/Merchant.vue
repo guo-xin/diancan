@@ -19,9 +19,6 @@
                 <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
                 </div>
               </li>
-              <li>
-                <div>v1.0.4</div>
-              </li>
             </ul>
           </div>
         </scroller>
@@ -124,9 +121,6 @@
       }
     },
     created () {
-      if (Util.isWhiteLabel) {
-        Util.setTitle('微信外送')
-      }
     },
     ready () {
     },

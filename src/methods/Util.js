@@ -14,11 +14,6 @@ let isAPP = function () {
 
 let isIOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
 
-let isWhiteLabel = function () {
-  let ua = navigator.userAgent
-  return ua.indexOf('bggroupid') !== -1
-}
-
 let setTitle = (title) => {
   document.title = title
   if (isIOS) {
@@ -83,7 +78,6 @@ let checkEmail = function (email) {
 exports.isWX = isWX()
 exports.isAPP = isAPP()
 exports.isIOS = isIOS
-exports.isWhiteLabel = isWhiteLabel()
 exports.getUrlRouteParams = getUrlRouteParams
 exports.getRequestParams = getRequestParams
 exports.checkEmail = checkEmail

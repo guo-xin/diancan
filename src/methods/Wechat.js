@@ -166,7 +166,7 @@ exports.getCoords = () => {
 exports.getFormattedAddress = (longitude, latitude) => {
   let args = {
     format: 'jsonp',
-    key: '9eb1cfce5386a0d7ad316255968c78bd',  // 高德web服务 经纬度转地址 http://lbs.amap.com/dev/key/app
+    key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
     location: `${latitude},${longitude}` // '116.480881,39.989410'
   }
   Vue.http.jsonp('https://apis.map.qq.com/ws/geocoder/v1/', args)

@@ -91,8 +91,7 @@
           }
         },
         type: 'android',
-        deliveryImg: '',
-        isWhiteLabel: false
+        deliveryImg: ''
       }
     },
     computed: {
@@ -109,7 +108,6 @@
     created () {
       // let Api = require('../api/mock')
       // this.$set('order', Api.order_detail)
-      this.isWhiteLabel = Util.isWhiteLabel()
     },
     ready () {
       // document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
@@ -138,19 +136,19 @@
           transition.next({order: data.data})
           switch (this.order.orderinfo.delivery_info.current_state) {
             case 0: {
-              this.deliveryImg = this.isWhiteLabel ? '../assets/img_progress_0.png' : '../assets/img_progress_0_white_label@2x.png'
+              this.deliveryImg = '../assets/img_progress_0_white_label@2x.png'
               break
             }
             case 1: {
-              this.deliveryImg = this.isWhiteLabel ? '../assets/img_progress_1.png' : '../assets/img_progress_1_white_label@2x.png'
+              this.deliveryImg = '../assets/img_progress_1_white_label@2x.png'
               break
             }
             case 2: {
-              this.deliveryImg = this.isWhiteLabel ? '../assets/img_progress_2.png' : '../assets/img_progress_2_white_label@2x.png'
+              this.deliveryImg = '../assets/img_progress_2_white_label@2x.png'
               break
             }
             case 3: {
-              this.deliveryImg = this.isWhiteLabel ? '../assets/img_progress_3.png' : '../assets/img_progress_3_white_label@2x.png'
+              this.deliveryImg = '../assets/img_progress_3_white_label@2x.png'
               break
             }
           }

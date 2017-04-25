@@ -12,7 +12,7 @@ exports.pages = [
   {
     filename: 'index',
     template: 'src/pages/index/index.ejs',
-    title:  '好近点餐',
+    title:  '微信点餐',
     chunks: 'vue_vue-resource'
   },
   {
@@ -24,7 +24,7 @@ exports.pages = [
   {
     filename: 'take-out',
     template: 'src/pages/take-out/index.ejs',
-    title: '好近外送',
+    title: '微信外送',
     chunks: 'vue_vue-resource'
   },
   {
