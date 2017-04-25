@@ -46,14 +46,12 @@
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
         this.getAdcode()
-        if (this.info.location) {
-          let viewport = document.querySelector('meta[name=viewport]')
-          let m = document.createElement('meta')
-          m.setAttribute('name', 'viewport')
-          m.setAttribute('content', viewport.getAttribute('content'))
-          viewport.parentNode.insertBefore(m, viewport.nextSibling)
-          viewport.parentNode.removeChild(viewport)
-        }
+        let viewport = document.querySelector('meta[name=viewport]')
+        let m = document.createElement('meta')
+        m.setAttribute('name', 'viewport')
+        m.setAttribute('content', viewport.getAttribute('content'))
+        viewport.parentNode.insertBefore(m, viewport.nextSibling)
+        viewport.parentNode.removeChild(viewport)
         transition.next()
       }
     },

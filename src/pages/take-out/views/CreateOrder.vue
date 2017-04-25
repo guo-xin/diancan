@@ -19,7 +19,10 @@
             <ul id="{{current_addr.addr_id}}">
               <li>{{current_addr.contact_name}} {{current_addr.mobile}}</li>
               <li>{{current_addr.location}} {{current_addr.detail_addr}}</li>
-              <li><em v-if="current_addr.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
+              <li>
+                <em v-if="!current_addr.longitude" class="warn-tip"><i></i>配送地址需要升级</em>
+                <em v-if="current_addr.longitude && current_addr.overdist" class="warn-tip"><i></i>超出配送范围</em>
+              </li>
             </ul>
             <img src="../assets/btn_arrow_orange.svg" alt="">
           </a>
@@ -51,7 +54,7 @@
       <button class="btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
     <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
-    <confirm :visible.sync="visibleConfirm" content="这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～" confirm-event="on-selectedAddr"></confirm>
+    <confirm :visible.sync="visibleConfirm" :content="confirmText" confirm-event="on-selectedAddr"></confirm>
   </div>
 </template>
 
@@ -69,6 +72,7 @@
     data () {
       return {
         alertVisible: false,
+        confirmText: '',
         visibleConfirm: false,
         alertTip: '',
         mchnt_id: '',       // 商户ID
@@ -156,7 +160,11 @@
     },
     methods: {
       overdist () {
-        if (this.current_addr.overdist) {
+        if (!this.current_addr.longitude) {
+          this.confirmText = '为了让商家更好的为您提供配送服务，请升级您的配送地址。'
+          this.visibleConfirm = true
+        } else if (this.current_addr.overdist) {
+          this.confirmText = '这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～'
           this.visibleConfirm = true
         } else {
           this.createOrder()
