@@ -19,7 +19,7 @@
             <ul id="{{current_addr.addr_id}}">
               <li>{{current_addr.contact_name}} {{current_addr.mobile}}</li>
               <li>{{current_addr.location}} {{current_addr.detail_addr}}</li>
-              <li><em v-if="item.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
+              <li><em v-if="current_addr.overdist" class="warn-tip"><i></i>超出配送范围</em></li>
             </ul>
             <img src="../assets/btn_arrow_orange.svg" alt="">
           </a>
@@ -48,9 +48,10 @@
     </div>
     <div class="l-r-lr order-bar">
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{payAmt | formatCurrency}}</div>
-      <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
+      <button class="btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">{{btnText}}</button>
     </div>
     <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
+    <confirm :visible.sync="visibleConfirm" content="这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～" confirm-event="on-selectedAddr"></confirm>
   </div>
 </template>
 
@@ -60,14 +61,15 @@
   import Config from '../../../methods/Config'
   import Util from '../../../methods/Util'
   import alert from '../../../components/alert/alert.vue'
-
+  import confirm from '../../../components/confirm/confirm'
   export default {
     components: {
-      alert
+      alert, confirm
     },
     data () {
       return {
         alertVisible: false,
+        visibleConfirm: false,
         alertTip: '',
         mchnt_id: '',       // 商户ID
         hasAddress: false,
@@ -153,6 +155,13 @@
       }
     },
     methods: {
+      overdist () {
+        if (this.current_addr.overdist) {
+          this.visibleConfirm = true
+        } else {
+          this.createOrder()
+        }
+      },
       createOrder () {  // 创建订单
         /**
          * open_id
@@ -322,8 +331,16 @@
       },
       goList () {
         this.$router.go({
-          path: '/address/list'
+          path: '/address/list',
+          query: {
+            'mchnt_id': this.mchnt_id
+          }
         })
+      }
+    },
+    events: {
+      'on-selectedAddr' () {
+        this.createOrder()
       }
     }
   }
@@ -483,6 +500,7 @@
     height: 92px;
     line-height: 92px;
     background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
+    background-size: 18px 34px;
     border-top: 2px solid $lightGray;
     border-bottom: 2px solid $lightGray;
     padding-left: 24px;
@@ -491,6 +509,8 @@
     color: $black;
     img {
       margin-right: 20px;
+      width: 40px;
+      height: 40px;
     }
     img, span {
       vertical-align: middle;
@@ -517,9 +537,8 @@
               margin: 16px auto 6px;
             }
             &:nth-of-type(2) {
-              color: #8A8C92;
-              font-size: 26px;
-              margin-bottom: 6px;
+              color: #2F323A;
+              font-size: 30px;
             }
             &:nth-of-type(3) {
               color: #2F323A;

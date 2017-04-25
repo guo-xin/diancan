@@ -3,7 +3,7 @@
     <img src="../assets/btn_add.svg"><span>新增配送地址</span>
   </div>
   <ul class="address-list">
-    <li id="{{id}}" v-for="item in addr" @click="goUpdate(item.addr_id)">
+    <li id="{{id}}" v-for="item in addr" @click="selectedAddr(item.addr_id)">
       <i class="checked-icon" :class="{'active': $index==0}"></i>
       <p>
         <span>{{item.contact_name}} {{item.mobile}}</span>
@@ -20,6 +20,7 @@
     height: 92px;
     line-height: 92px;
     background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
+    background-size: 18px 34px;
     border-top: 2px solid $lightGray;
     border-bottom: 2px solid $lightGray;
     padding-left: 24px;
@@ -27,6 +28,8 @@
     font-size: 30px;
     color: $black;
     img {
+      width: 46px;
+      height: 46px;
       margin-right: 20px;
     }
     img, span {
@@ -112,7 +115,8 @@
           url: config.dcHost + 'diancan/c/addr_list',
           method: 'JSONP',
           data: {
-            format: 'jsonp'
+            format: 'jsonp',
+            userid: this.$route.query.mchnt_id
           }
         }).then(function (res) {
           if (res.data.respcd === '0000') {
@@ -127,7 +131,15 @@
           path: '/address/add'
         })
       },
-      goUpdate (id) {
+      selectAddr (id, overdist) {
+        this.currentAddrId = id
+        if (overdist) {
+          this.visibleConfirm = true
+        } else {
+          this.selectedAddr()
+        }
+      },
+      selectedAddr (id) {
         this.$http({
           url: config.dcHost + 'diancan/c/modify_addr',
           method: 'post',

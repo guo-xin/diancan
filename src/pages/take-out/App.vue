@@ -43,6 +43,7 @@
         window.location.replace(url)
       }
       this.setOpenId()
+      this.getCustomerAddr()
     },
     methods: {
       setOpenId () {
@@ -54,6 +55,11 @@
       },
       saveCart (mchntId) {
         Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
+      },
+      getCustomerAddr () {
+        let longitude = window.localStorage.getItem('longitude')
+        let latitude = window.localStorage.getItem('latitude')
+        Wechat.getFormattedAddress(longitude, latitude)
       }
     },
     events: {

@@ -20,12 +20,15 @@
       </li>
     </ul>
     <a @click.prevent="goAdd" class="save">保存</a>
-    <a @click.prevent="goDelete" class="delete">删除地址</a>
+    <a @click.prevent="confirm" class="delete">删除地址</a>
   </form>
+  <confirm :visible.sync="visibleConfirm" title="确定删除地址？" confirm-event="on-deleteAddr"></confirm>
 </template>
 <script>
   import config from '../../../methods/Config'
+  import confirm from '../../../components/confirm/confirm'
   export default {
+    components: {confirm},
     data () {
       return {
         info: {
@@ -39,19 +42,35 @@
         },
         cors: {
           format: 'cors'
-        }
+        },
+        visibleConfirm: false
       }
     },
     route: {
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
+        if (this.info.location) {
+          let viewport = document.querySelector('meta[name=viewport]')
+          let m = document.createElement('meta')
+          m.setAttribute('name', 'viewport')
+          m.setAttribute('content', viewport.getAttribute('content'))
+          viewport.parentNode.insertBefore(m, viewport.nextSibling)
+          viewport.parentNode.removeChild(viewport)
+        }
         transition.next()
       }
     },
     methods: {
       goChoose () {
+        this.$root.tempAddr = this.info
+        let longitude = window.localStorage.getItem('longitude')
+        let latitude = window.localStorage.getItem('latitude')
+        let src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
         this.$router.go({
-          path: '/address/marker'
+          name: 'addressMarker',
+          query: {
+            src: src
+          }
         })
       },
       goAdd () {
@@ -70,18 +89,24 @@
           }
         })
       },
+      confirm () {
+        this.visibleConfirm = true
+      },
       goDelete () {
-        if (window.confirm('确定删除地址?')) {
-          this.$http({
-            url: config.dcHost + 'diancan/c/delete_addr',
-            method: 'POST',
-            data: Object.assign({addr_id: this.info.addr_id}, this.cors)
-          }).then(function (res) {
-            if (res.data.respcd === '0000') {
-              window.history.go(-1)
-            }
-          })
-        }
+        this.$http({
+          url: config.dcHost + 'diancan/c/delete_addr',
+          method: 'POST',
+          data: Object.assign({addr_id: this.info.addr_id}, this.cors)
+        }).then(function (res) {
+          if (res.data.respcd === '0000') {
+            window.history.go(-1)
+          }
+        })
+      }
+    },
+    events: {
+      'on-deleteAddr' () {
+        this.goDelete()
       }
     }
   }

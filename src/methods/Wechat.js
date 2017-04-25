@@ -109,8 +109,16 @@ exports.init = () => {
 let isReady = false
 let actionQueue = []
 wx && wx.ready(() => {
+  wx.getLocation({
+    type: 'gcj02',
+    success: function (res) {
+      window.localStorage.setItem('longitude', res.longitude)
+      window.localStorage.setItem('latitude', res.latitude)
+    }
+  })
   isReady = true
-  // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+  // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。
+  // 对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
   // wx.hideOptionMenu()
   runActionQueue()
 })
@@ -140,29 +148,34 @@ exports.hideOptionMenu = () => {
   // push()
 }
 
-// 获取地理位置接口
-exports.getLocation = () => {
-  if (!isReady) {
-    actionQueue.push('wx.getLocation()')
-    return
-  }
-  wx.getLocation({
-    success: function (res) {
-      let args = {
-        format: 'jsonp',
-        key: '9eb1cfce5386a0d7ad316255968c78bd',  // 高德web服务 经纬度转地址 http://lbs.amap.com/dev/key/app
-        location: `${res.longitude},${res.latitude}` // '116.480881,39.989410'
+// 获取经纬度接口
+exports.getCoords = () => {
+  return new Promise(function (resolve, reject) {
+    wx.getLocation({
+      type: 'gcj02',
+      success: function (res) {
+        window.localStorage.setItem('longitude', res.longitude)
+        window.localStorage.setItem('latitude', res.latitude)
+        resolve()
       }
-      Vue.http.jsonp('http://restapi.amap.com/v3/geocode/regeo', args)
-        .then((response) => {
-          if (response.data.info === 'OK') {
-            let formattedAddress = response.data.regeocode.formatted_address
-            window.localStorage.setItem('formatted_address', formattedAddress)
-            console.log(window.localStorage.getItem('formatted_address'))
-          }
-        })
-    }
+    })
   })
+}
+
+// 通过经纬度 获取详细地址
+exports.getFormattedAddress = (longitude, latitude) => {
+  let args = {
+    format: 'jsonp',
+    key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
+    location: `${latitude},${longitude}` // '116.480881,39.989410'
+  }
+  Vue.http.jsonp('https://apis.map.qq.com/ws/geocoder/v1/', args)
+    .then((response) => {
+      if (response.status === 0) {
+        let formattedAddress = response.result.formatted_addresses.recommend
+        window.localStorage.setItem('formatted_address', formattedAddress)
+      }
+    })
 }
 
 // 分享给朋友

@@ -3,26 +3,31 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import Wechat from '../methods/Wechat'
   export default {
-    props: ['plus'],
     data () {
       return {
         formattedAddress: ''
       }
     },
     created () {
-      this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
+      // Wechat.getCoords在wx.ready时就已经调用；微信对于 页面加载时就调用的接口 和 用户触发时才调用的接口 处理方式不一样 详情见wx.ready
+      let _t = setTimeout(() => {
+        this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
+        clearTimeout(_t)
+      }, 300)
     },
     computed: {
 
     },
     methods: {
       getLocation () {
-        this.$dispatch('on-getLocation')
+        this.formattedAddress = ''
+        Wechat.getCoords().then(Wechat.getFormattedAddress)
         let _t = setTimeout(() => {
           this.formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
           clearTimeout(_t)
-        }, 800)
+        }, 300)
       }
     }
   }

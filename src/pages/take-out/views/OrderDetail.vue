@@ -72,10 +72,6 @@
   import Util from '../../../methods/Util'
   import Loading from '../../../components/loading/Loading'
   import Config from '../../../methods/Config'
-  import img0 from '../assets/img_progress_0.png'
-  import img1 from '../assets/img_progress_1.png'
-  import img2 from '../assets/img_progress_2.png'
-  import img3 from '../assets/img_progress_3.png'
   //  import Api from '../api/mock'
 
   export default {
@@ -110,8 +106,8 @@
       }
     },
     created () {
-//      let Api = require('../api/mock')
-//      this.$set('order', Api.order_detail)
+      // let Api = require('../api/mock')
+      // this.$set('order', Api.order_detail)
     },
     ready () {
       // document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
@@ -140,19 +136,19 @@
           transition.next({order: data.data})
           switch (this.order.orderinfo.delivery_info.current_state) {
             case 0: {
-              this.deliveryImg = img0
+              this.deliveryImg = '../assets/img_progress_0_white_label@2x.png'
               break
             }
             case 1: {
-              this.deliveryImg = img1
+              this.deliveryImg = '../assets/img_progress_1_white_label@2x.png'
               break
             }
             case 2: {
-              this.deliveryImg = img2
+              this.deliveryImg = '../assets/img_progress_2_white_label@2x.png'
               break
             }
             case 3: {
-              this.deliveryImg = img3
+              this.deliveryImg = '../assets/img_progress_3_white_label@2x.png'
               break
             }
           }

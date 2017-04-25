@@ -46,13 +46,28 @@
       data (transition) {
         Object.assign(this.info, this.$root.tempAddr)
         this.getAdcode()
+        if (this.info.location) {
+          let viewport = document.querySelector('meta[name=viewport]')
+          let m = document.createElement('meta')
+          m.setAttribute('name', 'viewport')
+          m.setAttribute('content', viewport.getAttribute('content'))
+          viewport.parentNode.insertBefore(m, viewport.nextSibling)
+          viewport.parentNode.removeChild(viewport)
+        }
         transition.next()
       }
     },
     methods: {
       goChoose () {
+        this.$root.tempAddr = this.info
+        let longitude = window.localStorage.getItem('longitude')
+        let latitude = window.localStorage.getItem('latitude')
+        let src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
         this.$router.go({
-          path: '/address/marker'
+          name: 'addressMarker',
+          query: {
+            src: src
+          }
         })
       },
       getAdcode () {
@@ -97,6 +112,8 @@
             if (res.data.respcd === '0000') {
               window.sessionStorage.removeItem('info')
               window.history.go(-1)
+            } else {
+              window.alert(res.data.resperr)
             }
           })
         }

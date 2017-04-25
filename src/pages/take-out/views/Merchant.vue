@@ -1,4 +1,5 @@
 <template>
+  <get-Location></get-Location>
   <div class="">
     <div class="c-loading-container" v-if="$loadingRouteData">
       <loading :visible="$loadingRouteData"></loading>
@@ -66,10 +67,10 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" v-if="cart.length" ></cart-bar>
+    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
+      :overtime="merchantSetting.overtime" :nodelivery="merchantSetting.delivery_open_state === 0"
+      v-if="cart.length"></cart-bar>
 
-    <!--关店蒙层-->
-    <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
   </div>
@@ -86,15 +87,15 @@
   import SelectSpec from '../../../components/SelectSpec'
   import CartBar from '../components/CartBar'
   import GoodsDetail from '../../../components/GoodsDetail'
-  import ShopClose from '../components/ShopClose.vue'
   import ScanQrcode from '../../../components/ScanQrcode.vue'
+  import GetLocation from '../../../components/GetLocation.vue'
   import Config from '../../../methods/Config'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
     },
     data () {
       return {
@@ -107,7 +108,6 @@
         showDetail: false,
         selectDetail: null,
         order_info: {}, // 是否已存在订单
-        isClose: false,
         isExpire: false,
         merchantSetting: {}
       }
@@ -169,7 +169,6 @@
           transition.next({
             mchnt_id: args.mchnt_id,
             groupList: goods,
-            isClose: data.data.merchant_setting.sale_state === 0,
 //            goodsList: goods[0].goods_list,
             goodsList: (function () {
               if (goods.length !== 0) {

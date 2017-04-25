@@ -26,15 +26,16 @@
   }
 
   var ENV = '<%= htmlWebpackPlugin.options.RUN_ENV %>';
-  if('production' === ENV) {
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "//hm.baidu.com/hm.js?36d81edf56567c9dbad9fbd82db1ff21";
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(hm, s);
-    })();
-  }
+  // 在微信web开发者工具/dev环境会报错 找不到_hmt 改成排除公司公网ip查看统计数据即可
+  // if('production' === ENV) {
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?36d81edf56567c9dbad9fbd82db1ff21";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+  // }
 </script>
 
 <!-- built files will be auto injected -->

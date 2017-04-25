@@ -17,8 +17,11 @@
         </div>
       </div>
       <!--<a class="row-status" v-link="{name: 'createOrder', params: {mchnt_id: $parent.mchnt_id, address: $parent.address}}">选好了</a>-->
-      <a class="row-status" @click.prevent="goNextView()" v-if="deliver.startDeliveryFee <= cartData.price">选好了</a>
-      <a class="row-status gray-status" v-else>{{deliver.startDeliveryFee | formatCurrency | noZeroCurrency}}元起送</a>
+      <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
+      <span v-else>
+        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.startDeliveryFee <= cartData.price">选好了</a>
+        <a class="row-status gray-status" v-else>{{deliver.startDeliveryFee | formatCurrency | noZeroCurrency}}元起送</a>
+      </span>
     </div>
     <!--列表-->
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
@@ -64,7 +67,7 @@
     components: {
       Scroller, GoodsSelect, NoData
     },
-    props: ['plus', 'minus', 'deliver', 'diy'],
+    props: ['plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery'],
     data () {
       return {
         visibleList: false
@@ -96,6 +99,15 @@
       },
       deliver () {
         return this.$root.deliver
+      },
+      calcBtnText () {
+        let btnText = ''
+        if (this.nodelivery) {
+          btnText = '暂停送餐'
+        } else {
+          btnText = '已打烊'
+        }
+        return btnText
       }
     },
     methods: {

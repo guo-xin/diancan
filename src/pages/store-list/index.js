@@ -27,7 +27,6 @@ Wechat.verify().then(initVue)
 // initVue()
 Wechat.init()
 Wechat.hideOptionMenu()
-Wechat.getLocation()
 
 function initVue () {
   /* eslint-disable no-new */
