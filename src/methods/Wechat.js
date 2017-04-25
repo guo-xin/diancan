@@ -163,19 +163,27 @@ exports.getCoords = () => {
 }
 
 // 通过经纬度 获取详细地址
-exports.getFormattedAddress = (longitude, latitude) => {
+exports.getFormattedAddress = () => {
+  let longitude = window.localStorage.getItem('longitude')
+  let latitude = window.localStorage.getItem('latitude')
   let args = {
-    format: 'jsonp',
     key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
-    location: `${latitude},${longitude}` // '116.480881,39.989410'
+    location: `${latitude},${longitude}`, // '116.480881,39.989410'
+    output: 'jsonp'
   }
-  Vue.http.jsonp('https://apis.map.qq.com/ws/geocoder/v1/', args)
-    .then((response) => {
-      if (response.status === 0) {
-        let formattedAddress = response.result.formatted_addresses.recommend
-        window.localStorage.setItem('formatted_address', formattedAddress)
-      }
-    })
+  Vue.http({
+    url: 'https://apis.map.qq.com/ws/geocoder/v1/',
+    method: 'JSONP',
+    data: args
+  }).then(function (response) {
+    console.log('response')
+    console.log(response)
+    console.log(response.data)
+    if (response.status === 200) {
+      let formattedAddress = response.data.result.formatted_addresses.recommend
+      window.localStorage.setItem('formatted_address', formattedAddress)
+    }
+  })
 }
 
 // 分享给朋友

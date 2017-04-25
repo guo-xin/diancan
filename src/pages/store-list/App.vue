@@ -240,7 +240,7 @@
       this.getData()
     },
     ready () {
-      this.getCustomerAddr()
+      Wechat.getFormattedAddress()
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop
@@ -252,11 +252,6 @@
       }
     },
     methods: {
-      getCustomerAddr () {
-        let longitude = window.localStorage.getItem('longitude')
-        let latitude = window.localStorage.getItem('latitude')
-        Wechat.getFormattedAddress(longitude, latitude)
-      },
       getData () {
         let _this = this
         if (!this.loaded) {

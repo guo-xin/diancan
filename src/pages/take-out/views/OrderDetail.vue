@@ -72,6 +72,10 @@
   import Util from '../../../methods/Util'
   import Loading from '../../../components/loading/Loading'
   import Config from '../../../methods/Config'
+  import img0 from '../assets/img_progress_0_white_label@2x.png'
+  import img1 from '../assets/img_progress_1_white_label@2x.png'
+  import img2 from '../assets/img_progress_2_white_label@2x.png'
+  import img3 from '../assets/img_progress_3_white_label@2x.png'
   //  import Api from '../api/mock'
 
   export default {
@@ -136,19 +140,19 @@
           transition.next({order: data.data})
           switch (this.order.orderinfo.delivery_info.current_state) {
             case 0: {
-              this.deliveryImg = '../assets/img_progress_0_white_label@2x.png'
+              this.deliveryImg = img0
               break
             }
             case 1: {
-              this.deliveryImg = '../assets/img_progress_1_white_label@2x.png'
+              this.deliveryImg = img1
               break
             }
             case 2: {
-              this.deliveryImg = '../assets/img_progress_2_white_label@2x.png'
+              this.deliveryImg = img2
               break
             }
             case 3: {
-              this.deliveryImg = '../assets/img_progress_3_white_label@2x.png'
+              this.deliveryImg = img3
               break
             }
           }
