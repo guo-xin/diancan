@@ -240,7 +240,6 @@
       this.getData()
     },
     ready () {
-      Wechat.getFormattedAddress()
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop

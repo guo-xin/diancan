@@ -43,7 +43,6 @@
         window.location.replace(url)
       }
       this.setOpenId()
-      Wechat.getFormattedAddress()
     },
     methods: {
       setOpenId () {

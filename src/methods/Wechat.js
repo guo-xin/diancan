@@ -164,25 +164,25 @@ exports.getCoords = () => {
 
 // 通过经纬度 获取详细地址
 exports.getFormattedAddress = () => {
-  let longitude = window.localStorage.getItem('longitude')
-  let latitude = window.localStorage.getItem('latitude')
-  let args = {
-    key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
-    location: `${latitude},${longitude}`, // '116.480881,39.989410'
-    output: 'jsonp'
-  }
-  Vue.http({
-    url: 'https://apis.map.qq.com/ws/geocoder/v1/',
-    method: 'JSONP',
-    data: args
-  }).then(function (response) {
-    console.log('response')
-    console.log(response)
-    console.log(response.data)
-    if (response.status === 200) {
-      let formattedAddress = response.data.result.formatted_addresses.recommend
-      window.localStorage.setItem('formatted_address', formattedAddress)
+  return new Promise(function (resolve, reject) {
+    let longitude = window.localStorage.getItem('longitude')
+    let latitude = window.localStorage.getItem('latitude')
+    let args = {
+      key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
+      location: `${latitude},${longitude}`, // '116.480881,39.989410'
+      output: 'jsonp'
     }
+    Vue.http({
+      url: 'https://apis.map.qq.com/ws/geocoder/v1/',
+      method: 'JSONP',
+      data: args
+    }).then(function (response) {
+      if (response.status === 200) {
+        let formattedAddress = response.data.result.formatted_addresses.recommend
+        window.localStorage.setItem('formatted_address', formattedAddress)
+        resolve()
+      }
+    })
   })
 }
 
