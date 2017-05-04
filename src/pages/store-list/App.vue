@@ -1,7 +1,7 @@
 <template>
   <get-Location></get-Location>
   <ul v-if="!noData">
-    <li v-for="item in responseData.list" @click='jumpUrl(item.userid)'>
+    <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
       <figure>
         <img :src="item.head_img + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         <time>{{item.start_time}} - {{item.end_time}}营业</time>
@@ -10,14 +10,14 @@
       <div>
         <h3>{{item.shopname}}</h3>
         <p class="address">{{item.address}}</p>
-        <p v-if="item.max_shipping_dist" class="distance"><strong><i></i>{{item.max_shipping_dist}}m</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
+        <p v-if="item.distance" class="distance"><strong><i></i>{{item.distance}}</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
         <footer>
           <p>
             <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
             <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
             <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
           </p>
-          <a href="tel:{{item.telephone}}"><i></i></a>
+          <a href="tel:{{item.telephone}}"></a>
         </footer>
       </div>
       <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
@@ -189,7 +189,7 @@
             }
           }
         }
-        i {
+        a {
           width: 48px;
           height: 48px;
           @extend .icon-phone;
@@ -226,21 +226,28 @@
         return {
           format: 'jsonp',
           userid: this.mId,
+          longitude: window.localStorage.getItem('longitude'),
+          latitude: window.localStorage.getItem('latitude'),
           pagesize: 10,
           page: 1
         }
       }
     },
     components: {
-      loading: loading,
-      Toast: Toast,
-      GetLocation: GetLocation
+      loading, Toast, GetLocation
     },
     created () {
-      this.getData()
+      let _this = this
+      let longitude = 0
+      let _t = setInterval(function () {
+        longitude = window.localStorage.getItem('longitude')
+        if (longitude) {
+          _this.getData()
+          clearInterval(_t)
+        }
+      }, 1000)
     },
     ready () {
-      Wechat.getFormattedAddress()
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop
@@ -283,8 +290,10 @@
           })
         }
       },
-      jumpUrl (mchntId) {
-        window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+      jumpUrl (mchntId, e) {
+        if (e.target.nodeName !== 'A') {
+          window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+        }
       }
     }
   }
