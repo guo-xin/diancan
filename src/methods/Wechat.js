@@ -77,7 +77,7 @@ const jsApiList = [
   'onMenuShareWeibo'
 ]
 
-exports.init = () => {
+exports.init = (jsApis = jsApiList) => {
   let args = {
     format: 'jsonp',
     url: window.location.href
@@ -97,9 +97,8 @@ exports.init = () => {
         timestamp: data.timestamp,  // 必填，生成签名的时间戳
         nonceStr: data.nonceStr, // 必填，生成签名的随机串
         signature: data.signature,  // 必填，签名，见附录1
-        jsApiList: [] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        jsApiList: jsApis // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
       }
-      wxargs.jsApiList = jsApiList
       data.url = window.location.href
       wx.config(wxargs)
     }, (response) => {

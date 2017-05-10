@@ -104,7 +104,9 @@ appConfig.pages.forEach(function(page) {
     RUN_ENV: utils.env
   }
   // https://github.com/ampedandwired/html-webpack-plugin
-  prodWebpackConfig.plugins.push(new HtmlWebpackPlugin(conf))
+  if (page.isBuild) {
+    prodWebpackConfig.plugins.push(new HtmlWebpackPlugin(conf))
+  }
 });
 
 // console.log('chunks:', chunks)

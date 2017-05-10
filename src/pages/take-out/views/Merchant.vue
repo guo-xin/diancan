@@ -143,8 +143,8 @@
           method: 'JSONP',
           data: args
         }).then(function (response) {
-          // success callback
           let data = response.data
+          // 验证链接时间是否过期
           if (data.respcd === '4000') {
             this.isExpire = true
             return

@@ -25,7 +25,6 @@
     },
     methods: {
       scan () {
-        window.alert('scan')
         Wechat.onScanQRcode()
       }
     }
