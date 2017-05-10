@@ -3,7 +3,7 @@
   <ul v-if="!noData">
     <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
       <figure>
-        <img :src="item.head_img + '?imageView2/1/w/200/h/150'" alt="店铺图片">
+        <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         <time>{{item.start_time}} - {{item.end_time}}营业</time>
         <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
       </figure>
