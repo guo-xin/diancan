@@ -32,5 +32,11 @@ exports.pages = [
     template: 'src/pages/store-list/index.ejs',
     title: '店铺列表',
     chunks: 'vue_vue-resource'
+  },
+  {
+    filename: 'scan-qrcode',
+    template: 'src/pages/scan-qrcode/index.ejs',
+    title: '扫码点餐',
+    chunks: 'vue_vue-resource'
   }
 ]
