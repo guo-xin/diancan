@@ -1,5 +1,5 @@
 <template>
-  <img @click="scan" src="assets/scan-qrcode.png" alt="扫码点餐">
+  <div @click="scan"></div>
 </template>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   html, body {
@@ -8,9 +8,11 @@
   body {
     margin: 0;
   }
-  img {
+  div {
     width: 100%;
     height: 100%;
+    background: url('assets/scan-qrcode.png') no-repeat;
+    background-size: contain;
   }
 </style>
 <script type="text/ecmascript-6">

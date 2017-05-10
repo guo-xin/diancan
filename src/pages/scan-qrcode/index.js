@@ -9,7 +9,11 @@ import App from './App.vue'
 import Wechat from '../../methods/Wechat'
 Wechat.verify().then(initVue)
 // initVue()
-Wechat.init()
+Wechat.init([
+  'checkJsApi',
+  'hideAllNonBaseMenuItem',
+  'scanQRCode'
+])
 Wechat.hideOptionMenu()
 
 function initVue () {

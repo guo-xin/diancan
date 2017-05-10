@@ -186,7 +186,7 @@
           const shopname = data.data.shopname
           let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
           let imgUrl = data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-          this.$dispatch('on-onMenuShareAppMessage', {title: '还在店里排队叫餐吗？我已经在XX店坐享美味啦~', desc: shopname + '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
+          this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
           this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
 
           Util.setTitle(shopname)
