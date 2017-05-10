@@ -100,6 +100,9 @@
       'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
         Wechat.onMenuShareAppMessage(args)
       },
+      'on-onMenuShareTimeline' (args = {}) {  // 分享朋友圈
+        Wechat.onMenuShareTimeline(args)
+      },
       'on-qr' () {
         Wechat.onScanQRcode()
       }

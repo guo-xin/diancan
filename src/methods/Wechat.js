@@ -208,7 +208,7 @@ exports.onMenuShareAppMessage = (args) => {
     title: '好近点餐', // 分享标题
     desc: '好近点餐好近点餐好近点餐', // 分享描述
     link: '', // 分享链接
-    imgUrl: 'http://near.m1img.com/op_upload/8/146667767887.png', // 分享图标
+    imgUrl: '', // 分享图标
     // type: '', // 分享类型,music、video或link，不填默认为link
     // dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
     success () {
@@ -226,6 +226,30 @@ exports.onMenuShareAppMessage = (args) => {
   }
   wx.showMenuItems(menuList)
   wx.onMenuShareAppMessage(params)
+}
+// 分享到朋友圈
+exports.onMenuShareTimeline = (args) => {
+  let params = Object.assign({
+    title: '好近点餐', // 分享标题
+    link: '', // 分享链接
+    imgUrl: '', // 分享图标
+    // type: '', // 分享类型,music、video或link，不填默认为link
+    // dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+    success () {
+    },
+    cancel () {
+    }
+  }, args)
+  const menuList = {
+    menuList: ['menuItem:share:timeline']
+  }
+  if (!isReady) {
+    actionQueue.push('wx.showMenuItems(' + JSON.stringify(menuList) + ')')
+    actionQueue.push('wx.onMenuShareTimeline(' + JSON.stringify(params) + ')')
+    return
+  }
+  wx.showMenuItems(menuList)
+  wx.onMenuShareTimeline(params)
 }
 // 唤起二维码
 exports.onScanQRcode = () => {

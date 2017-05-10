@@ -14,28 +14,28 @@ exports.pages = [
     template: 'src/pages/index/index.ejs',
     title:  '微信点餐',
     chunks: 'vue_vue-resource',
-    isBuild: false
+    isBuild: true
   },
   {
     filename: 'order-list',
     template: 'src/pages/order-list/index.ejs',
     title: '我的订单',
     chunks: 'vue_vue-resource',
-    isBuild: false
+    isBuild: true
   },
   {
     filename: 'take-out',
     template: 'src/pages/take-out/index.ejs',
     title: '微信外送',
     chunks: 'vue_vue-resource',
-    isBuild: false
+    isBuild: true
   },
   {
     filename: 'store-list',
     template: 'src/pages/store-list/index.ejs',
     title: '店铺列表',
     chunks: 'vue_vue-resource',
-    isBuild: false
+    isBuild: true
   },
   {
     filename: 'scan-qrcode',
