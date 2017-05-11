@@ -192,7 +192,7 @@
           })
           const shopname = data.data.shopname
           let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
-          let imgUrl = data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+          let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
           this.$dispatch('on-onMenuShareAppMessage', {title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`, desc: '菜单在眼前，吃啥不纠结！', imgUrl: imgUrl, link: shareLink})
           this.$dispatch('on-onMenuShareTimeline', {title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`, imgUrl: imgUrl, link: shareLink})
 
