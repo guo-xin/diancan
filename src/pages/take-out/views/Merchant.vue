@@ -143,8 +143,8 @@
           method: 'JSONP',
           data: args
         }).then(function (response) {
-          // success callback
           let data = response.data
+          // 验证链接时间是否过期
           if (data.respcd === '4000') {
             this.isExpire = true
             return
@@ -192,7 +192,9 @@
           })
           const shopname = data.data.shopname
           let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
-          this.$dispatch('on-onMenuShareAppMessage', {title: shopname + '好吃到爆，快来一起品尝', desc: '天涯海角有穷时，只有相思无尽处，万年的等待，只为你~', link: shareLink})
+          let imgUrl = data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+          this.$dispatch('on-onMenuShareAppMessage', {title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`, desc: '菜单在眼前，吃啥不纠结！', imgUrl: imgUrl, link: shareLink})
+          this.$dispatch('on-onMenuShareTimeline', {title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`, imgUrl: imgUrl, link: shareLink})
 
           Util.setTitle(shopname)
         }, function (response) {

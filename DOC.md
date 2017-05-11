@@ -34,3 +34,4 @@
 	- order-list 订单页面
 	- take-out 好近外卖页面
 	- store-list 店铺页面
+	- scan-qrcode 扫码点餐

@@ -66,7 +66,11 @@ exports.entry = (function () {
     // n = n.slice(0, n.lastIndexOf('/'));
     //接着我对路径字符串进行了一些裁剪成想要的路径
     // entry[n] = name;
-    entry[n] = name + '/index.js';
+    appConfig.pages.forEach(function(page) {
+      if (page.filename === n && page.isBuild) {
+        entry[n] = name + '/index.js';
+      }
+    })
   });
 
   // var entry = {};
