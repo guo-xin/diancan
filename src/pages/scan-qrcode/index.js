@@ -7,8 +7,7 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import Wechat from '../../methods/Wechat'
-Wechat.verify().then(initVue)
-// initVue()
+initVue()
 Wechat.init([
   'checkJsApi',
   'hideAllNonBaseMenuItem',
