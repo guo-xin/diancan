@@ -51,6 +51,7 @@
     @extend .icon;
   }
   header {
+    background-color: #fff;
     padding: 16px 30px;
     border-bottom: 2px solid $midGray;
     display: flex;

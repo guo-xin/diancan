@@ -1,46 +1,38 @@
 <template>
   <div class="create-order-view">
-    <section class="pay">
-      <h2>支付方式</h2>
-      <div class="text">
-        <img
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGgAAABgCAMAAADGkcf+AAAAnFBMVEUAAAB/1CF+1CF+0yF/1CF+1CF+1CGI9jZ/1CGB1iKB1iSC2CR+1CGA1COB1yON4DN/1CJ/1SF/1SKB1SOC2iaF3CmW/2p+1CF+1CF/1CKD5zF/1CKA1SF/1SKB1iR/1CF+1CF/1CF+1CGA1CJ/1CKA1SOC1yWB2SaA1CJ/1CJ/1SKA1SN/1CGA1CKA1CF/1CJ/1CJ/1CKA1SN+0yHQOtO8AAAAM3RSTlMA+Oj789fDBHo1LxzuRiUI66psPBYQAtC7iwrLoVwp5ODctpxXUCINl3FhTa+lkYWAZkHLcJMGAAADr0lEQVRo3qzV6W6yQACF4QPjMGxSUXAX99Yu6tee+7+3L5rGVpkBrPP8IhBCDiEvaCwPNv56OJHzWDid5cBbTf1toWBVP/ycLqkjZNpNYMd4u49ZabHb5niQ2nw4bECkbTwg+ueysaWf4W/CVPAuIk1wv+c97yfWEe6T7QT/xBnluMOswz+LN2gqWvEhadZwTosPct9RTx1owU6hRubRiuELKhVzWjKIUCF0aY0bwCiIaVErgEHQolVuYoiOS8sWETRySetkjhI1pH0fBUpGtM1ZFyjr0bL4mEHjZUGrFq+GMkxp02CmoBfQomEbRh5tEfsQ17bpr2Nr1TlEuJasyMvCvqQVrp/j2vjokPTw7Z02yM8n3NgseHKZZKMJ3ha3iuHlIs4SC6np4dbLSPAiwcmBj3F2CUo2c/7i42RuPzWhxyvyfPKh1HTHmp4dBG+EAHxqdRzWmmz6KJu5LDkCmFAnHucjVlt9Adq3puEBT9SSANoujcQ0hEa+MySjb+qpowBkK1NqRhF0Pjs0KPBGvR5Oug7L5n4OnWBCo5nxFz7CWVG6Wb4p6GRrVjhgRT1X4Uz5V6O8d2j1u3F1OzAxj/2W/HxHaQC93oDVPEgaTHDR/uiQQh6eoZdNWWcAlyYBfhsrGKjXFmvN4dBkj0a+JBtoVTxIRKgXpWxEwKXREXWU32IzHUgauU+o1pZsavm/N3vdbRQGogB8YGlKUsAstISQa3MhJTRbkvP+77aqWhV2m9iY4H5/EULC4zkjWzppHSCTv7K9MdbSp9eJyqKGVD4Mx7hmt6KWDSJK/MZlQUpNEWLWlBVeDzi6zsikL03w3XxJfU/AmBJeJo1qjeoGNpQ5SaJawx8APmXu0JCcPHbjA7gPKXNWh46aI6D8dzON9qnYJmfKWAHeZZXF7ny8S1bygomB/C2kknqhI8o5Dm8T4YNY0ihnj08FjXLrlm/ToKXAlxMNOqAhpTHTBA25Q0OsEWom66HAv5IBjUjxv8dnGmBfiOiFw5rRo++Svdvhoog9K4Af+ZKLqw7sUQSJ7a8eO4+U77EXXgmFhyl7MM6hJF54s2OGNlzeJpyjnaL/a1gD9wfPJVobszM7ukdricWOPDeDhgW7mR4EtGzZgTMbQlfFhlW529hUCDelgL5X1l72ADCs1iGvCNdunKCTOtPvYnzJt2/Hgc0Ge3Cs5gE6y/jJqr6XqngIRrHvx6PgUeBGQ35IFzCnDj97DtMmJK3JHsYVtGY5fkAyeoIBfwE2fBJDhMQqyAAAAABJRU5ErkJggg==">
-        <span>微信支付</span>
-        <i class="iconfont pay-type_select">&#xe603;</i>
+    <section v-if="isEditAddress" class="fill-table-number item">
+      <label for="table-number-input">桌号：</label>
+      <input id="table-number-input" type="text" v-model="address" placeholder="请填写餐桌号码（选填）"/>
+    </section>
+    <section class="table-number">
+      <strong>&#8901;<span>12号桌</span>&#8901;</strong>
+    </section>
+    <section class="note item">
+      <label for="note">备注：</label>
+      <textarea v-model="note" id="note" placeholder="可填写口味要求或忌口等信息"></textarea>
+    </section>
+    <section class="order item">
+      <ul class="goods-list">
+        <li v-for="goods in cart">
+          <div>
+            <strong>{{goods.name}}</strong>
+            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+          </div>
+          <span>￥{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+        </li>
+      </ul>
+      <div class="total">
+        <del>原价¥63</del>
+        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
       </div>
     </section>
-    <ul class="goods-list">
-      <li v-for="goods in cart">
-        <div class="l-r">
-          <div class="l_auto">
-            <div class="name">{{goods.name}}</div>
-            <div class="specname">{{goods.spec_list[goods._specIndex].name}}</div>
-          </div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.spec_list[goods._specIndex]._count}}</span>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <section class="info">
-      <h2>补充信息</h2>
-      <div class="l-r row">
-        <span class="text">桌号</span>
-        <!--<input class="num" :class="{'edit': isEditAddress}" :disabled="!isEditAddress" type="text" maxlength="8" v-model="address" placeholder="桌号"/>-->
-        <!--开放编辑桌号-->
-        <input class="l_auto num" :class="{'edit': isEditAddress}" type="text" maxlength="8" v-model="address" placeholder=""/>
-      </div>
-      <div class="l-r row">
-        <span class="text">备注</span>
-        <input class="l_auto remarks" type="text" v-model="note" maxlength="30" placeholder="可填写口味要求或忌口等信息"/>
-      </div>
+    <section class="payment item">
+      <em>支付方式</em>
+      <span><i></i>微信支付</span>
     </section>
-
-    <div class="l-r-lr order-bar">
-      <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{cartData.price | formatCurrency}}</div>
-      <button class="btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
-    </div>
-    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
   </div>
+  <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
+  <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
 </template>
 
 <script type="text/ecmascript-6">
@@ -49,7 +41,6 @@
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
   import alert from '../components/alert/alert.vue'
-
   export default {
     components: {
       alert
@@ -124,12 +115,7 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-//        let args = this.$route.params
-//        if (!(this.address = ('' + this.address).trim())) {
-//          this.$dispatch('on-toast', '请输入桌号！')
-//          return false
-//        }
-        this.btnText = '下单中'
+        this.btnText = '支付中'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
         let goodsItem = cart.map((goods) => {
@@ -168,7 +154,6 @@
           this.orderId = orderId
 //          this.$dispatch('on-toast', '订单创建成功：' + orderId)
           this.getPayArgs(data.data)
-          this.btnText = '下单成功'
         }, (response) => {
           // error callback
         })
@@ -200,7 +185,6 @@
         })
       },
       pay (payParams) {
-        this.btnText = '支付中'
         if (!isWX) {  // 不是微信中打开
           this.$dispatch('on-toast', '支付失败，请在微信中打开')
           this.btnText = '确认下单'
@@ -278,158 +262,130 @@
   }
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
+  @import "../styles/base/_base";
+  body {
+    background-color: #f7f7f7;
+  }
   .create-order-view {
-    padding-bottom: 300px;
+    font-size: 28px;
+    color: $black;
   }
-
-  .edit {
-    color: #2F323A !important;
-    border-color: #FE9B20 !important;
+  .item {
+    padding: 24px 30px;
+    margin-top: 18px;
+    background-color: #fff;
+    border-top: 2px solid #E5E5E5;
+    border-bottom: 2px solid #E5E5E5;
   }
-
-  .text {
-    font-size: 34px;
-    color: #2f323a;
-    line-height: 34px;
-  }
-
-  section {
-    padding: 30px;
-    h2 {
-      font-size: 30px;
-      color: #8a8c92;
-    }
-  }
-
-  section.pay {
-    /*position: relative;*/
-    background: #E5E5E5;
-    /*height: 160px;*/
-    .text {
-      position: relative;
-      display: flex;
-      align-items: center;
-      margin-top: 28px;
-      img {
-        width: 52px;
-        height: 48px;
-        margin-right: 20px;
-      }
-    }
-    .pay-type_select {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-
-      font-size: 50px;
-      color: #0076FF;
-    }
-  }
-
-  .goods-list {
-    padding: 30px;
-    padding-right: 0;
-
-    li {
-      padding: 30px;
-      padding-left: 0;
-      border-bottom: 2px solid #e5e5e5; /*px*/
-      >div{
-        align-items: center;
-      }
-    }
-    .name {
-      margin-right: 5px;
-      font-size: 30px;
-      line-height: 30px;
-      color: #2f323a;
-    }
-    .specname {
-      margin-top: 15px;
-      font-size: 26px;
-      color: #8A8C92;
-    }
-    .price {
-      width: 210px;
-      text-align: right;
-      font-size: 34px;
-      color: #fe9b20;
-      line-height: 34px;
-      span {
-        /*font-size: 34px;*/
-        font-size: 75%;
-        color: #8A8C92;
-      }
-    }
-  }
-
-  .row {
-    margin-top: 30px;
+  .fill-table-number {
+    display: flex;
     align-items: center;
-    > *:first-child {
-      width: 128px;
+    padding-top: 0;
+    padding-bottom: 0;
+    input {
+      flex: 1;
+      padding: 24px 0;
+      border: none;
+      vertical-align: middle;
+      &::placeholder {
+        color: $midGray;
+      }
+      &:focus {
+        outline: none;
+      }
     }
   }
-
-  /*编号*/
-  .num {
-    padding: 0 10px;
-    /*width: 124px;*/
-    /*width: 350px;*/
-    /*width: 590px;*/
-    height: 68px;
-    border: 2px solid #E5E5E5; /*px*/
-    /*border: 2px solid #fe9b20; !*px*!*/
-    border-radius: 6px;
-    /*text-align: center;*/
-    font-size: 30px;
-    /*color: #8A8C92;*/
+  .table-number {
+    text-align: center;
+    padding: 28px 0;
+    line-height: 1;
+    strong {
+      color: $orange;
+      font-size: 40px;
+      span {
+        margin: 0 14px;
+      }
+    }
   }
-
-  /*备注*/
-  .remarks {
-    padding: 0 10px;
-    border: 2px solid #E5E5E5; /*px*/
-    border-radius: 6px;
-    /*width: 590px;*/
-    height: 68px;
-    font-size: 30px;
+  .note {
+    display: flex;
+    label {
+      line-height: 1.5;
+    }
+    textarea {
+      flex: 1;
+      border: none;
+      line-height: 1.5;
+      resize: none;
+    }
   }
-
-  .order-bar {
+  .order {
+    padding: 0;
+  }
+  .goods-list {
+    font-size: 30px;
+    padding: 10px 30px;
+    li {
+      display: flex;
+      line-height: 80px;
+    }
+    div {
+      flex: 1;
+      strong {
+        display: block;
+      }
+      em {
+        font-size: 26px;
+        color: $aluminium;
+      }
+    }
+    span {
+      font-size: 34px;
+      em {
+        font-size: 26px;
+        color: $aluminium;
+      }
+    }
+  }
+  .total {
+    border-top: 2px solid #E5E5E5;
+    line-height: 90px;
+    padding: 0 30px;
+    del {
+      color: $aluminium;
+      margin-right: 30px;
+    }
+    em {
+      font-size: 40px;
+      line-height: 1;
+    }
+    text-align: right;
+  }
+  .payment {
+    display: flex;
+    span {
+      i {
+        width: 42px;
+        height: 40px;
+        margin-right: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        background: url('../assets/wechat.svg') no-repeat;
+      }
+      flex: 1;
+      text-align: right;
+    }
+  }
+  .done-btn {
+    width: 100%;
+    height: 88px;
+    border: none;
+    background-color: #FF8100;
+    color: #fff;
+    font-size: 32px;
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
-    padding-left: 30px;
-    padding-right: 12px;
-
-    background: #e5e5e5;
-    height: 104px;
-    align-items: center;
-
-    span {
-      font-size: 26px;
-      color: #2f323a;
-    }
-    .price {
-      font-size: 40px;
-      color: #2f323a;
-      line-height: 40px;
-    }
-    button {
-      background: #fe9b20;
-      border-radius: 6px;
-      width: 260px;
-      height: 80px;
-      font-size: 40px;
-      color: #fff;
-    }
-  }
-
-  .info {
-    /*margin-bottom: 300px;*/
   }
 </style>

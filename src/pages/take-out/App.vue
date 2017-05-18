@@ -186,10 +186,12 @@
     /*transition: all .3s cubic-bezier(.645, .045, .355, 1);*/
     /*transform: translate3d(0, 0, 0);*/
   }
+  body {
+    background-color: #f7f7f7;
+  }
   #app-container {
     height: 100%;
     min-height: 100%;
-    background-color: #f7f7f7;
     position: relative;
   }
 </style>
