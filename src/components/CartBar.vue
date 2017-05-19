@@ -175,15 +175,13 @@
   }
 
   .row-status {
-    margin-right: 12px;
     display: block;
-    width: 192px;
-    height: 80px;
-    line-height: 80px;
+    width: 200px;
+    height: 104px;
+    line-height: 104px;
     text-align: center;
-    background-color: #FE9B20;
-    border-radius: 6px; /*px*/
-    font-size: 40px;
+    background-color: #FF8100;
+    font-size: 36px;
     color: #fff;
   }
 

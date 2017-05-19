@@ -13,7 +13,7 @@
       <label for="note">备注：</label>
       <textarea v-model="note" id="note" placeholder="可填写口味要求或忌口等信息"></textarea>
     </section>
-    <section class="order item">
+    <section class="goods item">
       <ul class="goods-list">
         <li v-for="goods in cart">
           <div>
@@ -35,7 +35,7 @@
         </li>
       </ul>
       <div class="total">
-        <del>原价¥63</del>
+        <!-- <del>原价¥63</del> -->
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
       </div>
     </section>
@@ -392,7 +392,7 @@
       resize: none;
     }
   }
-  .order {
+  .goods {
     padding: 0;
   }
   .goods-list {

@@ -22,7 +22,7 @@
         </li>
       </ul>
       <div class="total">
-        <del>原价¥63</del>
+        <!-- <del>原价¥63</del> -->
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
       </div>
     </section>

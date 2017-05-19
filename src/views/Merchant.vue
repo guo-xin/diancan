@@ -565,14 +565,13 @@
     width: 196px;
     height: 100px;
     button {
-      padding: 0 20px;
-      /*width: 156px;*/
+      padding: 0 28px;
       height: 60px;
-      border: 2px solid #C2C2C2;  /*px*/
+      border: none;
       border-radius: 30px;
-      background-color: #fff;
-      font-size: 30px;
-      color: #FE9B20;
+      background-color: #FF8100;
+      font-size: 24px;
+      color: #fff;
     }
   }
 </style>

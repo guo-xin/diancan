@@ -115,7 +115,7 @@
   @import "../../styles/iconfont/iconfont.css";
   /*@import '~vux/dist/vux.css';*/
 
-  html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+  html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
     padding: 0;
     margin: 0;
     border: 0;
@@ -144,6 +144,17 @@
 
   em {
     font-style: normal;
+  }
+
+  body {
+    background-color: #f7f7f7;
+  }
+
+  #app-container {
+    height: 100%;
+    min-height: 100%;
+    font-size: 30px;
+    position: relative;
   }
 
   // 文字中划线
@@ -185,13 +196,5 @@
     user-select: none;
     /*transition: all .3s cubic-bezier(.645, .045, .355, 1);*/
     /*transform: translate3d(0, 0, 0);*/
-  }
-  body {
-    background-color: #f7f7f7;
-  }
-  #app-container {
-    height: 100%;
-    min-height: 100%;
-    position: relative;
   }
 </style>
