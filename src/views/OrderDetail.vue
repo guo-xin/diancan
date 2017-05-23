@@ -41,7 +41,7 @@
     <section class="order-info">
       <ul>
         <li>订单编号：{{order.orderinfo.order_id}}</li>
-        <li>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</li>
+        <li>购买时间：{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</li>
       </ul>
     </section>
     </div>
@@ -76,7 +76,7 @@
 //      let Api = require('../api/mock')
 //      this.$set('order', Api.order_detail)
     },
-    ready () {
+    mounted () {
       document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
     },
     route: {

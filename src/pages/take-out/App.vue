@@ -37,7 +37,7 @@
         tempAddr: {}
       }
     },
-    ready () {
+    mounted () {
       if (window.location.hash === '#!/') {
         let url = window.location.origin + window.location.pathname + window.location.search + window.localStorage.getItem('redirect_uri')
         window.location.replace(url)
@@ -76,7 +76,7 @@
           this.cart.push(divGoods)
         } else {
           if (spec._count) { // 修改数量
-            this.cart.$set(index, divGoods)
+            this.$set(this.cart, index, divGoods)
           } else {  // 移除
             this.cart.splice(index, 1)
           }

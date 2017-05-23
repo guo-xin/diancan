@@ -6,7 +6,7 @@
         <h3>配送至</h3>
       </div>
       <ul class="area-wrap">
-        <li id="{{item.id}}" v-for="item in areaInfo" @click="getArea(item.id, item.name)">{{item.name}}</li>
+        <li :id="item.id" v-for="item in areaInfo" @click="getArea(item.id, item.name)">{{item.name}}</li>
       </ul>
     </div>
   </div>
@@ -23,8 +23,6 @@
       }
     },
     props: ['visible'],
-    ready () {
-    },
     methods: {
       init () {
         this.level = 0

@@ -22,9 +22,6 @@
       return {
       }
     },
-    ready () {
-
-    },
     methods: {
       scan () {
         Wechat.onScanQRcode()

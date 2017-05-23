@@ -7,7 +7,8 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import Wechat from '../../methods/Wechat'
-initVue()
+// initVue()
+Wechat.verify().then(initVue)
 Wechat.init([
   'checkJsApi',
   'hideAllNonBaseMenuItem',
@@ -18,8 +19,8 @@ Wechat.hideOptionMenu()
 function initVue () {
   /* eslint-disable no-new */
   new Vue({
-    el: 'body',
+    el: '#app',
+    render: creatElment => creatElment('App'),
     components: { App }
   })
 }
-/* eslint-disable no-new */

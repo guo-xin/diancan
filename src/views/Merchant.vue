@@ -4,17 +4,17 @@
       <loading :visible="$loadingRouteData"></loading>
     </div>
     <div class="order-info" v-show="isEmptyInfo">
-      <p>你在 {{order_info.order_time | formatTime 'hh:mm'}} 提交了一个订单
+      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
         <a @click="goDetail">查看取餐号</a>
       </p>
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <scroller class="scroller-left" lock-x v-ref:scrollerleft height="100%">
+        <scroller class="scroller-left" lock-x ref="scrollerleft" height="100%">
           <div class="list-group">
             <ul class="">
-              <li v-for="group in groupList" :class="{'active': selectIndex===$index}"
-                  @click="select($index, group)">
+              <li v-for="group in groupList" :class="{'active': selectIndex === index}"
+                  @click="select(index, group)">
                 <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
                 </div>
               </li>
@@ -23,7 +23,7 @@
         </scroller>
       </div>
       <div class="l_auto shopmenu-list-container">
-        <scroller class="scroller-right" lock-x v-ref:scroller height="100%">
+        <scroller class="scroller-right" lock-x ref="scroller" height="100%">
           <div class="shopmenu-list">
             <no-data v-if="!goodsList.length" class="no-data"></no-data>
             <ul class="listgroup" v-else>
@@ -121,10 +121,6 @@
         return !Util.isEmptyObject(this.order_info)
       }
     },
-    created () {
-    },
-    ready () {
-    },
     route: {
       data (transition) {
         /**
@@ -194,14 +190,14 @@
           // error callback
         })
       },
-      canDeactivate (transition) {
+      beforeRouteLeave (transition) {
         this.$dispatch('on-hideOptionMenu')
         transition.next()
       }
     },
     methods: {
       goDetail () {
-        this.$router.go({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
+        this.$router.push({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
       },
       getKey () {
         return STORAGEKEY + '_' + this.mchnt_id
@@ -322,16 +318,17 @@
           return
         }
         let spec = Object.assign({}, oldGoods.spec_list[specIndex], {_count: newCount})
-        this.groupList[index].goods_list[i].spec_list.$set(specIndex, spec)
+        this.$set(this.groupList[index].goods_list[i].spec_list, specIndex, spec)
         let newGoods = Object.assign({}, oldGoods)
-        this.groupList[index].goods_list.$set(i, newGoods)
+        // this.groupList[index].$set(.goods_list, i, newGoods)
+        this.$set(this.groupList[index].goods_list, i, newGoods)
 
         this.$dispatch('on-changeCart', newGoods, specIndex, this.mchnt_id)
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0
         let newGroup = Object.assign({}, oldGroup, {_count: isDIY ? type : oldGroup._count + type})
-        this.groupList.$set(index, newGroup)
+        this.$set(this.groupList, index, newGroup)
       },
       hasSelect (goods) {
         return !!goods.spec_list.find(spec => spec._count)

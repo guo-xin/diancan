@@ -16,7 +16,6 @@
           </div>
         </div>
       </div>
-      <!--<a class="row-status" v-link="{name: 'createOrder', params: {mchnt_id: $parent.mchnt_id, address: $parent.address}}">选好了</a>-->
       <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
       <span v-else>
         <a class="row-status" @click.prevent="goNextView()" v-if="deliver.startDeliveryFee <= cartData.price">选好了</a>
@@ -25,36 +24,38 @@
     </div>
     <!--列表-->
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
-    <div class="cart-list" v-show="visibleList" transition="totop">
-      <div class="title" @click="cleanCart">
-        清空购物车
-        <img
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAABFZJREFUaAXtWs1rE0EUnzdJmxb8QMUv1Ap6ETwI3vRSPYjWi6jQqyBKKW0DTZPcBEVPTZpAkraoRfSif4DgJ2q96E30IHjx4jdKBVFp2jT7fLO6Mpmtqbuzy2ZhA2HfzLz3e+83v2FmYQeYh79S6VZirvb6AjI8wZCt1YIG9gWQX020bzuTTB6e08KSguOSrW0S2RuIeFQbSADQhCEzMnPzr7dT67gnmAQCXgHliuV9WMdHXuHJOBCD/ZnhoWm5z63N3QaqcWjgWbXPq7aX2J4ovJi6EON7M8ODT92QzhUre7BuPJFjvVLZE4VVBQDgrluygqSIBWD3ZMJqDnnMia1NOF8sHaMNprshKYdzDW03Dc7PNoRRDjNXQ6fzhuslnZucXMdma+L4OY/IElZqU92RoUNWW+eZGyvfoV3/oIVBqs/RNnuGdbZdy/T3f7b6nTxNwoXC5KY6LoxSYDcl2OQEQPalgmYBYXc6PfRK7ndr5/PlHQj4jCa00y0GCfCeYh/HIJ5NpfrfQ6l0eXN1vvqcDr41bkFFHAEjZ3BqZGTwig6OGjs2VjlpMJwiIVyvxt/1sa+Jts5dvFqrkrJ6ZInuNwb8iNdkRaEmJmGbOdTZcNCmVbJacOXAcJ+DOMkVZmgJPyFpMyuXt2/NpAZuSoOemgJb5ADOsmZOBjNuEgiuMJovoRycTSe1lo6M1Qq2yk/7WGoFUk5qiAg7ma0w+kJurPSBdrCNYSzeac204X3kDOGx08Cw+iODaZ5o78gQ869hJfH/dcNMR1tHlieTp9+JNxB6U7pOh/uH/wcIh6d4tRTc4jy+S3C1nbnqubXUuZwvlnuMOl4y6fPY6Wxq4E6zqfDbf6n6tY8lNNhFIrhZ/AGN38SbMPbbv0lqc0ifMOIWKwm94P+1rT71KfvItupntWUf2bbGnT61CTtNGLR/RDhoBfzOHyns9wwHjR8pHLQCfuePFPZ7hoPGjxQOWgG/80cK+z3DQeNHCgetgN/5I4X9nuGg8SOFg1bA7/yRwn7PcND4kcJBK+B3fm2F6TPGW6tI2bb61KfsI9uqn9WWfWTbGnf61CfMWR8lfSf+dAdD2E1/f3x882+anAa1rw+nh4duE86SXxysQvz2t/L866mt8L+AW7U/ItyqynhVl01h2gl/yODF4sXQ3P9Qa1W5CF42wgzxjUx4AWuNV4PlwRazbbUqXES5dsLKxWyagNGJiYlVLcbNVo5ZI9UqDyCH+3Jb2LZjKQZ8agGNJI2ZkyE+Qv+crb/IFSpZTMB0dmDgkwoSZHt0fHxDrGp0U4055YO5AbH4lFqb7Y6HcKCL2WUKHlSdw9SmW7Pj6ZGkjYN9SROrFcvaU3Tz/EGYCMq1AoOHXVs2pOQ+y16UcF9fX23lskQP7XIV+tct5xA8DaHs1q71Pb29vfOL1bvokpYdC4XKzjoap+gW2wHawLpobLk83gL2dyLxllbkPbH/pFKDL5vV9AvkBnZAJrqyNgAAAABJRU5ErkJggg==">
-      </div>
-      <no-data class="no-data" v-show="!cart.length"></no-data>
-      <div class="cart-list_box">
-        <!--8.6rem-->
-        <scroller lock-x v-ref:cartscroller height="100%">
-        <ul v-show="cart.length">
-          <li v-for="goods in cart">
-            <div>
-              <div class="name one_text">{{goods.name}}</div>
-              <div class="goods-info">
-                <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}</span><span class="spec">{{goods.spec_list[goods._specIndex].name}}</span>
+    <transition name="totop">
+      <div class="cart-list" v-show="visibleList">
+        <div class="title" @click="cleanCart">
+          清空购物车
+          <img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAABFZJREFUaAXtWs1rE0EUnzdJmxb8QMUv1Ap6ETwI3vRSPYjWi6jQqyBKKW0DTZPcBEVPTZpAkraoRfSif4DgJ2q96E30IHjx4jdKBVFp2jT7fLO6Mpmtqbuzy2ZhA2HfzLz3e+83v2FmYQeYh79S6VZirvb6AjI8wZCt1YIG9gWQX020bzuTTB6e08KSguOSrW0S2RuIeFQbSADQhCEzMnPzr7dT67gnmAQCXgHliuV9WMdHXuHJOBCD/ZnhoWm5z63N3QaqcWjgWbXPq7aX2J4ovJi6EON7M8ODT92QzhUre7BuPJFjvVLZE4VVBQDgrluygqSIBWD3ZMJqDnnMia1NOF8sHaMNprshKYdzDW03Dc7PNoRRDjNXQ6fzhuslnZucXMdma+L4OY/IElZqU92RoUNWW+eZGyvfoV3/oIVBqs/RNnuGdbZdy/T3f7b6nTxNwoXC5KY6LoxSYDcl2OQEQPalgmYBYXc6PfRK7ndr5/PlHQj4jCa00y0GCfCeYh/HIJ5NpfrfQ6l0eXN1vvqcDr41bkFFHAEjZ3BqZGTwig6OGjs2VjlpMJwiIVyvxt/1sa+Jts5dvFqrkrJ6ZInuNwb8iNdkRaEmJmGbOdTZcNCmVbJacOXAcJ+DOMkVZmgJPyFpMyuXt2/NpAZuSoOemgJb5ADOsmZOBjNuEgiuMJovoRycTSe1lo6M1Qq2yk/7WGoFUk5qiAg7ma0w+kJurPSBdrCNYSzeac204X3kDOGx08Cw+iODaZ5o78gQ869hJfH/dcNMR1tHlieTp9+JNxB6U7pOh/uH/wcIh6d4tRTc4jy+S3C1nbnqubXUuZwvlnuMOl4y6fPY6Wxq4E6zqfDbf6n6tY8lNNhFIrhZ/AGN38SbMPbbv0lqc0ifMOIWKwm94P+1rT71KfvItupntWUf2bbGnT61CTtNGLR/RDhoBfzOHyns9wwHjR8pHLQCfuePFPZ7hoPGjxQOWgG/80cK+z3DQeNHCgetgN/5I4X9nuGg8SOFg1bA7/yRwn7PcND4kcJBK+B3fm2F6TPGW6tI2bb61KfsI9uqn9WWfWTbGnf61CfMWR8lfSf+dAdD2E1/f3x882+anAa1rw+nh4duE86SXxysQvz2t/L866mt8L+AW7U/ItyqynhVl01h2gl/yODF4sXQ3P9Qa1W5CF42wgzxjUx4AWuNV4PlwRazbbUqXES5dsLKxWyagNGJiYlVLcbNVo5ZI9UqDyCH+3Jb2LZjKQZ8agGNJI2ZkyE+Qv+crb/IFSpZTMB0dmDgkwoSZHt0fHxDrGp0U4055YO5AbH4lFqb7Y6HcKCL2WUKHlSdw9SmW7Pj6ZGkjYN9SROrFcvaU3Tz/EGYCMq1AoOHXVs2pOQ+y16UcF9fX23lskQP7XIV+tct5xA8DaHs1q71Pb29vfOL1bvokpYdC4XKzjoap+gW2wHawLpobLk83gL2dyLxllbkPbH/pFKDL5vV9AvkBnZAJrqyNgAAAABJRU5ErkJggg==">
+        </div>
+        <no-data class="no-data" v-show="!cart.length"></no-data>
+        <div class="cart-list_box">
+          <!--8.6rem-->
+          <scroller lock-x ref="cartscroller" height="100%">
+          <ul v-show="cart.length">
+            <li v-for="goods in cart">
+              <div>
+                <div class="name one_text">{{goods.name}}</div>
+                <div class="goods-info">
+                  <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}</span><span class="spec">{{goods.spec_list[goods._specIndex].name}}</span>
+                </div>
               </div>
-            </div>
-            <!--商品选择-->
-            <goods-select class="goods-select-container"
-                          :goods="goods"
-                          :activate="goods._specIndex"
-                          :plus="plus"
-                          :minus="minus"
-                          :diy="diy"></goods-select>
-          </li>
-        </ul>
-        </scroller>
+              <!--商品选择-->
+              <goods-select class="goods-select-container"
+                            :goods="goods"
+                            :activate="goods._specIndex"
+                            :plus="plus"
+                            :minus="minus"
+                            :diy="diy"></goods-select>
+            </li>
+          </ul>
+          </scroller>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -125,7 +126,7 @@
         })
       },
       goNextView () {
-        this.$router.go({name: 'createOrder', params: {mchnt_id: this.$parent.mchnt_id}})
+        this.$router.push({name: 'createOrder', params: {mchnt_id: this.$parent.mchnt_id}})
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])
       }
     }

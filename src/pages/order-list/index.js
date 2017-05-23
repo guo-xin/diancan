@@ -31,7 +31,8 @@ Wechat.hideOptionMenu()
 function initVue () {
   /* eslint-disable no-new */
   new Vue({
-    el: 'body',
+    el: '#app',
+    render: creatElment => creatElment('App'),
     components: { App }
   })
 }

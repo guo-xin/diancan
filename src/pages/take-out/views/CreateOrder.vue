@@ -3,7 +3,7 @@
     <section v-if="!hasAddress" class="address add" @click="goAddAddress">
       <img src="../assets/btn_add.svg"><span>新增送餐地址</span>
     </section>
-    <section v-else class="address content" @click="goList" id="{{current_addr.addr_id}}">
+    <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
       <p>{{current_addr.contact_name}} {{current_addr.mobile}}</p>
       <p>{{current_addr.location}} {{current_addr.detail_addr}}</p>
       <p v-if="!current_addr.longitude" class="warn-tip"><i></i>配送地址需要升级</p>
@@ -43,12 +43,12 @@
       <em>支付方式</em>
       <span><i></i>微信支付</span>
     </section>
+    <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">
+      <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
+    </button>
+    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
+    <confirm :visible.sync="visibleConfirm" :content="confirmText" confirm-event="on-selectedAddr"></confirm>
   </div>
-  <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">
-    <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
-  </button>
-  <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
-  <confirm :visible.sync="visibleConfirm" :content="confirmText" confirm-event="on-selectedAddr"></confirm>
 </template>
 <script>
   /* global _hmt */
@@ -76,7 +76,7 @@
       }
     },
     route: {
-      activate (transition) {
+      beforeRouteEnter (transition) {
         // let params = transition.from.params || {}
         let params = this.$route.params
         this.mchnt_id = params.mchnt_id
@@ -323,12 +323,12 @@
         })
       },
       goAddAddress () {
-        this.$router.go({
+        this.$router.push({
           path: '/address/add'
         })
       },
       goList () {
-        this.$router.go({
+        this.$router.push({
           path: '/address/list',
           query: {
             'mchnt_id': this.mchnt_id

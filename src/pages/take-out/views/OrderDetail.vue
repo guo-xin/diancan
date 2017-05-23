@@ -6,7 +6,7 @@
     <section class="delivery-status">
       <ul :style="backgroundObj">
         <li v-for="item in order.orderinfo.delivery_info.info">
-          <p>{{item.ctime | formatTime 'hh:mm'}}</p>
+          <p>{{item.ctime | formatTime('hh:mm')}}</p>
           <p v-if="item.delivery_state==0">付款</p>
           <p v-if="item.delivery_state==1">接单</p>
           <p v-if="item.delivery_state==2">发货</p>
@@ -20,7 +20,7 @@
     </section>
     <section class="order-info item">
       <p>订单编号：<span>{{order.orderinfo.order_id}}</span></p>
-      <p>购买时间：<span>{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</span></p>
+      <p>购买时间：<span>{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</span></p>
       <button type="button">取消订单</button>
     </section>
     <section class="order-content item">
@@ -65,12 +65,13 @@
           <p>北京市朝阳区 望京SOHO 中心广场负一层1012</p>
         </div>
       </div>
-      <a href="tel:{{order.orderinfo.merchant_info.mobile}}"><i class="icon-phone"></i></a>
+      <a :href="'tel:' + order.orderinfo.merchant_info.mobile"><i class="icon-phone"></i></a>
     </section>
     <section class="follow">
       <p>长按二维码关注，<br/>获取更多店铺福利！</p>
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
     </section>
+  </div>  
 </template>
 
 <script type="text/ecmascript-6">
@@ -118,7 +119,7 @@
       // let Api = require('../api/mock')
       // this.$set('order', Api.order_detail)
     },
-    ready () {
+    mounted () {
       // document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
     },
     route: {

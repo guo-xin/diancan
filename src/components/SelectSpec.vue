@@ -1,32 +1,34 @@
 <template>
   <div class="container" v-show="visible" @click="visible=false">
-    <div class="spec" v-if="visible" transition="zoomInOut" @click.stop.prevent="nullFunction">
-      <div class="close" @click="visible=false"><i class="icon-closed"></i></div>
-      <div class="head line">{{goods.name}}</div>
-      <section class="body">
-        <ul class="spec-list line">
-          <li v-for="_spec in goods.spec_list"
-              :class="{'activate': $index===goods._lastSpec}"
-              @click.stop.prevent="selectSpec($index)">{{_spec.name}}
-          </li>
-        </ul>
-        <div class="price">
-          单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
-          <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
-        </div>
-      </section>
+    <transition name="zoomInOut">
+      <div class="spec" v-if="visible" @click.stop.prevent="nullFunction">
+        <div class="close" @click="visible=false"><i class="icon-closed"></i></div>
+        <div class="head line">{{goods.name}}</div>
+        <section class="body">
+          <ul class="spec-list line">
+            <li v-for="_spec in goods.spec_list"
+                :class="{'activate': index === goods._lastSpec}"
+                @click.stop.prevent="selectSpec(index)">{{_spec.name}}
+            </li>
+          </ul>
+          <div class="price">
+            单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
+            <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
+          </div>
+        </section>
 
-      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, lastSpec)">
-        加入购物车
-      </button>
-      <!--商品选择-->
-      <goods-select v-show="spec._count" class="goods-select-container"
-                    :goods.sync="goods"
-                    :activate="lastSpec"
-                    :plus="plus"
-                    :minus="minus"
-                    :diy="diy"></goods-select>
-    </div>
+        <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, lastSpec)">
+          加入购物车
+        </button>
+        <!--商品选择-->
+        <goods-select v-show="spec._count" class="goods-select-container"
+                      :goods.sync="goods"
+                      :activate="lastSpec"
+                      :plus="plus"
+                      :minus="minus"
+                      :diy="diy"></goods-select>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -50,9 +52,9 @@
       }
     },
     methods: {
-      selectSpec ($index) {
-        this.goods._lastSpec = $index
-        this.$dispatch('on-selectSpec', this.goods, $index)
+      selectSpec (index) {
+        this.goods._lastSpec = index
+        this.$dispatch('on-selectSpec', this.goods, index)
       },
       nullFunction () {
       }

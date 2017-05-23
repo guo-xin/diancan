@@ -23,7 +23,7 @@
         transition.next()
       }
     },
-    ready () {
+    mounted () {
       /* eslint-disable */
       let _this = this
       let iframe = document.getElementById('test').contentWindow

@@ -1,19 +1,21 @@
 <template>
-  <div class="address-title" @click.prevent="goAddAddress">
-    <img src="../assets/btn_add.svg"><span>新增配送地址</span>
+  <div>
+    <div class="address-title" @click.prevent="goAddAddress">
+      <img src="../assets/btn_add.svg"><span>新增配送地址</span>
+    </div>
+    <ul class="address-list">
+      <li :id="id" v-for="item in addr" @click="selectedAddr(item.addr_id)">
+        <i class="checked-icon" :class="{'active': index === 0}"></i>
+        <p>
+          <span>{{item.contact_name}} {{item.mobile}}</span>
+          <strong>{{item.location}} {{item.detail_addr}}</strong>
+          <em v-if="!item.longitude" class="warn-tip"><i></i>配送地址需要升级</em>
+          <em v-if="item.longitude && item.overdist" class="warn-tip"><i></i>超出配送范围</em>
+        </p>
+        <a class="edit" @click.prevent.stop="goEdit(item.addr_id)"></a>
+      </li>
+    </ul>
   </div>
-  <ul class="address-list">
-    <li id="{{id}}" v-for="item in addr" @click="selectedAddr(item.addr_id)">
-      <i class="checked-icon" :class="{'active': $index==0}"></i>
-      <p>
-        <span>{{item.contact_name}} {{item.mobile}}</span>
-        <strong>{{item.location}} {{item.detail_addr}}</strong>
-        <em v-if="!item.longitude" class="warn-tip"><i></i>配送地址需要升级</em>
-        <em v-if="item.longitude && item.overdist" class="warn-tip"><i></i>超出配送范围</em>
-      </p>
-      <a class="edit" @click.prevent.stop="goEdit(item.addr_id)"></a>
-    </li>
-  </ul>
 </template>
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../../../styles/main";
@@ -128,7 +130,7 @@
     },
     methods: {
       goAddAddress () {
-        this.$router.go({
+        this.$router.push({
           path: '/address/add'
         })
       },
@@ -152,7 +154,7 @@
           }
         }
         this.$root.tempAddr = addrInfo()
-        this.$router.go({name: 'addressUpdate'})
+        this.$router.push({name: 'addressUpdate'})
       }
     }
   }

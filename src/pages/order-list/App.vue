@@ -2,7 +2,7 @@
   <div>
     <ul v-if="!noData">
       <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
-        <div v-if="item.order_type==3" class="{{this.theme(item.delivery_state)}}">
+        <div v-if="item.order_type==3" :class="this.theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
             <p>外送单号 <em>{{item.order_sn}}</em>
@@ -15,7 +15,7 @@
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span>
               </p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}}
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
                 <span v-if="item.order_state == 3">已退款</span>
                 <span v-if="item.order_state == 2" class="success">支付成功</span>
               </p>
@@ -28,20 +28,19 @@
             <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}} <span></span></p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}} <span></span></p>
             </div>
           </div>
         </div>
       </li>
     </ul>
+    <div v-if="noData" class="no-data">
+      <img src="assets/no_data.png" alt="">
+      <p>暂无数据</p>
+    </div>
+    <loading :visible="loading"></loading>
+    <Toast :msg.sync="errMsg"></Toast>
   </div>
-
-  <div v-if="noData" class="no-data">
-    <img src="assets/no_data.png" alt="">
-    <p>暂无数据</p>
-  </div>
-  <loading :visible="loading"></loading>
-  <Toast :msg.sync="errMsg"></Toast>
 </template>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
@@ -230,7 +229,7 @@
     created () {
       this.getData()
     },
-    ready () {
+    mounted () {
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop
@@ -275,14 +274,12 @@
                 _this.loaded = true
               }
             } else {
-              _this.errMsg = res.resperr
-              console.log(_this.errMsg)
+              _this.errMsg = res.resper
             }
           })
         }
       },
       jumpUrl (url) {
-        console.log(url)
         window.location.href = url
       },
       theme (id) {

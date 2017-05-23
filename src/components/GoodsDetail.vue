@@ -1,18 +1,20 @@
 <template>
   <div class="c-goods-detail" v-if="visible" @click.stop.prevent="closeHandler()">
-    <div class="l-c-c main" v-if="visible" transition="zoomInOut">
-      <div>
-        <div class="close" @click.stop.prevent="closeHandler()"><i class="icon-closed"></i></div>
-        <div class="img imgbox">
-          <div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120)'}">
-            <img :src="goods.img ? goods.img + '?imageView2/1/w/400/h/400' : '../assets/default_food_pic_big.png' ">
-            <!--<div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/400/h/400)'}"></div>-->
+    <transition name="zoomInOut">
+      <div class="l-c-c main" v-if="visible">
+        <div>
+          <div class="close" @click.stop.prevent="closeHandler()"><i class="icon-closed"></i></div>
+          <div class="img imgbox">
+            <div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120)'}">
+              <img :src="goods.img ? goods.img + '?imageView2/1/w/400/h/400' : '../assets/default_food_pic_big.png' ">
+              <!--<div class="img" :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/400/h/400)'}"></div>-->
+            </div>
           </div>
+          <h2>{{goods.name}}</h2>
+          <p>{{goods.spec_list[specIndex].descr}}</p>
         </div>
-        <h2>{{goods.name}}</h2>
-        <p>{{goods.spec_list[specIndex].descr}}</p>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 

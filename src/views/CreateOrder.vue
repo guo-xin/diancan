@@ -30,9 +30,9 @@
       <em>支付方式</em>
       <span><i></i>微信支付</span>
     </section>
+    <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
+    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
   </div>
-  <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
-  <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
 </template>
 
 <script type="text/ecmascript-6">
@@ -59,7 +59,7 @@
       }
     },
     route: {
-      activate (transition) {
+      beforeRouteEnter (transition) {
         // let params = transition.from.params || {}
         let params = this.$route.params
         this.mchnt_id = params.mchnt_id

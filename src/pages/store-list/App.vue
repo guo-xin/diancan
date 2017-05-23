@@ -1,34 +1,36 @@
 <template>
-  <get-Location></get-Location>
-  <ul v-if="!noData">
-    <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
-      <figure>
-        <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
-        <time>{{item.start_time}} - {{item.end_time}}营业</time>
-        <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
-      </figure>
-      <div>
-        <h3>{{item.shopname}}</h3>
-        <p class="address">{{item.address}}</p>
-        <p v-if="item.distance" class="distance"><strong><i></i>{{item.distance}}</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
-        <footer>
-          <p>
-            <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
-            <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
-            <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
-          </p>
-          <a href="tel:{{item.telephone}}"></a>
-        </footer>
-      </div>
-      <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
-    </li>
-  </ul>
-  <div v-if="noData" class="no-data">
-    <img src="assets/no_data.png" alt="">
-    <p>暂无数据</p>
+  <div>
+    <get-Location></get-Location>
+    <ul v-if="!noData">
+      <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
+        <figure>
+          <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
+          <time>{{item.start_time}} - {{item.end_time}}营业</time>
+          <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
+        </figure>
+        <div>
+          <h3>{{item.shopname}}</h3>
+          <p class="address">{{item.address}}</p>
+          <p v-if="item.distance" class="distance"><strong><i></i>{{item.distance}}</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
+          <footer>
+            <p>
+              <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
+              <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
+              <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
+            </p>
+            <a :href="'tel:' + item.telephone"></a>
+          </footer>
+        </div>
+        <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
+      </li>
+    </ul>
+    <div v-if="noData" class="no-data">
+      <img src="assets/no_data.png" alt="">
+      <p>暂无数据</p>
+    </div>
+    <loading :visible="loading"></loading>
+    <Toast :msg.sync="errMsg"></Toast>
   </div>
-  <loading :visible="loading"></loading>
-  <Toast :msg.sync="errMsg"></Toast>
 </template>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
@@ -247,7 +249,7 @@
         }
       }, 1000)
     },
-    ready () {
+    mounted () {
       let _this = this
       window.onscroll = () => {
         var scrollTop = document.body.scrollTop
