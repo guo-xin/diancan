@@ -1,45 +1,60 @@
 var path = require('path')
-var glob = require('glob')
 var config = require('../config')
-var appConfig = require('../appConfig')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var glob = require('glob')
+var appConfig = require('../appConfig')
 
 exports.assetsPath = function (_path) {
-  return path.posix.join(config.assetsSubDirectory, _path)
+  var assetsSubDirectory = process.env.NODE_ENV === 'production'
+    ? config.build.assetsSubDirectory
+    : config.dev.assetsSubDirectory
+  return path.posix.join(assetsSubDirectory, _path)
 }
 
 exports.cssLoaders = function (options) {
   options = options || {}
-  // generate loader string to be used with extract text plugin
-  function generateLoaders(loaders) {
-    var sourceLoader = loaders.map(function (loader) {
-      var extraParamChar
-      if (/\?/.test(loader)) {
-        loader = loader.replace(/\?/, '-loader?')
-        extraParamChar = '&'
-      } else {
-        loader = loader + '-loader'
-        extraParamChar = '?'
-      }
-      return loader + (options.sourceMap ? extraParamChar + 'sourceMap' : '')
-    }).join('!')
 
-    if (options.extract) {
-      return ExtractTextPlugin.extract('vue-style-loader', sourceLoader)
-    } else {
-      return ['vue-style-loader', sourceLoader].join('!')
+  var cssLoader = {
+    loader: 'css-loader',
+    options: {
+      minimize: process.env.NODE_ENV === 'production',
+      sourceMap: options.sourceMap
     }
   }
 
-  // http://vuejs.github.io/vue-loader/configurations/extract-css.html
+  // generate loader string to be used with extract text plugin
+  function generateLoaders (loader, loaderOptions) {
+    var loaders = [cssLoader]
+    if (loader) {
+      loaders.push({
+        loader: loader + '-loader',
+        options: Object.assign({}, loaderOptions, {
+          sourceMap: options.sourceMap
+        })
+      })
+    }
+
+    // Extract CSS when that option is specified
+    // (which is the case during production build)
+    if (options.extract) {
+      return ExtractTextPlugin.extract({
+        use: loaders,
+        fallback: 'vue-style-loader'
+      })
+    } else {
+      return ['vue-style-loader'].concat(loaders)
+    }
+  }
+
+  // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {
-    css: generateLoaders(['css?-autoprefixer']),
-    postcss: generateLoaders(['css?-autoprefixer']),
-    less: generateLoaders(['css?-autoprefixer', 'less']),
-    sass: generateLoaders(['css?-autoprefixer', 'sass?indentedSyntax']),
-    scss: generateLoaders(['css?-autoprefixer', 'sass?outputStyle=expanded']),
-    stylus: generateLoaders(['css?-autoprefixer', 'stylus']),
-    styl: generateLoaders(['css?-autoprefixer', 'stylus'])
+    css: generateLoaders(),
+    postcss: generateLoaders(),
+    less: generateLoaders('less'),
+    sass: generateLoaders('sass', { indentedSyntax: true }),
+    scss: generateLoaders('sass'),
+    stylus: generateLoaders('stylus'),
+    styl: generateLoaders('stylus')
   }
 }
 
@@ -51,10 +66,9 @@ exports.styleLoaders = function (options) {
     var loader = loaders[extension]
     output.push({
       test: new RegExp('\\.' + extension + '$'),
-      loader: loader
+      use: loader
     })
   }
-  // console.log('styleLoaders', output)
   return output
 }
 
@@ -67,7 +81,7 @@ exports.entry = (function () {
     //接着我对路径字符串进行了一些裁剪成想要的路径
     // entry[n] = name;
     appConfig.pages.forEach(function(page) {
-      if (page.filename === n && page.isBuild) {
+      if (page.filename === n) {
         entry[n] = name + '/index.js';
       }
     })
