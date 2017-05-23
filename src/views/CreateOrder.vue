@@ -58,6 +58,29 @@
         btnText: '确认下单'
       }
     },
+    created () {
+      this.$http({
+        url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
+        type: 'get',
+        data: {
+          url: window.location.href,
+          format: 'cors'
+        }
+      }).then(function(res) {
+        var data = res.data
+        if (data.respcd === '0000') {
+          var WXconfig = data.data;
+          wx.config({
+            debug: true,
+            appId: WXconfig.appId,
+            timestamp: WXconfig.timestamp,
+            signature: WXconfig.signature,
+            nonceStr: WXconfig.nonceStr,
+            jsApiList: ['chooseWXPay']
+          })
+        }
+      })
+    },
     route: {
       beforeRouteEnter (transition) {
         // let params = transition.from.params || {}
@@ -190,6 +213,15 @@
           this.btnText = '确认下单'
           return
         }
+        if (typeof payParams !== undefined) {
+          payParams.timestamp = parseInt(payParams.timeStamp)
+          alert(typeof payParams.timestamp);
+          delete payParams.timeStamp
+          delete payParams.appId
+          alert(JSON.stringify(payParams))
+        } else {
+          alert('支付参数为空')
+        }
         let _this = this
         let onBridgeReady = () => {
           window.WeixinJSBridge.invoke(
@@ -206,20 +238,25 @@
               }
               return
             }
-          )
-        }
-
-        if (typeof WeixinJSBridge === 'undefined') {
-          if (document.addEventListener) {
-            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
-          } else if (document.attachEvent) {
-            document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
-            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
           }
-        } else {
-          onBridgeReady()
-        }
+        }))
       },
+
+
+      //   if (typeof WeixinJSBridge === 'undefined') {
+      //     window.alert(0)
+      //     if (document.addEventListener) {
+      //       window.alert(1)
+      //       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+      //     } else if (document.attachEvent) {
+      //       document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
+      //       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+      //     }
+      //   } else {
+      //     window.alert(3)
+      //     onBridgeReady()
+      //   }
+      // },
       orderPaySuccess () {  // 订单支付成功
         this.$dispatch('on-cleanCart', this.mchnt_id)
         this.queryOrder()
