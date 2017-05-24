@@ -2,7 +2,7 @@
   <div>
     <ul v-if="!noData">
       <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
-        <div v-if="item.order_type==3" :class="this.theme(item.delivery_state)">
+        <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
             <p>外送单号 <em>{{item.order_sn}}</em>
@@ -214,7 +214,7 @@
     computed: {
       requestData () {
         return {
-          format: 'jsonp',
+          format: 'cors',
           mchnt_id: this.mId,
           openid: this.openId,
           page_size: 10,
@@ -249,10 +249,9 @@
             this.requestData.page += 1
           }
           this.$http({
+            method: 'get',
             url: Config.apiHost + 'diancan/c/order_list',
-//            url: 'http://172.100.111.215:9300/diancan/c/order_list',
-            data: _this.requestData,
-            method: 'JSONP'
+            params: _this.requestData
           }).then(function (response) {
             let res = response.data
             _this.init = false
