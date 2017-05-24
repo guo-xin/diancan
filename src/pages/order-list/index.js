@@ -14,7 +14,6 @@ import '../../filters/index'
 import App from './App.vue'
 
 Vue.use(VueResource)
-
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
@@ -32,7 +31,7 @@ function initVue () {
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
-    render: creatElment => creatElment('App'),
+    template: '<App/>',
     components: { App }
   })
 }
