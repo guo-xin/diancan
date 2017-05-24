@@ -18,9 +18,11 @@ Vue.http.options.xhr = {
 }
 Vue.http.options.emulateJSON = true
 
+const Wechat = {}
+
 // const OPENID = Config.OPENID
 
-exports.verify = function () {
+Wechat.verify = function () {
   return new Promise(function (resolve, reject) {
     let url = ''
     let hashArray, tempHashMchtId
@@ -77,7 +79,7 @@ const jsApiList = [
   'onMenuShareWeibo'
 ]
 
-exports.init = (jsApis = jsApiList) => {
+Wechat.init = (jsApis = jsApiList) => {
   let args = {
     format: 'jsonp',
     url: window.location.href
@@ -154,7 +156,7 @@ const runActionQueue = () => {
 }
 
 // 隐藏右上角菜单接口
-exports.hideOptionMenu = () => {
+Wechat.hideOptionMenu = () => {
   if (!isReady) {
     // actionQueue.push('wx.hideOptionMenu()')
     actionQueue.push('wx.hideAllNonBaseMenuItem()')
@@ -165,7 +167,7 @@ exports.hideOptionMenu = () => {
 }
 
 // 获取经纬度接口
-exports.getCoords = () => {
+Wechat.getCoords = () => {
   return new Promise(function (resolve, reject) {
     wx.getLocation({
       type: 'gcj02',
@@ -179,7 +181,7 @@ exports.getCoords = () => {
 }
 
 // 通过经纬度 获取详细地址
-exports.getFormattedAddress = () => {
+Wechat.getFormattedAddress = () => {
   return new Promise(function (resolve, reject) {
     let longitude = window.localStorage.getItem('longitude')
     let latitude = window.localStorage.getItem('latitude')
@@ -203,7 +205,7 @@ exports.getFormattedAddress = () => {
 }
 
 // 分享给朋友
-exports.onMenuShareAppMessage = (args) => {
+Wechat.onMenuShareAppMessage = (args) => {
   let params = Object.assign({
     title: '好近点餐', // 分享标题
     desc: '好近点餐好近点餐好近点餐', // 分享描述
@@ -228,7 +230,7 @@ exports.onMenuShareAppMessage = (args) => {
   wx.onMenuShareAppMessage(params)
 }
 // 分享到朋友圈
-exports.onMenuShareTimeline = (args) => {
+Wechat.onMenuShareTimeline = (args) => {
   let params = Object.assign({
     title: '好近点餐', // 分享标题
     link: '', // 分享链接
@@ -252,7 +254,7 @@ exports.onMenuShareTimeline = (args) => {
   wx.onMenuShareTimeline(params)
 }
 // 唤起二维码
-exports.onScanQRcode = () => {
+Wechat.onScanQRcode = () => {
   if (!isReady) {
     const params = {
       needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
@@ -268,7 +270,7 @@ exports.onScanQRcode = () => {
 }
 
 /* global WeixinJSBridge */
-exports.noResize = () => {
+Wechat.noResize = () => {
   function handleFontSize () {
     // 设置网页字体为默认大小
     WeixinJSBridge.invoke('setFontSizeCallback', { 'fontSize': 0 })
@@ -292,3 +294,5 @@ exports.noResize = () => {
     }
   }
 }
+
+export default Wechat

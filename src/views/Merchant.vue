@@ -1,7 +1,7 @@
 <template>
   <div class="">
-    <div class="c-loading-container" v-if="$loadingRouteData">
-      <loading :visible="$loadingRouteData"></loading>
+    <div class="c-loading-container" v-if="isLoading">
+      <loading :visible="isLoading"></loading>
     </div>
     <div class="order-info" v-show="isEmptyInfo">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
@@ -25,7 +25,7 @@
       <div class="l_auto shopmenu-list-container">
         <scroller class="scroller-right" lock-x ref="scroller" height="100%">
           <div class="shopmenu-list">
-            <no-data v-if="!goodsList.length" class="no-data"></no-data>
+            <no-data v-if="goodsList && !goodsList.length" class="no-data"></no-data>
             <ul class="listgroup" v-else>
               <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
@@ -40,7 +40,7 @@
                   </div>
                 </div>
                 <!--商品选择-->
-                <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
+                <goods-select v-if="goods.spec_list && goods.spec_list.length===1" class="goods-select-container"
                               :goods="goods"
                               :plus="plusHandler"
                               :minus="minusHandler"
@@ -66,7 +66,7 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" v-if="cart.length" ></cart-bar>
+    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" v-if="cart && cart.length" ></cart-bar>
 
     <!--关店蒙层-->
     <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
@@ -76,7 +76,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  /* global _hmt */
+  /* eslint-disable */
   import Util from '../methods/Util'
   import Scroller from 'vux-components/scroller'
 
@@ -98,6 +98,7 @@
     },
     data () {
       return {
+        isLoading: true,
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
         selectIndex: 0, // 激活分类
@@ -121,79 +122,60 @@
         return !Util.isEmptyObject(this.order_info)
       }
     },
-    route: {
-      data (transition) {
-        /**
-         * mchnt_id     // 商户id
-         */
-        let args = this.$route.params
-//        if (!args.mchnt_id) {
-//          window.alert('商户ID不存在')
-//          return
-//        }
-        args.format = 'jsonp'
-        args.open_id = this.$root.user.open_id
-        this.$http({
-          url: Config.apiHost + 'diancan/c/goods_list',
-          // url: '/static/api/goods_list.json',
-          method: 'JSONP',
-          data: args
-        }).then(function (response) {
-          // success callback
-          let data = response.data
-          if (data.respcd === '4000') {
-            this.isExpire = true
-            return
-          } else if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
-            return
+    mounted () {
+      this.isLoading = false
+    },
+    beforeRouteEnter (to, from, next) {
+      window.alert('beforeRouteUpdate')
+      let args = this.$route.params
+      args.format = 'jsonp'
+      args.open_id = this.$root.user.open_id
+      this.$http({
+        url: Config.apiHost + 'diancan/c/goods_list',
+        method: 'JSONP',
+        data: args
+      }).then(function (response) {
+        let data = response.data
+        if (data.respcd === '4000') {
+          this.isExpire = true
+          return
+        } else if (data.respcd !== Config.code.OK) {
+          this.$dispatch('on-toast', data.respmsg)
+          return
+        }
+      })
+      this.mchnt_id = args.mchnt_id
+      this.setStorage(data.data)
+      this.$dispatch('on-getCart', this.mchnt_id)
+      let goods = this.mergeGoods(data.data.goods)
+      next(vm => {
+        vm.mchnt_id = args.mchnt_id,
+        vm.address = args.address || null,
+        vm.groupList = goods,
+        vm.isClose = data.data.merchant_setting.sale_state === 0,
+        vm.goodsList = (function () {
+          if (goods && goods.length !== 0) {
+            return goods[0].goods_list
+          } else {
+            return ''
           }
-          this.mchnt_id = args.mchnt_id
-          this.setStorage(data.data)
-          this.$dispatch('on-getCart', this.mchnt_id)
-          let goods = this.mergeGoods(data.data.goods)
-          transition.next({
-            mchnt_id: args.mchnt_id,
-            address: args.address || null,
-            groupList: goods,
-            isClose: data.data.merchant_setting.sale_state === 0,
-//            goodsList: goods[0].goods_list,
-            goodsList: (function () {
-              if (goods.length !== 0) {
-                return goods[0].goods_list
-              } else {
-                return ''
-              }
-            })(),
-            order_info: data.data.order_info,
-            merchantSetting: data.data.merchant_setting
-//            order_info: {
-//              order_id: '6149736680771744597',
-//              order_time: 1469006994
-//            }
-          })
-          this.$nextTick(() => {
-            document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-            document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-            this.$refs.scrollerleft.reset()
-            this.$refs.scroller.reset()
-          })
-          const shopname = data.data.shopname
-          let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
-          let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-          this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
-          this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
+        })(),
+        vm.order_info = data.data.order_info,
+        vm.merchantSetting = data.data.merchant_setting
+      })
+      this.$nextTick(() => {
+        document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
+        document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+        this.$refs.scrollerleft.reset()
+        this.$refs.scroller.reset()
+      })
+      const shopname = data.data.shopname
+      let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
+      let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+      this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
+      this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
 
-          Util.setTitle(shopname)
-        }, function (response) {
-          // error callback
-        })
-      },
-      beforeRouteLeave (transition) {
-        this.$dispatch('on-hideOptionMenu')
-        transition.next()
-      }
+      Util.setTitle(shopname)
     },
     methods: {
       goDetail () {

@@ -201,7 +201,7 @@
   }
 </style>
 <script type="text/ecmascript-6">
-  /*eslint-disable no-unused-vars*/
+  /* eslint-disable no-unused-vars */
   import Wechat from '../../methods/Wechat'
   import Config from '../../methods/Config'
   import Util from '../../methods/Util'

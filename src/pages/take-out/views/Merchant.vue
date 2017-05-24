@@ -1,8 +1,8 @@
 <template>
   <div>
     <get-Location></get-Location>
-    <div class="c-loading-container" v-if="$loadingRouteData">
-      <loading :visible="$loadingRouteData"></loading>
+    <div class="c-loading-container" v-if="isLoading">
+      <loading :visible="isLoading"></loading>
     </div>
     <div class="order-info" v-show="isEmptyInfo">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
@@ -99,6 +99,7 @@
     },
     data () {
       return {
+        isLoading: true,
         mchnt_id: '',   // 商户id
         selectIndex: 0, // 激活分类
         groupList: [],  // 分类列表
@@ -119,6 +120,9 @@
       isEmptyInfo () {
         return !Util.isEmptyObject(this.order_info)
       }
+    },
+    mounted () {
+      this.isLoading = false
     },
     route: {
       data (transition) {

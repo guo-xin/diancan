@@ -189,7 +189,7 @@
   }
 </style>
 <script type="text/ecmascript-6">
-  /*eslint-disable no-unused-vars*/
+  /* eslint-disable no-unused-vars */
   import Config from '../../methods/Config'
   import Util from '../../methods/Util'
   import loading from '../../components/loading/juhua.vue'
