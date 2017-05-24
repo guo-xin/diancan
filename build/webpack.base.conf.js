@@ -6,7 +6,7 @@ var vueLoaderConfig = require('./vue-loader.conf')
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
-console.log(utils.entry)
+
 module.exports = {
   entry: utils.entry,
   output: {
@@ -19,7 +19,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
+      'vue$': 'vue/dist/vue.common.js',
       'vux-components': 'vux/src/components/',
       'src': resolve('src'),
       'methods': resolve('src/methods'),

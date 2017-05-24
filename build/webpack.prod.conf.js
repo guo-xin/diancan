@@ -81,7 +81,6 @@ var prodWebpackConfig = {
 
 var appConfig = require('../appConfig')
 
-var chunks = {};
 appConfig.pages.forEach(function(page) {
   var conf = {
     template: page.template || 'src/templates/vue.ejs',  // html模板路径
