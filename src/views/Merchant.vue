@@ -22,6 +22,7 @@
           </div>
         </scroller>
       </div>
+
       <div class="l_auto shopmenu-list-container">
         <scroller class="scroller-right" lock-x ref="scroller" height="100%">
           <div class="shopmenu-list">
@@ -77,18 +78,19 @@
 
 <script type="text/ecmascript-6">
   /* eslint-disable */
-  import Util from '../methods/Util'
+  import Util from 'methods/Util'
   import Scroller from 'vux-components/scroller'
 
-  import NoData from '../components/NoData'
-  import Loading from '../components/loading/Loading'
-  import GoodsSelect from '../components/GoodsSelect'
-  import SelectSpec from '../components/SelectSpec'
-  import CartBar from '../components/CartBar'
-  import GoodsDetail from '../components/GoodsDetail'
-  import ShopClose from '../components/ShopClose.vue'
-  import ScanQrcode from '../components/ScanQrcode.vue'
-  import Config from '../methods/Config'
+  import NoData from 'components/NoData'
+  import Loading from 'components/loading/Loading'
+  import GoodsSelect from 'components/GoodsSelect'
+  import SelectSpec from 'components/SelectSpec'
+  import CartBar from 'components/CartBar'
+  import GoodsDetail from 'components/GoodsDetail'
+  import ShopClose from 'components/ShopClose.vue'
+  import ScanQrcode from 'components/ScanQrcode.vue'
+  import Config from 'methods/Config'
+  import Vue from 'vue'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
@@ -111,13 +113,11 @@
         order_info: {}, // 是否已存在订单
         isClose: false,
         isExpire: false,
-        merchantSetting: {}
+        merchantSetting: {},
+        cart: this.$root.cart
       }
     },
     computed: {
-      cart () {
-        return this.$root.cart
-      },
       isEmptyInfo () {
         return !Util.isEmptyObject(this.order_info)
       }
@@ -125,61 +125,68 @@
     mounted () {
       this.isLoading = false
     },
-    beforeRouteEnter (to, from, next) {
-      window.alert('beforeRouteUpdate')
-      let args = this.$route.params
-      args.format = 'jsonp'
-      args.open_id = this.$root.user.open_id
+    created () {
+      // debugger
+      let args = {
+        mchnt_id: this.$route.params.mchnt_id,
+        format: 'cors',
+        open_id: window.localStorage.getItem('dc_openid') || ''
+      }
       this.$http({
         url: Config.apiHost + 'diancan/c/goods_list',
-        method: 'JSONP',
-        data: args
-      }).then(function (response) {
+        method: 'get',
+        params: args
+      })
+      .then(function (response) {
         let data = response.data
         if (data.respcd === '4000') {
           this.isExpire = true
           return
         } else if (data.respcd !== Config.code.OK) {
-          this.$dispatch('on-toast', data.respmsg)
+          this.$emit('toast', data.respmsg)
           return
         }
+        this.mchnt_id = args.mchnt_id
+        this.setStorage(data.data)
+        this.$emit('getCart', this.mchnt_id)
+        let goods = this.mergeGoods(data.data && data.data.goods)
+        this.mchnt_id = args.mchnt_id
+        this.address = args.address || null,
+        this.groupList = goods
+        // this.isClose = data.data.merchant_setting.sale_state === 0
+        // this.goodsList = (function () {
+        //   if (goods && goods.length !== 0) {
+        //     return goods[0].goods_list
+        //   } else {
+        //     return ''
+        //   }
+        // })()
+        // this.order_info = data.data.order_info,
+        // this.merchantSetting = data.data.merchant_setting
+        // this.$nextTick(() => {
+        //   document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
+        //   document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+        //   this.$refs.scrollerleft.reset()
+        //   this.$refs.scroller.reset()
+        // })
+        // const shopname = data.data.shopname
+        // let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
+        // let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+        // this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
+        // this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
+        //
+        // Util.setTitle(shopname)
       })
-      this.mchnt_id = args.mchnt_id
-      this.setStorage(data.data)
-      this.$dispatch('on-getCart', this.mchnt_id)
-      let goods = this.mergeGoods(data.data.goods)
-      next(vm => {
-        vm.mchnt_id = args.mchnt_id,
-        vm.address = args.address || null,
-        vm.groupList = goods,
-        vm.isClose = data.data.merchant_setting.sale_state === 0,
-        vm.goodsList = (function () {
-          if (goods && goods.length !== 0) {
-            return goods[0].goods_list
-          } else {
-            return ''
-          }
-        })(),
-        vm.order_info = data.data.order_info,
-        vm.merchantSetting = data.data.merchant_setting
-      })
-      this.$nextTick(() => {
-        document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-        document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-        this.$refs.scrollerleft.reset()
-        this.$refs.scroller.reset()
-      })
-      const shopname = data.data.shopname
-      let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
-      let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-      this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
-      this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
-
-      Util.setTitle(shopname)
     },
     methods: {
       goDetail () {
-        this.$router.push({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
+        this.$router.push({
+          name: 'orderDetail',
+          params: {
+            mchnt_id: this.mchnt_id,
+            order_id: this.order_info.order_id
+          }
+        })
       },
       getKey () {
         return STORAGEKEY + '_' + this.mchnt_id
@@ -197,7 +204,6 @@
           })
           return cate
         })
-
         let cart = this.cart
         let delArr = []
         let delCart = []

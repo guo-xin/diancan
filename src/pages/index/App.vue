@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view @toast="toast" @changeCart="changeCart" @saveCart="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
     <toast :msg.sync="msg"></toast>
   </div>
 </template>
 
 <script>
-  import Wechat from '../../methods/Wechat'
-  import {Store} from '../../methods/Store'
-  import {STORE_CART} from '../../methods/Config'
-  import Toast from '../../components/tips/Toast'
+  import Wechat from 'methods/Wechat'
+  import Store from 'methods/Store'
+  import { STORE_CART } from 'methods/Config'
+  import Toast from 'components/tips/Toast'
 
   export default {
     components: {
@@ -42,13 +42,11 @@
       },
       saveCart (mchntId) {
         Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      }
-    },
-    events: {
-      'on-toast' (msg) {
+      },
+      toast (msg) {
         this.msg = msg
       },
-      'on-changeCart' (goods, specIndex, mchntId) {
+      changeCart (goods, specIndex, mchntId) {
         let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
         let index = -1
         let spec = goods.spec_list[specIndex]
@@ -71,27 +69,29 @@
         }
         this.saveCart(mchntId)
       },
-      'on-saveCart' (mchntId, cart) {
+      saveCartEv (mchntId, cart) {
         this.$set('cart', cart || [])
         this.saveCart(mchntId)
       },
-      'on-getCart' (mchntId) {
-        this.$set('cart', Store.get(this.getKey(mchntId)) || [])
+      getCart (mchntId) {
+        console.log(mchntId)
+        this.cart = Store.get(this.getKey(mchntId)) || []
+        console.log(this.cart)
       },
-      'on-cleanCart' (mchntId) {  // 清空购物车
+      cleanCart (mchntId) {  // 清空购物车
         this.$set('cart', [])
         this.saveCart(mchntId)
       },
-      'on-hideOptionMenu' () {  // 隐藏右上角菜单
+      hideOptionMenu () {  // 隐藏右上角菜单
         Wechat.hideOptionMenu()
       },
-      'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
+      menuShareAppMessage (args = {}) {  // 分享给朋友
         Wechat.onMenuShareAppMessage(args)
       },
-      'on-onMenuShareTimeline' (args = {}) {
+      menuShareTimeline (args = {}) {
         Wechat.onMenuShareTimeline(args)
       },
-      'on-qr' () {
+      qr () {
         Wechat.onScanQRcode()
       }
     }

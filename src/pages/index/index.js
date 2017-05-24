@@ -21,20 +21,6 @@ import About from '../../views/About.vue'
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
-Vue.http.options.headers = {
-  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
-}
-Vue.http.options.xhr = {
-  withCredentials: true
-}
-Vue.http.options.emulateJSON = true
-import Wechat from '../../methods/Wechat'
-Wechat.verify().then(initVue)
-// initVue()
-Wechat.init()
-Wechat.hideOptionMenu()
-Wechat.noResize()
-
 const router = new VueRouter({
   routes: [
     {
@@ -51,29 +37,35 @@ const router = new VueRouter({
       }]
     },
     {
-      path: 'create_order/:mchnt_id/:address', // 创建订单
+      path: '/create_order/:mchnt_id/:address', // 创建订单
       name: 'createOrder',
       component: CreateOrder
     },
     {
-      path: 'order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
+      path: '/order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
       name: 'orderDetail',
       component: OrderDetail
     },
     {
-      path: 'about', // 关于
+      path: '/about', // 关于
       name: 'about',
       component: About
     }
   ]
 })
+// import Wechat from '../../methods/Wechat'
+// Wechat.verify().then(initVue)
+initVue()
+// Wechat.init()
+// Wechat.hideOptionMenu()
+// Wechat.noResize()
 
 function initVue () {
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
     router,
-    render: h => h('App'),
+    template: '<App/>',
     components: { App }
   })
 }

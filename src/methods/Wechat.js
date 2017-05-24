@@ -10,13 +10,6 @@ import VueResource from 'vue-resource'
 import store from '../vuex/store'
 
 Vue.use(VueResource)
-Vue.http.options.headers = {
-  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
-}
-Vue.http.options.xhr = {
-  withCredentials: true
-}
-Vue.http.options.emulateJSON = true
 
 const Wechat = {}
 
