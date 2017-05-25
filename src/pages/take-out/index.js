@@ -2,66 +2,53 @@ import 'lib-flexible'
 import FastClick from 'fastclick'
 window.FastClick = FastClick
 
-import 'core-js/fn/array/find'
-import 'core-js/fn/array/find-index'
-import 'core-js/fn/array/map'
-import 'core-js/fn/object/assign'
-
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import router from './router'
 
-import '../../filters/index'
-import App from './App.vue'
-
-Vue.use(VueResource)
-Vue.use(VueRouter)
-let router = new VueRouter()
-
+// 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
+// 在使用cors跨域时带上cookie
 Vue.http.options.xhr = {
   withCredentials: true
 }
+// 将请求的数据url化
 Vue.http.options.emulateJSON = true
-import Wechat from '../../methods/Wechat'
-Wechat.verify().then(initRouter)
-// initRouter()
-Wechat.init()
-Wechat.hideOptionMenu()
-Wechat.noResize()
-function initRouter () {
-  router.map({
-    '/merchant/:mchnt_id': {
-      name: 'merchant',
-      component: require('./views/Merchant')
-    },
-    'create_order/:mchnt_id': { // 创建订单
-      name: 'createOrder',
-      component: require('./views/CreateOrder')
-    },
-    '/address/list': {
-      name: 'addressList',
-      component: require('./components/addr-list.vue')
-    },
-    '/address/add': {
-      name: 'addressAdd',
-      component: require('./components/addr-add.vue')
-    },
-    '/address/marker': {
-      name: 'addressMarker',
-      component: require('./components/MapMarker.vue')
-    },
-    '/address/update': {
-      name: 'addressUpdate',
-      component: require('./components/addr-update.vue')
-    },
-    'order_detail/:order_id/:mchnt_id': { // 订单详情: 订单id|商户id
-      name: 'orderDetail',
-      component: require('./views/OrderDetail')
-    }
+
+import App from './App'
+import 'filters/index'
+import { WechatPlugin, Wechat } from 'methods/Wechat'
+
+Vue.use(VueResource)
+Vue.use(WechatPlugin)
+
+// 此处声明你需要用到的JS-SDK权限
+let jsApiList = [
+  'checkJsApi',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'hideMenuItems',
+  'showMenuItems',
+  'getLocation',
+  'scanQRCode'
+]
+// 需要csid的情况
+Wechat.verify().then(initVue)
+// 不需要csid的情况
+// initVue()
+
+Wechat.init(jsApiList)
+Wechat.ready()
+.then(Wechat.hideOptionMenu)
+
+function initVue () {
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    template: '<App/>',
+    components: { App }
   })
-  router.start(App, '#app')
 }
-/* eslint-disable no-new */

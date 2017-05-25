@@ -9,7 +9,11 @@ const getAuthInfo = (mchtId) => {
   return new Promise((resolve, reject) => {
     Vue.http({
       method: 'jsonp',
-      url: `${Config.apiHost}diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`
+      url: `${Config.apiHost}diancan/c/takeauthinfo`,
+      params: {
+        mchnt_id: mchtId,
+        format: 'jsonp'
+      }
     })
     .then((res) => {
       let data = res.data
@@ -29,7 +33,11 @@ const getWeixinBack = (data) => {
   return new Promise((resolve, reject) => {
     Vue.http({
       method: 'jsonp',
-      url: `${Config.apiHost}diancan/weixincallback?format=jsonp&appid=${data.appid}`
+      url: `${Config.apiHost}diancan/weixincallback`,
+      params: {
+        appid: data.appid,
+        format: 'jsonp'
+      }
     })
     .then((res) => {
       let data = res.data
