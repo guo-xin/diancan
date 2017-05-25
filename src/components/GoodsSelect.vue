@@ -1,11 +1,11 @@
 <template>
   <div class="l-r item-add show-all">
-    <div class="btn-touch" v-show="count" @click.stop="minus($events, goods, activate)">
+    <div class="btn-touch" v-show="count" @click.stop="minus(goods, activate)">
       <i class="icon-reduce"></i>
     </span>
     </div>
-    <input class="item-count" type="tel" v-show="count" :value="count" v-model="countValue" @focus="focusHandler(count)" @blur="blurHandler">
-    <div class="btn-touch" @click.stop="plus($events, goods, activate)">
+    <input class="item-count" type="tel" v-show="count" v-model="count" @focus="focusHandler(count)" @blur="blurHandler">
+    <div class="btn-touch" @click.stop="plus(goods, activate)">
       <i class="icon-add"></i>
     </span>
     </div>
@@ -52,7 +52,7 @@
         } else {
           val = e.target.value
         }
-        this.diy(this.$event, this.goods, this.activate, parseInt(val))
+        this.diy(this.goods, this.activate, parseInt(val))
       }
     }
   }

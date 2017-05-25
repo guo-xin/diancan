@@ -70,7 +70,7 @@
     },
     computed: {
       cart () {
-        return this.$root.cart
+        return this.$root.cart || []
       },
       cartData () {
         let count = 0

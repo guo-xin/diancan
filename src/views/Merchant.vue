@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="c-loading-container" v-if="isLoading">
       <loading :visible="isLoading"></loading>
     </div>
@@ -13,8 +13,8 @@
         <scroller class="scroller-left" lock-x ref="scrollerleft" height="100%">
           <div class="list-group">
             <ul class="">
-              <li v-for="group in groupList" :class="{'active': selectIndex === index}"
-                  @click="select(index, group)">
+              <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}"
+                  @click="classSelect(index, group)">
                 <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
                 </div>
               </li>
@@ -40,7 +40,6 @@
                     <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                   </div>
                 </div>
-                <!--商品选择-->
                 <goods-select v-if="goods.spec_list && goods.spec_list.length===1" class="goods-select-container"
                               :goods="goods"
                               :plus="plusHandler"
@@ -67,7 +66,7 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" v-if="cart && cart.length" ></cart-bar>
+    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"></cart-bar>
 
     <!--关店蒙层-->
     <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
@@ -100,7 +99,7 @@
     },
     data () {
       return {
-        isLoading: true,
+        isLoading: false,
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
         selectIndex: 0, // 激活分类
@@ -113,20 +112,19 @@
         order_info: {}, // 是否已存在订单
         isClose: false,
         isExpire: false,
-        merchantSetting: {},
-        cart: this.$root.cart
+        merchantSetting: {}
       }
     },
     computed: {
       isEmptyInfo () {
         return !Util.isEmptyObject(this.order_info)
+      },
+      cart () {
+        return this.$root.cart
       }
     },
-    mounted () {
-      this.isLoading = false
-    },
     created () {
-      // debugger
+      this.isLoading = true
       let args = {
         mchnt_id: this.$route.params.mchnt_id,
         format: 'cors',
@@ -146,36 +144,37 @@
           this.$emit('toast', data.respmsg)
           return
         }
+        this.isLoading = false
         this.mchnt_id = args.mchnt_id
         this.setStorage(data.data)
-        this.$emit('getCart', this.mchnt_id)
+        this.$emit('getCart', args.mchnt_id)
         let goods = this.mergeGoods(data.data && data.data.goods)
         this.mchnt_id = args.mchnt_id
         this.address = args.address || null,
         this.groupList = goods
-        // this.isClose = data.data.merchant_setting.sale_state === 0
-        // this.goodsList = (function () {
-        //   if (goods && goods.length !== 0) {
-        //     return goods[0].goods_list
-        //   } else {
-        //     return ''
-        //   }
-        // })()
-        // this.order_info = data.data.order_info,
-        // this.merchantSetting = data.data.merchant_setting
-        // this.$nextTick(() => {
-        //   document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-        //   document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-        //   this.$refs.scrollerleft.reset()
-        //   this.$refs.scroller.reset()
-        // })
-        // const shopname = data.data.shopname
-        // let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
-        // let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+        this.isClose = data.data.merchant_setting.sale_state === 0
+        this.goodsList = (function () {
+          if (goods && goods.length !== 0) {
+            return goods[0].goods_list
+          } else {
+            return ''
+          }
+        })()
+        this.order_info = data.data.order_info
+        this.merchantSetting = data.data.merchant_setting
+        this.$nextTick(() => {
+          document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
+          document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+          this.$refs.scrollerleft.reset()
+          this.$refs.scroller.reset()
+        })
+        const shopname = data.data.shopname
+        let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
+        let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         // this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
         // this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
         //
-        // Util.setTitle(shopname)
+        Util.setTitle(shopname)
       })
     },
     methods: {
@@ -204,7 +203,7 @@
           })
           return cate
         })
-        let cart = this.cart
+        let cart = this.cart || []
         let delArr = []
         let delCart = []
         cart.forEach((cartGoods, index) => {
@@ -240,31 +239,31 @@
             delCart.push(index)
           }
         })
-        delArr.length && this.$dispatch('on-toast', delArr.join(' ') + '已下架')
+        delArr.length && this.$emit('toast', delArr.join(' ') + '已下架')
         delCart.reverse().forEach(item => {
           cart.splice(item, 1)
         })
-        this.$dispatch('on-saveCart', this.mchnt_id, cart)
+        this.$emit('saveCartEv', this.mchnt_id, cart)
         return goods
       },
-      select (index, item) {
+      classSelect (index, item) {
         this.selectIndex = index
-        this.$set('goodsList', item.goods_list)
+        this.goodsList = item.goods_list
         this.$nextTick(function () {
           let scroller = this.$refs.scroller
           scroller.reset()
           scroller._xscroll.scrollTop()
         })
       },
-      plusHandler (event, goods, specIndex) {
+      plusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, true)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
-      minusHandler (event, goods, specIndex) {
+      minusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, false)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
-      diyHandler (events, goods, specIndex, number) {
+      diyHandler (goods, specIndex, number) {
         this.addCartHandler(goods, specIndex, number)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
       },
@@ -311,7 +310,7 @@
         // this.groupList[index].$set(.goods_list, i, newGoods)
         this.$set(this.groupList[index].goods_list, i, newGoods)
 
-        this.$dispatch('on-changeCart', newGoods, specIndex, this.mchnt_id)
+        this.$emit('changeCart', newGoods, specIndex, this.mchnt_id)
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0
@@ -358,7 +357,7 @@
   }
 </script>
 
-<style scoped lang="scss" rel="stylesheet/scss">
+<style lang="scss" rel="stylesheet/scss">
 
   .c-loading-container {
     position: fixed;

@@ -5,7 +5,7 @@
  */
 
 const test = process.env.NODE_ENV === 'testing'
-// const dev = process.env.NODE_ENV === 'development'
+const dev = process.env.NODE_ENV === 'development'
 
 // 生产环境,线上配置
 // let host = 'http://wx.qfpay.com/'
@@ -32,15 +32,14 @@ if (test) {
 }
 
 // 开发配置
-// if (dev) {
-//   rootHost = 'https://o.qa.qfpay.net/dc/'
-//   payHost = 'https://openapi.qa.qfpay.net/'
-//   apiHost = 'https://o.qa.qfpay.net/'
-//   dcHost = 'https://o.qa.qfpay.net/'
-//   o2Host = 'https://o2.qa.qfpay.net/'
-//   wxmpHost = 'https://wxmp.qa.qfpay.net/'
-//   // appid = 'wx087a3fc3f3757766'  // 公众号ID
-// }
+if (dev) {
+  rootHost = 'https://o.qfpay.com/dc/'
+  payHost = 'https://openapi.qfpay.com/'
+  apiHost = 'https://o.qfpay.com/'
+  dcHost = 'https://o.qfpay.com/'
+  o2Host = 'https://o2.qfpay.com/'  // 获取微信openid
+  wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
+}
 
 module.exports = {
   rootHost,

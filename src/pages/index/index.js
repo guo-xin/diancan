@@ -21,6 +21,14 @@ import About from '../../views/About.vue'
 Vue.use(VueResource)
 Vue.use(VueRouter)
 
+Vue.http.options.headers = {
+  'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
+}
+Vue.http.options.xhr = {
+  withCredentials: true
+}
+Vue.http.options.emulateJSON = true
+
 const router = new VueRouter({
   routes: [
     {
@@ -53,12 +61,13 @@ const router = new VueRouter({
     }
   ]
 })
-// import Wechat from '../../methods/Wechat'
-// Wechat.verify().then(initVue)
-initVue()
-// Wechat.init()
-// Wechat.hideOptionMenu()
-// Wechat.noResize()
+
+import Wechat from '../../methods/Wechat'
+Wechat.verify().then(initVue)
+// initVue()
+Wechat.init()
+Wechat.hideOptionMenu()
+Wechat.noResize()
 
 function initVue () {
   /* eslint-disable no-new */

@@ -8,7 +8,7 @@
 
 <script>
   import Wechat from '../../methods/Wechat'
-  import {Store} from '../../methods/Store'
+  import Store from '../../methods/Store'
   import {STORE_CART} from '../../methods/Config'
   import Toast from '../../components/tips/Toast'
 
