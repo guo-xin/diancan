@@ -23,7 +23,9 @@ module.exports = {
       'vux-components': 'vux/src/components/',
       'src': resolve('src'),
       'methods': resolve('src/methods'),
-      'components': resolve('src/components')
+      'components': resolve('src/components'),
+      'views': resolve('src/views'),
+      'filters': resolve('src/filters')
     }
   },
   module: {

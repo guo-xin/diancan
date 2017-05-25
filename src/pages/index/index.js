@@ -2,21 +2,16 @@ import 'lib-flexible'
 import FastClick from 'fastclick'
 window.FastClick = FastClick
 
-import 'core-js/fn/array/find'
-import 'core-js/fn/array/find-index'
-import 'core-js/fn/array/map'
-import 'core-js/fn/object/assign'
-
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 
-import '../../filters/index'
-import App from './App.vue'
-import Merchant from '../../views/Merchant.vue'
-import CreateOrder from '../../views/CreateOrder.vue'
-import OrderDetail from '../../views/OrderDetail.vue'
-import About from '../../views/About.vue'
+import 'filters/index'
+import App from './App'
+import Merchant from 'views/Merchant'
+import CreateOrder from 'views/CreateOrder'
+import OrderDetail from 'views/OrderDetail'
+import About from 'views/About'
 
 Vue.use(VueResource)
 Vue.use(VueRouter)
@@ -53,19 +48,24 @@ const router = new VueRouter({
     }
   ]
 })
+
+// 此处声明你需要用到的JS-SDK权限
+let jsApiList = [
+  'checkJsApi',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'hideMenuItems',
+  'showMenuItems',
+  'getLocation',
+  'scanQRCode'
+]
 import { WechatPlugin, Wechat } from '../../methods/Wechat'
 Vue.use(WechatPlugin)
 
-Wechat.verify().then(initVue())
-Wechat.init()
+Wechat.verify().then(initVue)
+Wechat.init(jsApiList)
 Wechat.ready()
-.then(Wechat.hideOptionMenu())
-
-// Wechat.verify().then(initVue)
-// initVue()
-// Wechat.init()
-// Wechat.hideOptionMenu()
-// Wechat.noResize()
+.then(Wechat.hideOptionMenu)
 
 function initVue () {
   /* eslint-disable no-new */
