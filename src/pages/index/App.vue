@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view @toast="toast" @changeCart="changeCart" @saveCart="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
+    <router-view @toast="toast" @changeCart="changeCart" @saveCartEv="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
     <toast :msg.sync="msg"></toast>
   </div>
 </template>
@@ -70,13 +70,11 @@
         this.saveCart(mchntId)
       },
       saveCartEv (mchntId, cart) {
-        this.$set('cart', cart || [])
+        this.cart = cart || []
         this.saveCart(mchntId)
       },
       getCart (mchntId) {
-        console.log(mchntId)
         this.cart = Store.get(this.getKey(mchntId)) || []
-        console.log(this.cart)
       },
       cleanCart (mchntId) {  // 清空购物车
         this.$set('cart', [])
