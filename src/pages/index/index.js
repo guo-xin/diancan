@@ -3,59 +3,26 @@ import FastClick from 'fastclick'
 window.FastClick = FastClick
 
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import router from './router'
 
-import 'filters/index'
-import App from './App'
-import Merchant from 'views/Merchant'
-import CreateOrder from 'views/CreateOrder'
-import OrderDetail from 'views/OrderDetail'
-import About from 'views/About'
-
-Vue.use(VueResource)
-Vue.use(VueRouter)
-
+// 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
+// 在使用cors跨域时带上cookie
 Vue.http.options.xhr = {
   withCredentials: true
 }
+// 将请求的数据url化
 Vue.http.options.emulateJSON = true
 
-const router = new VueRouter({
-  routes: [
-    {
-      name: 'merchant', // 首页点餐
-      path: '/merchant/:mchnt_id',
-      component: Merchant,
-      children: [{
-        path: '/:address',
-        component: Merchant,
-        children: [{
-          path: '/:expire_time',
-          component: Merchant
-        }]
-      }]
-    },
-    {
-      path: '/create_order/:mchnt_id/:address', // 创建订单
-      name: 'createOrder',
-      component: CreateOrder
-    },
-    {
-      path: '/order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
-      name: 'orderDetail',
-      component: OrderDetail
-    },
-    {
-      path: '/about', // 关于
-      name: 'about',
-      component: About
-    }
-  ]
-})
+import App from './App'
+import 'filters/index'
+import { WechatPlugin, Wechat } from 'methods/Wechat'
+
+Vue.use(VueResource)
+Vue.use(WechatPlugin)
 
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [
@@ -67,10 +34,11 @@ let jsApiList = [
   'getLocation',
   'scanQRCode'
 ]
-import { WechatPlugin, Wechat } from '../../methods/Wechat'
-Vue.use(WechatPlugin)
-
+// 需要csid的情况
 Wechat.verify().then(initVue)
+// 不需要csid的情况
+// initVue()
+
 Wechat.init(jsApiList)
 Wechat.ready()
 .then(Wechat.hideOptionMenu)
