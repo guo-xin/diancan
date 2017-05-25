@@ -16,7 +16,6 @@
   }
 </style>
 <script type="text/ecmascript-6">
-  import Wechat from '../../methods/Wechat'
   export default {
     data () {
       return {
@@ -24,7 +23,7 @@
     },
     methods: {
       scan () {
-        Wechat.onScanQRcode()
+        this.$wechat.scanQRcode()
       }
     }
   }

@@ -14,7 +14,6 @@ const getAuthInfo = (mchtId) => {
     .then((res) => {
       let data = res.data
       if (data.respcd === Config.code.OK) {
-        console.log(data.data)
         resolve(data.data)
       } else {
         window.alert(data.resperr)
@@ -39,9 +38,13 @@ const getWeixinBack = (data) => {
         window.localStorage.setItem('dc_openid', res.data.data.openid)
         resolve()
       } else {
+        reject(data)
         let url = `${Config.o2Host}trade/v1/customer/get?appid=${data.data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
         window.location.replace(url)
       }
+    })
+    .catch((err) => {
+      console.log('获取微信回调错误', err)
     })
   })
 }
@@ -204,6 +207,10 @@ const scanQRcode = () => {
   })
 }
 
+const hideAllNonBaseMenuItem = () => {
+  wx.hideAllNonBaseMenuItem()
+}
+
 export default {
   verify,
   init,
@@ -212,5 +219,6 @@ export default {
   getCoords,
   menuShareAppMessage,
   menuShareTimeline,
-  scanQRcode
+  scanQRcode,
+  hideAllNonBaseMenuItem
 }
