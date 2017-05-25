@@ -53,9 +53,16 @@ const router = new VueRouter({
     }
   ]
 })
-// import Wechat from '../../methods/Wechat'
+import { WechatPlugin, Wechat } from '../../methods/Wechat'
+Vue.use(WechatPlugin)
+
+Wechat.verify().then(initVue())
+Wechat.init()
+Wechat.ready()
+.then(Wechat.hideOptionMenu())
+
 // Wechat.verify().then(initVue)
-initVue()
+// initVue()
 // Wechat.init()
 // Wechat.hideOptionMenu()
 // Wechat.noResize()
