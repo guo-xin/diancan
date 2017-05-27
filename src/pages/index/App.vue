@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <router-view
-      @click="testToast"
       @toast="toast"
       :cart="cart"
       @changeCart="changeCart"
@@ -17,7 +16,6 @@
 </template>
 
 <script>
-  import Wechat from 'methods/Wechat'
   import Store from 'methods/Store'
   import { STORE_CART } from 'methods/Config'
   import Toast from 'components/tips/Toast'
@@ -42,6 +40,7 @@
         this.cart = []
         this.saveCartEv(mchntId, [])
       })
+      this.$toast('Test Toast!')
     },
     mounted () {
       if (window.location.hash === '#!/') {
@@ -51,9 +50,6 @@
       this.setOpenId()
     },
     methods: {
-      testTost () {
-        this.$toast('Test Toast!')
-      },
       setOpenId () {
         this.user.open_id = window.localStorage.getItem('dc_openid') || ''
         this.appId = window.localStorage.getItem('dc_appid') || ''
@@ -98,16 +94,16 @@
         this.cart = Store.get(this.getKey(mchntId)) || []
       },
       hideOptionMenu () {  // 隐藏右上角菜单
-        Wechat.hideOptionMenu()
+        this.$wechat.hideOptionMenu()
       },
       menuShareAppMessage (args = {}) {  // 分享给朋友
-        Wechat.onMenuShareAppMessage(args)
+        this.$wechat.onMenuShareAppMessage(args)
       },
       menuShareTimeline (args = {}) {
-        Wechat.onMenuShareTimeline(args)
+        this.$wechat.onMenuShareTimeline(args)
       },
       qr () {
-        Wechat.onScanQRcode()
+        this.$wechat.onScanQRcode()
       }
     }
   }
