@@ -56,17 +56,18 @@
 
     <!--选择规格-->
     <select-spec :visible.sync="showSpec"
-                 :goods.sync="selectSpecGoods"
+                 :goods="selectSpecGoods"
                  :plus="plusHandler"
                  :minus="minusHandler"
-                 :diy="diyHandler">
+                 :diy="diyHandler"
+                 @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
     <goods-detail :visible.sync="showDetail"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"></cart-bar>
+    <cart-bar v-if="cart.length" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" :cart="cart" @cleanGoods="cleanGoods"></cart-bar>
 
     <!--关店蒙层-->
     <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
@@ -94,6 +95,7 @@
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
+    props: ['cart'],
     components: {
       Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode
     },
@@ -118,9 +120,6 @@
     computed: {
       isEmptyInfo () {
         return !Util.isEmptyObject(this.order_info)
-      },
-      cart () {
-        return this.$root.cart
       }
     },
     created () {
@@ -333,13 +332,8 @@
       showDetailHandler (goods) {
         this.selectDetail = goods
         this.showDetail = true
-      }
-    },
-    events: {
-      'on-selectSpec' (goods, specIndex) {
-        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
       },
-      'on-cleanCart' (mchntId) {
+      cleanGoods () {
         let data = this.getStorage() || {}
         let goods = data.goods || []
         goods.map(group => {
@@ -348,10 +342,11 @@
             return goods
           })
         })
-
-        this.$set('groupList', goods)
-        this.$set('goodsList', goods[this.selectIndex].goods_list)
-        return true
+        this.groupList = goods
+        this.goodsList = goods[this.selectIndex].goods_list
+      },
+      selectSpecBtn (goods, specIndex) {
+        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
       }
     }
   }

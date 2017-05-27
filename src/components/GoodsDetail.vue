@@ -29,7 +29,7 @@
     },
     methods: {
       closeHandler () {
-        this.visible = false
+        this.$emit('update:visible', false)
       }
     }
   }
@@ -60,7 +60,7 @@
     padding: 10px;
     text-align: right;
     i {
-      font-size: 60px;
+      font-size: 50px;
       font-weight: normal;
       color: #D8D8D8;
     }
