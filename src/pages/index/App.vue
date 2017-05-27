@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view @toast="toast" @changeCart="changeCart" @saveCartEv="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
+    <router-view @click="testToast" @toast="toast" @changeCart="changeCart" @saveCartEv="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
     <toast :msg.sync="msg"></toast>
   </div>
 </template>
@@ -33,6 +33,9 @@
       this.setOpenId()
     },
     methods: {
+      testTost () {
+        this.$toast('Test Toast!')
+      },
       setOpenId () {
         this.user.open_id = window.localStorage.getItem('dc_openid') || ''
         this.appId = window.localStorage.getItem('dc_appid') || ''

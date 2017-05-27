@@ -5,6 +5,7 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
+import { Toast } from 'qfpay-ui'
 import { verify } from 'methods/verify'
 
 // 将post请求的提交方式默认为表格提交的方式
@@ -24,6 +25,9 @@ import { WechatPlugin, Wechat } from 'methods/Wechat'
 
 Vue.use(VueResource)
 Vue.use(WechatPlugin)
+
+Vue.component(Toast.name, Toast)
+Vue.prototype.$toast = Toast
 
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [
