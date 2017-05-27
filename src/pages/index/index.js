@@ -5,6 +5,7 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
+import { verify } from 'methods/verify'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -36,7 +37,7 @@ let jsApiList = [
 ]
 
 if (Util.isWX) {
-  Wechat.verify().then(initVue)
+  verify().then(initVue)
   Wechat.init(jsApiList)
   Wechat.ready()
   .then(Wechat.hideOptionMenu)

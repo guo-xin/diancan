@@ -4,6 +4,7 @@ window.FastClick = FastClick
 
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import { verify } from 'methods/verify'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -34,7 +35,7 @@ let jsApiList = [
   'scanQRCode'
 ]
 // 需要csid的情况
-Wechat.verify().then(initVue)
+verify().then(initVue)
 // 不需要csid的情况
 // initVue()
 
