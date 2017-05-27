@@ -11,19 +11,14 @@
       @menuShareTimeline="menuShareTimeline"
       @qr="qr">
     </router-view>
-    <toast :msg.sync="msg"></toast>
   </div>
 </template>
 
 <script>
   import Store from 'methods/Store'
   import { STORE_CART } from 'methods/Config'
-  import Toast from 'components/tips/Toast'
 
   export default {
-    components: {
-      Toast
-    },
     data () {
       return {
         user: {
@@ -40,7 +35,7 @@
         this.cart = []
         this.saveCartEv(mchntId, [])
       })
-      this.$toast('Test Toast!')
+      // this.$toast('Test Toast!')
     },
     mounted () {
       if (window.location.hash === '#!/') {

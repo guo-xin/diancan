@@ -98,7 +98,7 @@
           name: 'createOrder',
           params: {
             mchnt_id: this.$parent.mchnt_id,
-            address: this.$parent.address
+            address: this.$parent.address || ':address'
           }
         })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])

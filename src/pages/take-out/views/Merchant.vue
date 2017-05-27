@@ -4,7 +4,7 @@
     <div class="c-loading-container" v-if="isLoading">
       <loading :visible="isLoading"></loading>
     </div>
-    <div class="order-info" v-show="isEmptyInfo">
+    <div class="order-info" v-if="isEmptyOrder">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
         <a @click="goDetail">查看订单</a>
       </p>
@@ -14,7 +14,7 @@
         <scroller class="scroller-left" lock-x ref="scrollerleft" height="100%">
           <div class="list-group">
             <ul class="">
-              <li v-for="group in groupList" :class="{'active': selectIndex === index}"
+              <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}"
                   @click="select(index, group)">
                 <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
                 </div>
@@ -57,19 +57,23 @@
 
     <!--选择规格-->
     <select-spec :visible.sync="showSpec"
-                 :goods.sync="selectSpecGoods"
+                 :goods="selectSpecGoods"
                  :plus="plusHandler"
                  :minus="minusHandler"
-                 :diy="diyHandler">
+                 :diy="diyHandler"
+                 @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
     <goods-detail :visible.sync="showDetail"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
-      :overtime="merchantSetting.overtime" :nodelivery="merchantSetting.delivery_open_state === 0"
-      v-if="cart.length"></cart-bar>
+    <cart-bar v-if="cart.length"
+      :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
+      :overtime="merchantSetting.overtime"
+      :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
+      @cleanGoods="cleanGoods">
+    </cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -94,6 +98,7 @@
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
+    props: ['cart', 'deliver'],
     components: {
       Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
     },
@@ -114,101 +119,75 @@
       }
     },
     computed: {
-      cart () {
-        return this.$root.cart
-      },
-      isEmptyInfo () {
+      isEmptyOrder () {
         return !Util.isEmptyObject(this.order_info)
       }
     },
-    mounted () {
-      this.isLoading = false
-    },
-    route: {
-      data (transition) {
-        /**
-         * mchnt_id     // 商户id
-         */
-        let args = this.$route.params
-//        if (!args.mchnt_id) {
-//          window.alert('商户ID不存在')
-//          return
-//        }
-        args.format = 'jsonp'
-        args.open_id = this.$root.user.open_id
-        args.sale_type = 3
-        this.$http({
-          url: Config.apiHost + 'diancan/c/goods_list',
-          // url: '/static/api/goods_list.json',
-          method: 'JSONP',
-          data: args
-        }).then(function (response) {
-          let data = response.data
-          // 验证链接时间是否过期
-          if (data.respcd === '4000') {
-            this.isExpire = true
-            return
-          } else if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
-            return
-          }
-          this.mchnt_id = args.mchnt_id
-          this.$root.mchnt_id = args.mchnt_id
-          let mSet = data.data.merchant_setting
-          if (mSet.shipping_fee !== undefined) {
-            let deliver = this.$root.deliver
-            deliver.isFee = true
-            deliver.originFee = mSet.shipping_fee
-            deliver.freeDeliverFee = mSet.min_shipping_fee
-            deliver.startDeliveryFee = mSet.start_delivery_fee
-          }
-          this.setStorage(data.data)
-          this.$dispatch('on-getCart', this.mchnt_id)
-          let goods = this.mergeGoods(data.data.goods)
-          transition.next({
-            mchnt_id: args.mchnt_id,
-            groupList: goods,
-//            goodsList: goods[0].goods_list,
-            goodsList: (function () {
-              if (goods.length !== 0) {
-                return goods[0].goods_list
-              } else {
-                return ''
-              }
-            })(),
-            order_info: data.data.order_info,
-            merchantSetting: mSet
-//            order_info: {
-//              order_id: '6149736680771744597',
-//              order_time: 1469006994
-//            }
-          })
-          this.$nextTick(() => {
-            document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-            document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-            this.$refs.scrollerleft.reset()
-            this.$refs.scroller.reset()
-          })
-          const shopname = data.data.shopname
-          let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
-          let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-          this.$dispatch('on-onMenuShareAppMessage', {title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`, desc: '菜单在眼前，吃啥不纠结！', imgUrl: imgUrl, link: shareLink})
-          this.$dispatch('on-onMenuShareTimeline', {title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`, imgUrl: imgUrl, link: shareLink})
-
-          Util.setTitle(shopname)
-        }, function (response) {
-          // error callback
-        })
-      },
-      beforeRouteLeave (transition) {
-        this.$dispatch('on-hideOptionMenu')
-        transition.next()
+    created () {
+      this.isLoading = true
+      let args = {
+        mchnt_id: this.$route.params.mchnt_id,
+        format: 'jsonp',
+        open_id: window.localStorage.getItem('dc_openid') || '',
+        sale_type: 3
       }
+      this.$http({
+        url: Config.apiHost + 'diancan/c/goods_list',
+        method: 'JSONP',
+        params: args
+      }).then(function (response) {
+        let data = response.data
+        // 验证链接时间是否过期
+        if (data.respcd === '4000') {
+          this.isExpire = true
+          return
+        } else if (data.respcd !== Config.code.OK) {
+          this.$toast(data.respmsg)
+          return
+        }
+        this.isLoading = false
+        let mSet = data.data.merchant_setting
+        if (mSet.shipping_fee !== undefined) {
+          let deliver = this.$parent.deliver
+          deliver.isFee = true
+          deliver.originFee = mSet.shipping_fee
+          deliver.freeDeliverFee = mSet.min_shipping_fee
+          deliver.startDeliveryFee = mSet.start_delivery_fee
+          this.$emit('updateDeliver', deliver)
+        }
+        this.merchantSetting = mSet
+        this.setStorage(data.data)
+        this.$emit('getCart', this.mchnt_id)
+        let goods = this.mergeGoods(data.data.goods)
+        this.groupList = goods
+        this.goodsList = (function () {
+          if (goods.length !== 0) {
+            return goods[0].goods_list
+          } else {
+            return ''
+          }
+        })()
+        this.order_info = data.data.order_info
+        this.$nextTick(() => {
+          document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
+          document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+          this.$refs.scrollerleft.reset()
+          this.$refs.scroller.reset()
+        })
+        const shopname = data.data.shopname
+        const logourl = data.data.logo_url
+        this.shareStore(shopname, logourl)
+      })
     },
     methods: {
       goDetail () {
-        this.$router.push({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
+        this.$router.push({
+          name: 'orderDetail',
+          params: {
+            mchnt_id: this.mchnt_id,
+            order_id: this.order_info.order_id
+          }
+        })
       },
       getKey () {
         return STORAGEKEY + '_' + this.mchnt_id
@@ -263,31 +242,31 @@
             delCart.push(index)
           }
         })
-        delArr.length && this.$dispatch('on-toast', delArr.join(' ') + '已下架')
+        delArr.length && this.$emit('toast', delArr.join(' ') + '已下架')
         delCart.reverse().forEach(item => {
           cart.splice(item, 1)
         })
-        this.$dispatch('on-saveCart', this.mchnt_id, cart)
+        this.$emit('saveCartEv', this.mchnt_id, cart)
         return goods
       },
       select (index, item) {
         this.selectIndex = index
-        this.$set('goodsList', item.goods_list)
+        this.goodsList = item.goods_list
         this.$nextTick(function () {
           let scroller = this.$refs.scroller
           scroller.reset()
           scroller._xscroll.scrollTop()
         })
       },
-      plusHandler (events, goods, specIndex) {
+      plusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, true)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
-      minusHandler (events, goods, specIndex) {
+      minusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, false)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
-      diyHandler (events, goods, specIndex, number) {
+      diyHandler (goods, specIndex, number) {
         this.addCartHandler(goods, specIndex, number)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
       },
@@ -333,7 +312,7 @@
         let newGoods = Object.assign({}, oldGoods)
         this.$set(this.groupList[index].goods_list, i, newGoods)
 
-        this.$dispatch('on-changeCart', newGoods, specIndex, this.mchnt_id)
+        this.$emit('changeCart', newGoods, specIndex, this.mchnt_id)
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0
@@ -356,6 +335,38 @@
       showDetailHandler (goods) {
         this.selectDetail = goods
         this.showDetail = true
+      },
+      shareStore (shopname, logourl) {
+        let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + this.mchnt_id
+        let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+        this.$wechat.menuShareAppMessage({
+          title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,
+          desc: '菜单在眼前，吃啥不纠结！',
+          imgUrl: imgUrl,
+          link: shareLink
+        })
+        this.$wechat.menuShareTimeline({
+          title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`,
+          imgUrl: imgUrl,
+          link: shareLink
+        })
+        Util.setTitle(shopname)
+      },
+      selectSpecBtn (goods, specIndex) {
+        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
+      },
+      cleanGoods (mchntId) {
+        let data = this.getStorage() || {}
+        let goods = data.goods || []
+        goods.map(group => {
+          return group.goods_list.map(goods => {
+            goods._lastSpec = 0
+            return goods
+          })
+        })
+
+        this.groupList = goods
+        this.goodsList = goods[this.selectIndex].goods_list
       }
     },
     events: {

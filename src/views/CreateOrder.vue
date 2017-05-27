@@ -1,12 +1,13 @@
 <template>
   <div class="create-order-view">
-    <section v-if="isEditAddress" class="fill-table-number item">
+    <section v-if="address === ':address'" class="fill-table-number item">
       <label for="table-number-input">桌号：</label>
-      <input id="table-number-input" type="text" v-model="address" placeholder="请填写餐桌号码（选填）"/>
+      <input id="table-number-input" type="text" value="" placeholder="请填写餐桌号码（选填）"/>
     </section>
-    <section class="table-number">
-      <strong>&#8901;<span>12号桌</span>&#8901;</strong>
+    <section v-else class="table-number">
+      <strong>&#8901;<span>{{address}}号桌</span>&#8901;</strong>
     </section>
+
     <section class="note item">
       <label for="note">备注：</label>
       <textarea v-model="note" id="note" placeholder="可填写口味要求或忌口等信息"></textarea>
@@ -42,6 +43,7 @@
   import { isWX } from '../methods/Util'
   import alert from '../components/alert/alert.vue'
   export default {
+    props: ['cart'],
     components: {
       alert
     },
@@ -51,71 +53,22 @@
         alertTip: '',
         mchnt_id: '',       // 商户ID
         address: '',        // 桌号
-        isEditAddress: '',  // 是否可以编辑桌号
         note: '',           // 备注
-        orderId: '',        // 订单ID
+        orderId: '',
         checkout: {},
         btnText: '确认下单'
       }
     },
     created () {
-      this.$http({
-        url: 'https://wxmp.qfpay.com/v1/manage/wxjs_conf',
-        type: 'get',
-        data: {
-          url: window.location.href,
-          format: 'cors'
-        }
-      }).then(function(res) {
-        var data = res.data
-        if (data.respcd === '0000') {
-          var WXconfig = data.data;
-          wx.config({
-            debug: true,
-            appId: WXconfig.appId,
-            timestamp: WXconfig.timestamp,
-            signature: WXconfig.signature,
-            nonceStr: WXconfig.nonceStr,
-            jsApiList: ['chooseWXPay']
-          })
-        }
-      })
-    },
-    route: {
-      beforeRouteEnter (transition) {
-        // let params = transition.from.params || {}
-        let params = this.$route.params
-        this.mchnt_id = params.mchnt_id
-        this.address = params.address && params.address !== ':address' ? decodeURIComponent(params.address) : ''
-        this.isEditAddress = !this.address
-
-        if (this.cart.length) {
-          transition.next()
-          return
-        }
-        if (this.mchnt_id) {
-          this.$router.replace({
-            name: 'merchant',
-            params: {
-              'mchnt_id': this.mchnt_id,
-              'address': encodeURIComponent(this.address)
-            }
-          })
-          return
-        }
-        transition.abort()
-      }
+      let params = this.$route.params
+      this.mchnt_id = params.mchnt_id
+      this.address = params.address
     },
     computed: {
-      cart () {
-        this.$dispatch('on-getCart', this.mchnt_id)
-        return this.$root.cart || []
-      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.$root.cart
-        cart.forEach((goods, index) => {
+        this.cart.forEach((goods, index) => {
           let spec = goods.spec_list[goods._specIndex]
           count += spec._count
           price += spec._count * spec.txamt
@@ -165,11 +118,9 @@
           method: 'POST',
           data: args
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
             this.btnText = '确认下单'
             return
           }
@@ -193,11 +144,9 @@
           method: 'POST',
           data: args
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.resperr)
-            // transition.abort()
             this.btnText = '确认下单'
             return
           }
@@ -215,7 +164,7 @@
         }
         if (typeof payParams !== undefined) {
           payParams.timestamp = parseInt(payParams.timeStamp)
-          alert(typeof payParams.timestamp);
+          alert(typeof payParams.timestamp)
           delete payParams.timeStamp
           delete payParams.appId
           alert(JSON.stringify(payParams))
@@ -241,27 +190,13 @@
           )
         }
       },
-
-
-      //   if (typeof WeixinJSBridge === 'undefined') {
-      //     window.alert(0)
-      //     if (document.addEventListener) {
-      //       window.alert(1)
-      //       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
-      //     } else if (document.attachEvent) {
-      //       document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
-      //       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
-      //     }
-      //   } else {
-      //     window.alert(3)
-      //     onBridgeReady()
-      //   }
-      // },
-      orderPaySuccess () {  // 订单支付成功
+      orderPaySuccess () {
+        // 订单支付成功
         this.$dispatch('on-cleanCart', this.mchnt_id)
         this.queryOrder()
       },
-      orderPayFail () { // 支付失败
+      orderPayFail () {
+        // 支付失败
         this.btnText = '确认下单'
       },
       queryOrder () {
@@ -276,7 +211,6 @@
           method: 'GET',
           data: args
         }).then((response) => {
-          // success callback
           this.$router.replace({
             name: 'orderDetail',
             params: {
@@ -285,7 +219,6 @@
             }
           })
         }, (response) => {
-          // error callback
           this.$router.replace({
             name: 'orderDetail',
             params: {
@@ -355,6 +288,9 @@
       border: none;
       line-height: 1.5;
       resize: none;
+      &::placeholder {
+        color: $midGray;
+      }
     }
   }
   .order {

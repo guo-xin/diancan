@@ -1,21 +1,22 @@
 <template>
   <div id="app-container">
-    <!-- <router-view class="view-container"></router-view> -->
-    <router-view></router-view>
-    <toast :msg.sync="msg"></toast>
+    <router-view
+      :cart="cart"
+      :deliver="deliver"
+      @changeCart="changeCart"
+      @saveCartEv="saveCartEv"
+      @getCart="getCart"
+      @cleanCart="cleanCart"
+      @updateDeliver="updateDeliver">
+    </router-view>
   </div>
 </template>
 
 <script>
-  import Wechat from '../../methods/Wechat'
   import Store from '../../methods/Store'
   import {STORE_CART} from '../../methods/Config'
-  import Toast from '../../components/tips/Toast'
 
   export default {
-    components: {
-      Toast
-    },
     data () {
       return {
         user: {
@@ -37,6 +38,13 @@
         tempAddr: {}
       }
     },
+    created () {
+      // 清空购物车
+      this.$root.eventHub.$on('cleanCart', (mchntId) => {
+        this.cart = []
+        this.saveCartEv(mchntId, [])
+      })
+    },
     mounted () {
       if (window.location.hash === '#!/') {
         let url = window.location.origin + window.location.pathname + window.location.search + window.localStorage.getItem('redirect_uri')
@@ -52,15 +60,13 @@
       getKey (mchntId) {
         return STORE_CART + '_' + mchntId
       },
+      updateDeliver (newDeliver) {
+        this.deliver = newDeliver
+      },
       saveCart (mchntId) {
         Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      }
-    },
-    events: {
-      'on-toast' (msg) {
-        this.msg = msg
       },
-      'on-changeCart' (goods, specIndex, mchntId) {
+      changeCart (goods, specIndex, mchntId) {
         let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
         let index = -1
         let spec = goods.spec_list[specIndex]
@@ -83,28 +89,12 @@
         }
         this.saveCart(mchntId)
       },
-      'on-saveCart' (mchntId, cart) {
-        this.$set('cart', cart || [])
+      saveCartEv (mchntId, cart) {
+        this.cart = cart || []
         this.saveCart(mchntId)
       },
-      'on-getCart' (mchntId) {
-        this.$set('cart', Store.get(this.getKey(mchntId)) || [])
-      },
-      'on-cleanCart' (mchntId) {  // 清空购物车
-        this.$set('cart', [])
-        this.saveCart(mchntId)
-      },
-      'on-hideOptionMenu' () {  // 隐藏右上角菜单
-        Wechat.hideOptionMenu()
-      },
-      'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
-        Wechat.onMenuShareAppMessage(args)
-      },
-      'on-onMenuShareTimeline' (args = {}) {  // 分享朋友圈
-        Wechat.onMenuShareTimeline(args)
-      },
-      'on-qr' () {
-        Wechat.onScanQRcode()
+      getCart (mchntId) {
+        this.cart = Store.get(this.getKey(mchntId)) || []
       }
     }
   }
