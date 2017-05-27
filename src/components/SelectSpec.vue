@@ -1,12 +1,12 @@
 <template>
-  <div class="container" v-show="visible" @click="visible=false">
+  <div class="container" v-show="visible" @click="closeSpec">
     <transition name="zoomInOut">
       <div class="spec" v-if="visible" @click.stop.prevent="nullFunction">
-        <div class="close" @click="visible=false"><i class="icon-closed"></i></div>
+        <div class="close" @click="closeSpec"><i class="icon-closed"></i></div>
         <div class="head line">{{goods.name}}</div>
         <section class="body">
           <ul class="spec-list line">
-            <li v-for="_spec in goods.spec_list"
+            <li v-for="(_spec, index) in goods.spec_list"
                 :class="{'activate': index === goods._lastSpec}"
                 @click.stop.prevent="selectSpec(index)">{{_spec.name}}
             </li>
@@ -17,12 +17,12 @@
           </div>
         </section>
 
-        <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, lastSpec)">
+        <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus(goods, lastSpec)">
           加入购物车
         </button>
         <!--商品选择-->
         <goods-select v-show="spec._count" class="goods-select-container"
-                      :goods.sync="goods"
+                      :goods="goods"
                       :activate="lastSpec"
                       :plus="plus"
                       :minus="minus"
@@ -53,8 +53,12 @@
     },
     methods: {
       selectSpec (index) {
-        this.goods._lastSpec = index
-        this.$dispatch('on-selectSpec', this.goods, index)
+        let goods = this.goods
+        goods._lastSpec = index
+        this.$emit('selectSpecBtn', goods, index)
+      },
+      closeSpec () {
+        this.$emit('update:visible', false)
       },
       nullFunction () {
       }
@@ -93,7 +97,7 @@
     top: 20px;
     text-align: right;
     i {
-      font-size: 50px;
+      font-size: 40px;
       font-weight: normal;
       color: #D8D8D8;
     }

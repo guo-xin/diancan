@@ -1,5 +1,10 @@
 {
   "presets": ["stage-2"],
-  "plugins": ["transform-runtime"],
+  "plugins": [["component", [
+    {
+      "libraryName": "qfpay-ui",
+      "style": true
+    }
+  ]], "transform-runtime"],
   "comments": false
 }

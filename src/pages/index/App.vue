@@ -1,6 +1,17 @@
 <template>
   <div id="app">
-    <router-view @click="testToast" @toast="toast" @changeCart="changeCart" @saveCartEv="saveCartEv" @getCart="getCart" @cleanCart="cleanCart" @hideOptionMenu="hideOptionMenu" @menuShareAppMessage="menuShareTimeline" @menuShareTimeline="menuShareTimeline" @qr="qr"></router-view>
+    <router-view
+      @click="testToast"
+      @toast="toast"
+      :cart="cart"
+      @changeCart="changeCart"
+      @saveCartEv="saveCartEv"
+      @getCart="getCart"
+      @hideOptionMenu="hideOptionMenu"
+      @menuShareAppMessage="menuShareTimeline"
+      @menuShareTimeline="menuShareTimeline"
+      @qr="qr">
+    </router-view>
     <toast :msg.sync="msg"></toast>
   </div>
 </template>
@@ -24,6 +35,13 @@
         cart: [],
         msg: ''
       }
+    },
+    created () {
+      // 清空购物车
+      this.$root.eventHub.$on('cleanCart', (mchntId) => {
+        this.cart = []
+        this.saveCartEv(mchntId, [])
+      })
     },
     mounted () {
       if (window.location.hash === '#!/') {
@@ -78,10 +96,6 @@
       },
       getCart (mchntId) {
         this.cart = Store.get(this.getKey(mchntId)) || []
-      },
-      cleanCart (mchntId) {  // 清空购物车
-        this.$set('cart', [])
-        this.saveCart(mchntId)
       },
       hideOptionMenu () {  // 隐藏右上角菜单
         Wechat.hideOptionMenu()

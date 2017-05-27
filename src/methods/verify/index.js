@@ -40,14 +40,14 @@ const getWeixinCallBack = (data) => {
       }
     })
     .then((res) => {
-      let data = res.data
+      let response = res.data
       if (data.respcd === Config.code.OK) {
-        window.localStorage.setItem('dc_appid', res.data.data.appid)
-        window.localStorage.setItem('dc_openid', res.data.data.openid)
+        window.localStorage.setItem('dc_appid', response.data.appid)
+        window.localStorage.setItem('dc_openid', response.data.openid)
         resolve()
       } else {
         reject(data)
-        let url = `${Config.o2Host}trade/v1/customer/get?appid=${data.data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
+        let url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
         window.location.replace(url)
       }
     })

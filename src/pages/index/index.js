@@ -22,6 +22,7 @@ Vue.http.options.emulateJSON = true
 import App from './App'
 import 'filters/index'
 import { WechatPlugin, Wechat } from 'methods/Wechat'
+import Util from 'methods/Util'
 
 Vue.use(VueResource)
 Vue.use(WechatPlugin)
@@ -36,17 +37,17 @@ let jsApiList = [
   'showAllNonBaseMenuItem',
   'hideMenuItems',
   'showMenuItems',
-  'getLocation',
   'scanQRCode'
 ]
-// 需要csid的情况
-verify().then(initVue)
-// 不需要csid的情况
-// initVue()
 
-Wechat.init(jsApiList)
-Wechat.ready()
-.then(Wechat.hideOptionMenu)
+if (Util.isWX) {
+  verify().then(initVue)
+  Wechat.init(jsApiList)
+  Wechat.ready()
+  .then(Wechat.hideOptionMenu)
+} else {
+  initVue()
+}
 
 function initVue () {
   /* eslint-disable no-new */
@@ -54,6 +55,9 @@ function initVue () {
     el: '#app',
     router,
     template: '<App/>',
-    components: { App }
+    components: { App },
+    data: {
+      eventHub: new Vue()
+    }
   })
 }
