@@ -78,13 +78,13 @@ const hideOptionMenu = () => {
 
 // 获取经纬度接口
 const getCoords = () => {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     wx.getLocation({
       type: 'gcj02',
       success: function (res) {
         window.localStorage.setItem('longitude', res.longitude)
         window.localStorage.setItem('latitude', res.latitude)
-        resolve()
+        resolve(res)
       }
     })
   })

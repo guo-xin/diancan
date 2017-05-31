@@ -6,7 +6,6 @@
       @changeCart="changeCart"
       @saveCartEv="saveCartEv"
       @getCart="getCart"
-      @cleanCart="cleanCart"
       @updateDeliver="updateDeliver">
     </router-view>
   </div>
@@ -103,26 +102,20 @@
 <style lang="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
   @import "../../styles/iconfont/iconfont.css";
-  /*@import '~vux/dist/vux.css';*/
 
-  html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
-    padding: 0;
-    margin: 0;
-    border: 0;
-    outline: 0;
-    font-weight: inherit;
-    font-style: inherit;
+  body {
+    background-color: #f7f7f7;
     font-size: 100%;
-    vertical-align: baseline;
   }
 
-  ol, ul, li {
+  ul, p, h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  ol, ul {
     list-style: none;
-  }
-
-  // fix Font Boosting
-  p, div {
-    max-height: 999999px;
+    padding-left: 0
   }
 
   a {
@@ -134,10 +127,6 @@
 
   em {
     font-style: normal;
-  }
-
-  body {
-    background-color: #f7f7f7;
   }
 
   #app-container {

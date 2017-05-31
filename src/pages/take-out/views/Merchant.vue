@@ -368,25 +368,6 @@
         this.groupList = goods
         this.goodsList = goods[this.selectIndex].goods_list
       }
-    },
-    events: {
-      'on-selectSpec' (goods, specIndex) {
-        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
-      },
-      'on-cleanCart' (mchntId) {
-        let data = this.getStorage() || {}
-        let goods = data.goods || []
-        goods.map(group => {
-          return group.goods_list.map(goods => {
-            goods._lastSpec = 0
-            return goods
-          })
-        })
-
-        this.$set('groupList', goods)
-        this.$set('goodsList', goods[this.selectIndex].goods_list)
-        return true
-      }
     }
   }
 </script>

@@ -135,20 +135,19 @@
         params: args
       })
       .then(function (response) {
+        this.isLoading = false
         let data = response.data
         if (data.respcd === '4000') {
           this.isExpire = true
           return
         } else if (data.respcd !== Config.code.OK) {
-          this.$emit('toast', data.respmsg)
+          this.$toast(data.respmsg)
           return
         }
-        this.isLoading = false
         this.mchnt_id = args.mchnt_id
         this.setStorage(data.data)
         this.$emit('getCart', args.mchnt_id)
         let goods = this.mergeGoods(data.data && data.data.goods)
-        this.mchnt_id = args.mchnt_id
         this.address = args.address || null,
         this.groupList = goods
         this.isClose = data.data.merchant_setting.sale_state === 0

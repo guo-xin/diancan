@@ -41,7 +41,10 @@ if (Util.isWX) {
   verify().then(initVue)
   Wechat.init(jsApiList)
   Wechat.ready()
-  .then(Wechat.hideOptionMenu)
+  .then(() => {
+    Wechat.hideOptionMenu()
+    Wechat.getFormattedAddress()
+  })
 } else {
   initVue()
 }

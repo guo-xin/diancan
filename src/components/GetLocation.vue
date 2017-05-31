@@ -6,9 +6,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Wechat from '../methods/Wechat'
+  import { Wechat } from '../methods/Wechat'
   import store from '../vuex/store'
-  import { getAddress } from '../vuex/getters'
 
   export default {
     data () {
@@ -16,26 +15,20 @@
         btnDisabled: false
       }
     },
-    vuex: {
-      getters: {
-        formattedAddress: getAddress
-      }
-    },
     computed: {
+      formattedAddress () {
+        return this.$store.getters.doneFormat
+      }
     },
     methods: {
       getLocation () {
-        store.dispatch('UPDATEADDRESS', '未获取到地理位置')
         this.btnDisabled = 'disabled'
-        Wechat.getCoords().then(Wechat.getFormattedAddress().then(this.setFormattedAddress))
-      },
-      setFormattedAddress () {
-        let formattedAddress = window.localStorage.getItem('formatted_address') || '未获取到地理位置'
-        store.dispatch('UPDATEADDRESS', formattedAddress)
-        this.btnDisabled = false
+        Wechat.getFormattedAddress().then(() => {
+          this.btnDisabled = false
+        })
       }
     },
-    store: store
+    store
   }
 </script>
 

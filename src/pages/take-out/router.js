@@ -1,5 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Merchant from './views/Merchant'
+import CreateOrder from './views/CreateOrder'
+import AddrList from './components/addr-list'
+import AddrAdd from './components/addr-add'
+import MapMarker from './components/MapMarker'
+import AddressUpdate from './components/addr-update'
+import OrderDetail from './views/OrderDetail'
 
 Vue.use(VueRouter)
 
@@ -7,37 +14,37 @@ let routes = [
   {
     path: '/merchant/:mchnt_id',
     name: 'merchant',
-    component: require('./views/Merchant')
+    component: Merchant
   },
   { // 创建订单
-    path: 'create_order/:mchnt_id',
+    path: '/create_order/:mchnt_id',
     name: 'createOrder',
-    component: require('./views/CreateOrder')
+    component: CreateOrder
   },
   {
     path: '/address/list',
     name: 'addressList',
-    component: require('./components/addr-list.vue')
+    component: AddrList
   },
   {
     path: '/address/add',
     name: 'addressAdd',
-    component: require('./components/addr-add.vue')
+    component: AddrAdd
   },
   {
     path: '/address/marker',
     name: 'addressMarker',
-    component: require('./components/MapMarker.vue')
+    component: MapMarker
   },
   {
     path: '/address/update',
     name: 'addressUpdate',
-    component: require('./components/addr-update.vue')
+    component: AddressUpdate
   },
   { // 订单详情: 订单id|商户id
-    path: 'order_detail/:order_id/:mchnt_id',
+    path: '/order_detail/:order_id/:mchnt_id',
     name: 'orderDetail',
-    component: require('./views/OrderDetail')
+    component: OrderDetail
   }
 ]
 
