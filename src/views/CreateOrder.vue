@@ -233,7 +233,7 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss">
-  @import "../styles/base/_base";
+  @import "../styles/base/_var";
   body {
     background-color: #f7f7f7;
   }

@@ -19,7 +19,7 @@
     },
     route: {
       data (transition) {
-        Object.assign(this.info, this.$root.tempAddr)
+        Object.assign(this.info, this.$parent.tempAddr)
         transition.next()
       }
     },
@@ -39,7 +39,7 @@
           coord = e.data.location.split(',')
           _this.info.longitude = coord[0]
           _this.info.latitude = coord[1]
-          _this.$root.tempAddr = _this.info
+          _this.$parent.tempAddr = _this.info
           window.history.go(-1)
         }
       }

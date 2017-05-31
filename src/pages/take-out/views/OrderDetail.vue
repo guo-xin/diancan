@@ -51,7 +51,7 @@
         <!-- <del>原价¥63</del> -->
         <span><sub>￥</sub>{{order.orderinfo.txamt | formatCurrency}}</span>
       </div>
-      <div class="note">
+      <div class="note-item">
         <p><em>备注：</em>不要放葱，不要放蒜，不要青椒</p>
       </div>
     </section>
@@ -71,7 +71,7 @@
       <p>长按二维码关注，<br/>获取更多店铺福利！</p>
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
     </section>
-  </div>  
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -172,8 +172,8 @@
   }
 </script>
 
-<style lang="scss" rel="stylesheet/scss">
-  @import "../../../styles/base/_base";
+<style scoped lang="scss" rel="stylesheet/scss">
+  @import "../../../styles/base/_var";
   .c-loading-container {
     position: fixed;
     top: 0;
@@ -297,7 +297,7 @@
     }
     text-align: right;
   }
-  .note {
+  .note-item {
     background-color: #F7F7F7;
     padding: 24px 20px;
     border-radius: 6px;

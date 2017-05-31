@@ -79,6 +79,7 @@
     }
     .item-count {
       display: block;
+      box-sizing: border-box;
       width: 2em;
       height: 80px;
       line-height: 1;

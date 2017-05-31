@@ -20,8 +20,10 @@
         <input type="text" placeholder="填写详细门牌号" v-model="info.detail_addr"/>
       </li>
     </ul>
-    <a @click.prevent="goAdd" class="save">保存</a>
-    <a @click.prevent="confirm" class="delete">删除地址</a>
+    <footer>
+      <a @click.prevent="goAdd" class="save-btn">保存</a>
+      <a @click.prevent="confirm" class="delete-btn">删除地址</a>
+    </footer>
     <confirm :visible.sync="visibleConfirm" title="确定删除地址？" confirm-event="on-deleteAddr"></confirm>
   </form>
 </template>
@@ -47,21 +49,18 @@
         visibleConfirm: false
       }
     },
-    route: {
-      data (transition) {
-        Object.assign(this.info, this.$root.tempAddr)
-        let viewport = document.querySelector('meta[name=viewport]')
-        let m = document.createElement('meta')
-        m.setAttribute('name', 'viewport')
-        m.setAttribute('content', viewport.getAttribute('content'))
-        viewport.parentNode.insertBefore(m, viewport.nextSibling)
-        viewport.parentNode.removeChild(viewport)
-        transition.next()
-      }
+    created () {
+      Object.assign(this.info, this.$parent.tempAddr)
+      let viewport = document.querySelector('meta[name=viewport]')
+      let m = document.createElement('meta')
+      m.setAttribute('name', 'viewport')
+      m.setAttribute('content', viewport.getAttribute('content'))
+      viewport.parentNode.insertBefore(m, viewport.nextSibling)
+      viewport.parentNode.removeChild(viewport)
     },
     methods: {
       goChoose () {
-        this.$root.tempAddr = this.info
+        this.$parent.tempAddr = this.info
         let longitude = window.localStorage.getItem('longitude')
         let latitude = window.localStorage.getItem('latitude')
         let src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
@@ -111,7 +110,7 @@
   }
 </script>
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "../../../styles/main";
+  @import "../../../styles/base/_var";
   #user-info {
     padding-top: 30px;
   }
@@ -130,8 +129,8 @@
         border-bottom: none;
       }
       &.choose-city {
-        background: #fff url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjEwcHgiIGhlaWdodD0iMTdweCIgdmlld0JveD0iMCAwIDEwIDE3IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggQmV0YSAzLjUgKDI1MTI1KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5idG5fYXJyb3dAM3g8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaCBCZXRhLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSLorqLljZXnoa7orqQiIHNrZXRjaDp0eXBlPSJNU0FydGJvYXJkR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zNTAuMDAwMDAwLCAtOTIuMDAwMDAwKSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2U9IiNBN0E5QUUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgICAgICAgICA8ZyBpZD0iYWRkX2FkZHJlc3MiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLCA3OC4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJidG5fYXJyb3ciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM1NS41MDAwMDAsIDIyLjUwMDAwMCkgcm90YXRlKC0xODAuMDAwMDAwKSB0cmFuc2xhdGUoLTM1NS41MDAwMDAsIC0yMi41MDAwMDApIHRyYW5zbGF0ZSgzNTEuMDAwMDAwLCAxNC4wMDAwMDApIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNOC45MDI4Mjc5LDAuNjI0Mzk4NzUgTDAuOTAyODI3ODk4LDguNjI2Mjk4NzUgTDguOTAyODI3OSwxNi42MjcyOTg4IiBpZD0iUGFnZS0xIj48L3BhdGg+CiAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg%3D%3D") 8.5rem center no-repeat;
-        background-size: .6rem .6rem;
+        background: #fff url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjEwcHgiIGhlaWdodD0iMTdweCIgdmlld0JveD0iMCAwIDEwIDE3IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNrZXRjaD0iaHR0cDovL3d3dy5ib2hlbWlhbmNvZGluZy5jb20vc2tldGNoL25zIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggQmV0YSAzLjUgKDI1MTI1KSAtIGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCAtLT4KICAgIDx0aXRsZT5idG5fYXJyb3dAM3g8L3RpdGxlPgogICAgPGRlc2M+Q3JlYXRlZCB3aXRoIFNrZXRjaCBCZXRhLjwvZGVzYz4KICAgIDxkZWZzPjwvZGVmcz4KICAgIDxnIGlkPSJQYWdlLTEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHNrZXRjaDp0eXBlPSJNU1BhZ2UiPgogICAgICAgIDxnIGlkPSLorqLljZXnoa7orqQiIHNrZXRjaDp0eXBlPSJNU0FydGJvYXJkR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zNTAuMDAwMDAwLCAtOTIuMDAwMDAwKSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2U9IiNBN0E5QUUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgICAgICAgICA8ZyBpZD0iYWRkX2FkZHJlc3MiIHNrZXRjaDp0eXBlPSJNU0xheWVyR3JvdXAiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLCA3OC4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxnIGlkPSJidG5fYXJyb3ciIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM1NS41MDAwMDAsIDIyLjUwMDAwMCkgcm90YXRlKC0xODAuMDAwMDAwKSB0cmFuc2xhdGUoLTM1NS41MDAwMDAsIC0yMi41MDAwMDApIHRyYW5zbGF0ZSgzNTEuMDAwMDAwLCAxNC4wMDAwMDApIiBza2V0Y2g6dHlwZT0iTVNTaGFwZUdyb3VwIj4KICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNOC45MDI4Mjc5LDAuNjI0Mzk4NzUgTDAuOTAyODI3ODk4LDguNjI2Mjk4NzUgTDguOTAyODI3OSwxNi42MjcyOTg4IiBpZD0iUGFnZS0xIj48L3BhdGg+CiAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg%3D%3D") right 30px center no-repeat;
+        background-size: .3rem auto;
         em {
           display: inline-block;
           width: 6.5rem;
@@ -162,20 +161,22 @@
     }
   }
 
-  a {
-    display: block;
-    width: 9.2rem;
-    margin: 0 auto .4rem;
-    text-align: center;
-    font-size: .45333rem;
-    height: 1.173rem;
-    line-height: 1.173rem;
-    border-radius: .08rem;
-    &.save {
+  footer {
+    a {
+      display: block;
+      width: 9.2rem;
+      margin: 0 auto .4rem;
+      text-align: center;
+      font-size: .45333rem;
+      height: 1.173rem;
+      line-height: 1.173rem;
+      border-radius: .08rem;
+    }
+    .save-btn {
       color: $white;
       background-color: $orange;
     }
-    &.delete {
+    .delete-btn {
       background-color: transparent;
       color: $orange;
       border: .03rem solid $orange;

@@ -170,15 +170,13 @@
       display: block;
       top: -16px;
       right: -16px;
+      box-sizing: border-box;
       padding: 0 10px;
-
-      /*padding: 2px 10px;*/
       min-width: 36px;
       height: 36px;
       line-height: 36px;
       border-radius: 18px;
       text-align: center;
-      /*font-size: 32px;*/
       font-size: 26px;
       background-color: #FD5359;
     }

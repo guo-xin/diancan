@@ -103,32 +103,6 @@
   @import "../../styles/main.scss";
   @import "../../styles/iconfont/iconfont.css";
 
-  body {
-    background-color: #f7f7f7;
-    font-size: 100%;
-  }
-
-  ul, p, h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  ol, ul {
-    list-style: none;
-    padding-left: 0
-  }
-
-  a {
-    text-decoration: none;
-    &:link, &:visited, &:hover, &:active {
-      text-decoration: none;
-    }
-  }
-
-  em {
-    font-style: normal;
-  }
-
   #app-container {
     height: 100%;
     min-height: 100%;

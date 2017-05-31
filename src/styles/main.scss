@@ -1,8 +1,9 @@
 @charset "UTF-8";
 
 //@import "/node_modules/normalize.css/normalize.css";
-@import "./base/normalize";
-@import "./base/layout";
+// @import "./base/normalize";
+@import "./base/_layout";
 //@import "./iconfont/iconfont.css";
 @import "./base/_base";
+@import "./base/_var";
 //@import "./base/component";

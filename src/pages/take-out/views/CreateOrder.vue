@@ -4,9 +4,9 @@
       <img src="../assets/btn_add.svg"><span>新增送餐地址</span>
     </section>
     <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
-      <p>{{current_addr.contact_name}} {{current_addr.mobile}}</p>
+      <p>{{current_addr.contact_name}}　{{current_addr.mobile}}</p>
       <p>{{current_addr.location}} {{current_addr.detail_addr}}</p>
-      <p v-if="!current_addr.longitude" class="warn-tip"><i></i>配送地址需要升级</p>
+      <p v-if="!current_addr.longitude" class="update-tip">配送地址需要升级</p>
       <p v-if="current_addr.longitude && current_addr.overdist" class="warn-tip"><i></i>超出配送范围</p>
     </section>
     <section class="note item">
@@ -47,17 +47,18 @@
       <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
     <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
-    <confirm :visible.sync="visibleConfirm" :content="confirmText" confirm-event="on-selectedAddr"></confirm>
+    <confirm :visible.sync="visibleConfirm" :content="confirmText" @selectedAddr="selectedAddr"></confirm>
   </div>
 </template>
 <script>
   /* global _hmt */
   /* eslint-disable  */
-  import Config from '../../../methods/Config'
-  import Util from '../../../methods/Util'
-  import alert from '../../../components/alert/alert.vue'
-  import confirm from '../../../components/confirm/confirm'
+  import Config from 'methods/Config'
+  import Util from 'methods/Util'
+  import alert from 'components/alert/alert.vue'
+  import confirm from 'components/confirm/confirm'
   export default {
+    props: ['cart', 'deliver'],
     components: {
       alert, confirm
     },
@@ -75,57 +76,42 @@
         btnText: '确认下单'
       }
     },
-    route: {
-      beforeRouteEnter (transition) {
-        // let params = transition.from.params || {}
-        let params = this.$route.params
-        this.mchnt_id = params.mchnt_id
-        this.$watch('$root.cart', function (val) {
-          this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
-        })
-        if (this.cart.length) {
-          this.$http({
-            url: Config.dcHost + 'diancan/c/get_addr',
-            method: 'JSONP',
-            data: {
-              format: 'jsonp',
-              userid: this.mchnt_id
-            }
-          }).then(function (res) {
-            if (res.data.respcd === '0000') {
-              let _data = res.data.data.addr
-              if (Util.isEmptyObject(_data)) {
-                this.$root.current_addr = {}
-                return
-              }
-              this.hasAddress = true
-              this.$root.current_addr = _data
-            }
-          })
-          transition.next()
-          return
+    created () {
+      console.log('created')
+      let params = this.$route.params
+      this.mchnt_id = params.mchnt_id
+      console.log(params.mchnt_id)
+      // let deliver = this.deliver
+      // deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
+      // this.$emit('updateDeliver', deliver)
+      this.$http({
+        url: Config.dcHost + 'diancan/c/get_addr',
+        method: 'JSONP',
+        params: {
+          format: 'jsonp',
+          userid: this.mchnt_id
         }
-        if (this.mchnt_id) {
-          this.$router.replace({
-            name: 'merchant',
-            params: {
-              'mchnt_id': this.mchnt_id
-            }
-          })
-          return
+      }).then(function (res) {
+        console.log('get_addr')
+        console.log(res)
+        if (res.data.respcd === '0000') {
+          let _data = res.data.data.addr
+          if (Util.isEmptyObject(_data)) {
+            this.$parent.current_addr = {}
+            return
+          }
+          this.hasAddress = true
+          this.$parent.current_addr = _data
+        } else {
+          this.$toast(data.respmsg)
         }
-        transition.abort()
-      }
+      })
     },
     computed: {
-      cart () {
-        this.$dispatch('on-getCart', this.mchnt_id)
-        return this.$root.cart || []
-      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.$root.cart
+        let cart = this.cart
         cart.forEach((goods, index) => {
           let spec = goods.spec_list[goods._specIndex]
           count += spec._count
@@ -143,11 +129,8 @@
         }
         return payAmt
       },
-      deliver () {
-        return this.$root.deliver
-      },
       current_addr () {
-        return this.$root.current_addr
+        return this.$parent.current_addr
       }
     },
     methods: {
@@ -172,7 +155,7 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        if (!this.$root.current_addr.addr_id) {
+        if (!this.$parent.current_addr.addr_id) {
           this.$dispatch('on-toast', '请添加配送地址!')
           return
         }
@@ -197,12 +180,12 @@
           goods_info: JSON.stringify(goodsItem),
           format: 'cors',
           sale_type: 3,
-          addr_id: this.$root.current_addr.addr_id
+          addr_id: this.$parent.current_addr.addr_id
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
           method: 'POST',
-          data: args
+          params: args
         }).then((response) => {
           // success callback
           let data = response.data
@@ -230,7 +213,7 @@
         this.$http({
           url: Config.payHost + 'trade/v1/checkout',
           method: 'POST',
-          data: args
+          params: args
         }).then((response) => {
           // success callback
           let data = response.data
@@ -301,7 +284,7 @@
         this.$http({
           url: Config.apiHost + 'diancan/c/check_pay',
           method: 'GET',
-          data: args
+          params: args
         }).then((response) => {
           // success callback
           this.$router.replace({
@@ -322,6 +305,9 @@
           })
         })
       },
+      selectedAddr () {
+        console.log('selectedAddr')
+      },
       goAddAddress () {
         this.$router.push({
           path: '/address/add'
@@ -335,20 +321,12 @@
           }
         })
       }
-    },
-    events: {
-      'on-selectedAddr' () {
-        this.createOrder()
-      }
     }
   }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "../../../styles/base/_base";
-  body {
-    background-color: #f7f7f7;
-  }
+  @import "../../../styles/base/_var";
   .create-order-view {
     font-size: 28px;
     color: $black;
@@ -361,13 +339,13 @@
     border-bottom: 2px solid #E5E5E5;
   }
   .address {
-    min-height: 130px;
-    display: flex;
-    align-items: center;
     border-bottom: 2px dashed $orange;
     padding: 24px 30px;
     background:#fff url('../assets/arrow.svg') right 30px center no-repeat;
     &.add {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
       img {
         margin-right: 16px;
       }
@@ -406,6 +384,7 @@
       flex: 1;
       strong {
         display: block;
+        font-weight: normal;
       }
       em {
         font-size: 26px;
@@ -473,6 +452,10 @@
     position: fixed;
     bottom: 0;
     left: 0;
+  }
+  .update-tip {
+    color: #06B390;
+    font-size: 24px;
   }
   .warn-tip {
     color: #E73B48;
