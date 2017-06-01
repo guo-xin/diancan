@@ -42,6 +42,111 @@
     <Toast :msg.sync="errMsg"></Toast>
   </div>
 </template>
+<script type="text/ecmascript-6">
+  /* eslint-disable no-unused-vars */
+  import Config from '../../methods/Config'
+  import Util from '../../methods/Util'
+  import loading from '../../components/loading/juhua.vue'
+  import Toast from '../../components/tips/Toast.vue'
+
+  export default {
+    data () {
+      return {
+        init: true,
+        mId: Util.getRequestParams().mchnt_id || '',
+        openId: window.localStorage.getItem('dc_openid') || '',
+        firstRequest: true,
+        loading: false,
+        loaded: false,
+        errMsg: '',
+        responseData: {
+          list: []
+        },
+        noData: false
+      }
+    },
+    computed: {
+      requestData () {
+        return {
+          format: 'jsonp',
+          mchnt_id: this.mId,
+          openid: this.openId,
+          page_size: 10,
+          page: 1
+        }
+      }
+    },
+    components: {
+      loading: loading,
+      Toast: Toast
+    },
+    created () {
+      this.getData()
+    },
+    mounted () {
+      let _this = this
+      window.onscroll = () => {
+        var scrollTop = document.body.scrollTop
+        var windowHeight = document.body.offsetHeight
+        var scrollHeight = document.body.scrollHeight
+        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          _this.getData()
+        }
+      }
+    },
+    methods: {
+      getData () {
+        let _this = this
+        if (!this.loaded) {
+          this.loading = true
+          if (!this.firstRequest) {
+            this.requestData.page += 1
+          }
+          this.$http({
+            method: 'JSONP',
+            url: Config.apiHost + 'diancan/c/order_list',
+            params: _this.requestData
+          }).then(function (response) {
+            let res = response.data
+            _this.init = false
+            _this.firstRequest = false
+            _this.loading = false
+            if (res.respcd === '0000') {
+              res.data.order_list.map(function (item) {
+                if (item.order_type === 3) {
+                  item.url = `${Config.apiHost}dc/take-out.html#!/order_detail/${item.order_id}/${item.mchnt_id}`
+                } else {
+                  item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
+                }
+              })
+              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
+              if (res.data.order_list.length === 0) {
+                _this.noData = true
+              }
+              if (res.data.order_list.length < 10) {
+                _this.loaded = true
+              }
+            } else {
+              _this.errMsg = res.resper
+            }
+          })
+        }
+      },
+      jumpUrl (url) {
+        window.location.href = url
+      },
+      theme (id) {
+        switch (id) {
+        // 0 橘色 1 红色 2 蓝色 3 绿色
+          case 0: return 'border0'
+          case 1: return 'border1'
+          case 2: return 'border2'
+          case 3: return 'border3'
+        }
+      }
+    }
+  }
+</script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
 
@@ -188,108 +293,3 @@
     }
   }
 </style>
-<script type="text/ecmascript-6">
-  /* eslint-disable no-unused-vars */
-  import Config from '../../methods/Config'
-  import Util from '../../methods/Util'
-  import loading from '../../components/loading/juhua.vue'
-  import Toast from '../../components/tips/Toast.vue'
-
-  export default {
-    data () {
-      return {
-        init: true,
-        mId: Util.getRequestParams().mchnt_id || '',
-        openId: window.localStorage.getItem('dc_openid') || '',
-        firstRequest: true,
-        loading: false,
-        loaded: false,
-        errMsg: '',
-        responseData: {
-          list: []
-        },
-        noData: false
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'cors',
-          mchnt_id: this.mId,
-          openid: this.openId,
-          page_size: 10,
-          page: 1
-        }
-      }
-    },
-    components: {
-      loading: loading,
-      Toast: Toast
-    },
-    created () {
-      this.getData()
-    },
-    mounted () {
-      let _this = this
-      window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
-        var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          _this.getData()
-        }
-      }
-    },
-    methods: {
-      getData () {
-        let _this = this
-        if (!this.loaded) {
-          this.loading = true
-          if (!this.firstRequest) {
-            this.requestData.page += 1
-          }
-          this.$http({
-            method: 'get',
-            url: Config.apiHost + 'diancan/c/order_list',
-            params: _this.requestData
-          }).then(function (response) {
-            let res = response.data
-            _this.init = false
-            _this.firstRequest = false
-            _this.loading = false
-            if (res.respcd === '0000') {
-              res.data.order_list.map(function (item) {
-                if (item.order_type === 3) {
-                  item.url = `${Config.apiHost}dc/take-out.html#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                } else {
-                  item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                }
-              })
-              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
-              if (res.data.order_list.length === 0) {
-                _this.noData = true
-              }
-              if (res.data.order_list.length < 10) {
-                _this.loaded = true
-              }
-            } else {
-              _this.errMsg = res.resper
-            }
-          })
-        }
-      },
-      jumpUrl (url) {
-        window.location.href = url
-      },
-      theme (id) {
-        switch (id) {
-        // 0 橘色 1 红色 2 蓝色 3 绿色
-          case 0: return 'border0'
-          case 1: return 'border1'
-          case 2: return 'border2'
-          case 3: return 'border3'
-        }
-      }
-    }
-  }
-</script>

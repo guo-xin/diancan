@@ -70,7 +70,7 @@
         this.$http({
           url: 'http://restapi.amap.com/v3/geocode/regeo',
           method: 'JSONP',
-          data: {
+          params: {
             format: 'jsonp',
             key: '9eb1cfce5386a0d7ad316255968c78bd',
             location: `${this.info.longitude},${this.info.latitude}`
@@ -106,7 +106,6 @@
           }).then(function (res) {
             this.loadingData = false
             if (res.data.respcd === '0000') {
-              window.sessionStorage.removeItem('info')
               window.history.go(-1)
             } else {
               window.alert(res.data.resperr)

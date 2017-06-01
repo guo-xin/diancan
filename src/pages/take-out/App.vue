@@ -33,7 +33,6 @@
           startDeliveryFee: 0
         },
         current_addr: {},
-        addr: [],
         tempAddr: {}
       }
     },

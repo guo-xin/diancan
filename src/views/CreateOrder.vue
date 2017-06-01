@@ -116,11 +116,11 @@
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
           method: 'POST',
-          data: args
+          params: args
         }).then((response) => {
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
+            this.$toast(data.respmsg)
             this.btnText = '确认下单'
             return
           }
@@ -142,7 +142,7 @@
         this.$http({
           url: Config.payHost + 'trade/v1/checkout',
           method: 'POST',
-          data: args
+          params: args
         }).then((response) => {
           let data = response.data
           if (data.respcd !== Config.code.OK) {
@@ -209,7 +209,7 @@
         this.$http({
           url: Config.apiHost + 'diancan/c/check_pay',
           method: 'GET',
-          data: args
+          params: args
         }).then((response) => {
           this.$router.replace({
             name: 'orderDetail',

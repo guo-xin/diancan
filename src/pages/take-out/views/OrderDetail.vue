@@ -134,7 +134,7 @@
         this.$http({
           url: Config.dcHost + 'diancan/c/order_detail',
           method: 'JSONP',
-          data: args
+          params: args
         }).then(function (response) {
           // success callback
           let data = response.data

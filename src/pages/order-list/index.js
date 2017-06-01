@@ -5,6 +5,7 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import { verify } from 'methods/verify'
+import { isWX } from 'methods/Util'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -34,14 +35,16 @@ let jsApiList = [
   'getLocation',
   'scanQRCode'
 ]
-// 需要csid的情况
-verify().then(initVue)
-// 不需要csid的情况
-// initVue()
 
-Wechat.init(jsApiList)
-Wechat.ready()
-.then(Wechat.hideOptionMenu)
+if (isWX) {
+  console.log('isWX')
+  verify().then(initVue)
+  Wechat.init(jsApiList)
+  Wechat.ready()
+  .then(Wechat.hideOptionMenu)
+} else {
+  initVue()
+}
 
 function initVue () {
   /* eslint-disable no-new */

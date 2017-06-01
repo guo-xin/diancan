@@ -69,8 +69,6 @@
     <!--购物车-->
     <cart-bar v-if="cart.length" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" :cart="cart" @cleanGoods="cleanGoods"></cart-bar>
 
-    <!--关店蒙层-->
-    <shop-close :display="isClose" :info="merchantSetting"> </shop-close>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
   </div>
@@ -87,7 +85,6 @@
   import SelectSpec from 'components/SelectSpec'
   import CartBar from 'components/CartBar'
   import GoodsDetail from 'components/GoodsDetail'
-  import ShopClose from 'components/ShopClose.vue'
   import ScanQrcode from 'components/ScanQrcode.vue'
   import Config from 'methods/Config'
   import Vue from 'vue'
@@ -97,7 +94,7 @@
   export default {
     props: ['cart'],
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ShopClose, ScanQrcode
+      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
     },
     data () {
       return {

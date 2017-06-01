@@ -17,11 +17,9 @@
         }
       }
     },
-    route: {
-      data (transition) {
-        Object.assign(this.info, this.$parent.tempAddr)
-        transition.next()
-      }
+    created () {
+      Object.assign(this.info, this.$parent.tempAddr)
+      this.resetViewport()
     },
     mounted () {
       /* eslint-disable */
@@ -31,7 +29,6 @@
         iframe.postMessage('hello','https://m.amap.com/picker/')
       }
       let listener = function (e) {
-        let addressInfo = JSON.parse(window.sessionStorage.getItem('info')) || {}
         let coord = []
         if (e.data.name) {
           window.removeEventListener('message', listener, false)
@@ -44,9 +41,6 @@
         }
       }
       window.addEventListener('message', listener, false)
-    },
-    created () {
-      this.resetViewport()
     },
     beforeDestroy () {
       let element = document.getElementById('m')

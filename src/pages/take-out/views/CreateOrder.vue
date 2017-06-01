@@ -77,10 +77,8 @@
       }
     },
     created () {
-      console.log('created')
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
-      console.log(params.mchnt_id)
       // let deliver = this.deliver
       // deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
       // this.$emit('updateDeliver', deliver)
@@ -92,10 +90,9 @@
           userid: this.mchnt_id
         }
       }).then(function (res) {
-        console.log('get_addr')
-        console.log(res)
-        if (res.data.respcd === '0000') {
-          let _data = res.data.data.addr
+        let data = res.data
+        if (data.respcd === '0000') {
+          let _data = data.data.addr
           if (Util.isEmptyObject(_data)) {
             this.$parent.current_addr = {}
             return
@@ -187,20 +184,17 @@
           method: 'POST',
           params: args
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
+            this.$toast(data.respmsg)
             this.btnText = '确认下单'
             return
           }
           let orderId = data.data.out_trade_no
           this.orderId = orderId
-//          this.$dispatch('on-toast', '订单创建成功：' + orderId)
           this.getPayArgs(data.data)
         }, (response) => {
-          // error callback
+          this.$toast(response)
         })
         _hmt.push(['_trackEvent', 'view-create_order', 'click-createOrderBtn'])
       },
@@ -215,7 +209,6 @@
           method: 'POST',
           params: args
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
             this.$dispatch('on-toast', data.resperr)
@@ -226,7 +219,7 @@
           this.pay(data.pay_params)
           this.checkout = data
         }, (response) => {
-          // error callback
+          this.$toast(response)
         })
       },
       pay (payParams) {
@@ -286,7 +279,6 @@
           method: 'GET',
           params: args
         }).then((response) => {
-          // success callback
           this.$router.replace({
             name: 'orderDetail',
             params: {
@@ -295,7 +287,6 @@
             }
           })
         }, (response) => {
-          // error callback
           this.$router.replace({
             name: 'orderDetail',
             params: {

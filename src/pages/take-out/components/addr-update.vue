@@ -21,7 +21,7 @@
       </li>
     </ul>
     <footer>
-      <a @click.prevent="goAdd" class="save-btn">保存</a>
+      <a @click.prevent="updateAddr" class="save-btn">保存</a>
       <a @click.prevent="confirm" class="delete-btn">删除地址</a>
     </footer>
     <confirm :visible.sync="visibleConfirm" title="确定删除地址？" confirm-event="on-deleteAddr"></confirm>
@@ -71,16 +71,16 @@
           }
         })
       },
-      goAdd () {
+      updateAddr () {
         const mobileReg = /^\d{11}$/
         if (!this.info.mobile.match(mobileReg)) {
-          this.$dispatch('on-toast', '请输入正确的手机号!')
+          this.$toast('请输入正确的手机号')
           return false
         }
         this.$http({
           url: config.dcHost + 'diancan/c/modify_addr',
           method: 'POST',
-          data: Object.assign(this.info, this.cors)
+          params: Object.assign(this.info, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)
@@ -94,7 +94,7 @@
         this.$http({
           url: config.dcHost + 'diancan/c/delete_addr',
           method: 'POST',
-          data: Object.assign({addr_id: this.info.addr_id}, this.cors)
+          params: Object.assign({addr_id: this.info.addr_id}, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)

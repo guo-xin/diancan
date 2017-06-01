@@ -5,6 +5,7 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import { verify } from 'methods/verify'
+import { Toast } from 'qfpay-ui'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -24,6 +25,9 @@ import { WechatPlugin, Wechat } from 'methods/Wechat'
 Vue.use(VueResource)
 Vue.use(WechatPlugin)
 
+Vue.component(Toast.name, Toast)
+Vue.prototype.$toast = Toast
+
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [
   'checkJsApi',
@@ -34,6 +38,7 @@ let jsApiList = [
   'getLocation',
   'scanQRCode'
 ]
+
 // 需要csid的情况
 verify().then(initVue)
 // 不需要csid的情况
@@ -41,7 +46,10 @@ verify().then(initVue)
 
 Wechat.init(jsApiList)
 Wechat.ready()
-.then(Wechat.hideOptionMenu)
+.then(() => {
+  Wechat.hideOptionMenu()
+  Wechat.getFormattedAddress()
+})
 
 function initVue () {
   /* eslint-disable no-new */

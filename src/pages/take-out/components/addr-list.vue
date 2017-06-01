@@ -4,7 +4,7 @@
       <img src="../assets/btn_add.svg"><span>新增配送地址</span>
     </div>
     <ul class="address-list">
-      <li :id="id" v-for="(item, index) in addr" @click="selectedAddr(item.addr_id)">
+      <li v-for="(item, index) in addressList" @click="selectedAddr(item.addr_id)">
         <i class="checked-icon" :class="{'active': index === 0}"></i>
         <p>
           <span>{{item.contact_name}} {{item.mobile}}</span>
@@ -23,31 +23,34 @@
   export default {
     data () {
       return {
+        addressList: [],
         cors: {
           format: 'cors'
         }
       }
     },
-    computed: {
-      addr () {
-        return this.$root.addr
-      }
-    },
     created () {
-      this.$http({
-        url: config.dcHost + 'diancan/c/addr_list',
-        method: 'JSONP',
-        params: {
-          format: 'jsonp',
-          userid: this.$route.query.mchnt_id
-        }
-      }).then((res) => {
-        if (res.data.respcd === '0000') {
-          this.$root.addr = res.data.data.addr_list
-        }
-      })
+      this.fetchData()
+    },
+    watch: {
+      // 如果路由有变化，会再次执行该方法
+      '$route': 'fetchData'
     },
     methods: {
+      fetchData () {
+        this.$http({
+          url: config.dcHost + 'diancan/c/addr_list',
+          method: 'JSONP',
+          params: {
+            format: 'jsonp',
+            userid: this.$route.query.mchnt_id
+          }
+        }).then((res) => {
+          if (res.data.respcd === '0000') {
+            this.addressList = res.data.data.addr_list
+          }
+        })
+      },
       goAddAddress () {
         this.$router.push({
           path: '/address/add'
@@ -66,9 +69,9 @@
       },
       goEdit (id) {
         var addrInfo = () => {
-          for (var i = 0; i < this.addr.length; i++) {
-            if (this.addr[i].addr_id === id) {
-              return this.addr[i]
+          for (var i = 0; i < this.addressList.length; i++) {
+            if (this.addressList[i].addr_id === id) {
+              return this.addressList[i]
             }
           }
         }
