@@ -1,7 +1,7 @@
 <template>
   <div class="order-detail-view">
-    <div class="c-loading-container" v-if="$loadingRouteData">
-      <loading :visible="$loadingRouteData"></loading>
+    <div class="c-loading-container" v-if="isLoading">
+      <loading :visible="isLoading"></loading>
     </div>
     <section class="delivery-status">
       <ul :style="backgroundObj">
@@ -42,7 +42,7 @@
         <div v-else>
           配送费<span v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费）</span>
         </div>
-        <span :class="{'free': cartData.price >= order.orderinfo.shipping_fee, 'hasfee': !order.orderinfo.shipping_fee && !deliver.originFee}">
+        <span :class="{'free': cartPrice >= order.orderinfo.shipping_fee, 'hasfee': !order.orderinfo.shipping_fee && !deliver.originFee}">
           <sub>￥</sub>{{order.orderinfo.shipping_fee| formatCurrency}}
         </span>
       </div>
@@ -51,8 +51,8 @@
         <!-- <del>原价¥63</del> -->
         <span><sub>￥</sub>{{order.orderinfo.txamt | formatCurrency}}</span>
       </div>
-      <div class="note-item">
-        <p><em>备注：</em>不要放葱，不要放蒜，不要青椒</p>
+      <div v-if="order.orderinfo.note" class="note-item">
+        <p><em>备注：</em>{{order.orderinfo.note}}</p>
       </div>
     </section>
     <section class="shop-info item">
@@ -62,7 +62,8 @@
         </figure>
         <div>
           <h2>{{order.orderinfo.shop_name}}</h2>
-          <p>北京市朝阳区 望京SOHO 中心广场负一层1012</p>
+          <p><i class="icon-marker"></i>店铺地址</p>
+          <!-- <p><i class="icon-marker"></i>{{order.merchant_info.address}}</p> -->
         </div>
       </div>
       <a :href="'tel:' + order.orderinfo.merchant_info.mobile"><i class="icon-phone"></i></a>
@@ -90,6 +91,7 @@
     },
     data () {
       return {
+        isLoading: false,
         order: {
           orderinfo: {
             delivery_info: '',
@@ -101,11 +103,13 @@
           }
         },
         type: 'android',
-        deliveryImg: ''
+        deliveryImg: '',
+        cartPrice: 0
       }
     },
     computed: {
-      cart () {
+      deliver () {
+        return this.$parent.deliver
       },
       backgroundObj () {
         return {
@@ -116,64 +120,56 @@
       }
     },
     created () {
-      // let Api = require('../api/mock')
-      // this.$set('order', Api.order_detail)
-    },
-    mounted () {
-      // document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
-    },
-    route: {
-      data (transition) {
-        let args = this.$route.params
-        /**
-         * order_id     // 订单id
-         * mchnt_id     // 商户id
-         * customer_id  // 用户id(去掉)
-         */
-        args.format = 'jsonp'
-        this.$http({
-          url: Config.dcHost + 'diancan/c/order_detail',
-          method: 'JSONP',
-          params: args
-        }).then(function (response) {
-          // success callback
-          let data = response.data
-          if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
-            return
+      console.log('created')
+      this.isLoading = true
+      let args = this.$route.params
+      /**
+       * order_id     // 订单id
+       * mchnt_id     // 商户id
+       */
+      args.format = 'jsonp'
+      this.$http({
+        url: Config.dcHost + 'diancan/c/order_detail',
+        method: 'JSONP',
+        params: args
+      }).then(function (response) {
+        this.isLoading = false
+        let data = response.data
+        if (data.respcd !== Config.code.OK) {
+          this.$toast(data.respmsg)
+          return
+        }
+        this.order = data.data
+        switch (this.order.orderinfo.delivery_info.current_state) {
+          case 0: {
+            this.deliveryImg = img0
+            break
           }
-          transition.next({order: data.data})
-          switch (this.order.orderinfo.delivery_info.current_state) {
-            case 0: {
-              this.deliveryImg = img0
-              break
-            }
-            case 1: {
-              this.deliveryImg = img1
-              break
-            }
-            case 2: {
-              this.deliveryImg = img2
-              break
-            }
-            case 3: {
-              this.deliveryImg = img3
-              break
-            }
+          case 1: {
+            this.deliveryImg = img1
+            break
           }
-          const shopname = data.data.orderinfo.shop_name
-          Util.setTitle(shopname)
-        }, function (response) {
-          // error callback
-        })
-      }
+          case 2: {
+            this.deliveryImg = img2
+            break
+          }
+          case 3: {
+            this.deliveryImg = img3
+            break
+          }
+        }
+        const shopname = data.data.orderinfo.shop_name
+        Util.setTitle(shopname)
+      }, function (response) {
+
+      })
     }
   }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../../../styles/base/_var";
+  @import "../../../styles/iconfont/iconfont.css";
   .c-loading-container {
     position: fixed;
     top: 0;
@@ -217,7 +213,8 @@
     }
   }
   .delivery-address {
-    min-height: 130px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     line-height: 1.4;
   }
   .order-content {
@@ -237,8 +234,8 @@
       background-color: transparent;
       border: none;
       position: absolute;
-      right: 24px;
-      top: 30px;
+      top: 24px;
+      right: 30px;
     }
   }
   .goods-list {
@@ -253,6 +250,7 @@
     .goods-name {
       strong {
         display: block;
+        font-weight: normal;
       }
       em {
         font-size: 26px;
@@ -284,10 +282,12 @@
     }
   }
   .total {
-    margin-bottom: 36px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    strong {
+      font-weight: normal;
+    }
     span {
       font-size: 40px;
     }
@@ -298,6 +298,7 @@
     text-align: right;
   }
   .note-item {
+    margin-top: 36px;
     background-color: #F7F7F7;
     padding: 24px 20px;
     border-radius: 6px;
@@ -324,11 +325,20 @@
       }
       div {
         margin-left: 18px;
+        h2 {
+          font-size: 30px;
+        }
         p {
           color: $aluminium;
           font-size: 24px;
           margin-top: 10px;
           line-height: 1.5;
+        }
+        i {
+          color: $gray;
+          font-size: 26px;
+          vertical-align: -2px;
+          margin-right: 10px;
         }
       }
     }

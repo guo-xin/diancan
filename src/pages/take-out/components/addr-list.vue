@@ -60,7 +60,7 @@
         this.$http({
           url: config.dcHost + 'diancan/c/modify_addr',
           method: 'post',
-          data: Object.assign({'addr_id': id}, this.cors)
+          params: Object.assign({'addr_id': id}, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)

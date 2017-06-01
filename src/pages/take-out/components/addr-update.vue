@@ -143,10 +143,11 @@
           vertical-align: middle;
         }
       }
-      span, input {
-        vertical-align: middle;
+      input {
+        vertical-align: bottom;
       }
       span {
+        vertical-align: middle;
         display: inline-block;
         padding: 24px 0;
         width: 2.1333rem;

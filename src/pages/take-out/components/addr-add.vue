@@ -81,12 +81,12 @@
       },
       goAdd () {
         const mobileReg = /^\d{11}$/
-        if (!this.info.mobile.match(mobileReg)) {
-          this.$toast('请输入正确的手机号')
-          return false
-        }
         if (!this.info.contact_name) {
           this.$toast('请输入联系人姓名')
+          return false
+        }
+        if (!this.info.mobile.match(mobileReg)) {
+          this.$toast('请输入正确的手机号')
           return false
         }
         if (!this.info.location) {
@@ -102,7 +102,7 @@
           this.$http({
             url: config.dcHost + 'diancan/c/create_addr',
             method: 'POST',
-            data: Object.assign(this.info, this.cors)
+            params: Object.assign(this.info, this.cors)
           }).then(function (res) {
             this.loadingData = false
             if (res.data.respcd === '0000') {
@@ -150,10 +150,11 @@
           vertical-align: middle;
         }
       }
-      span, input {
-        vertical-align: middle;
+      input {
+        vertical-align: bottom;
       }
       span {
+        vertical-align: middle;
         display: inline-block;
         padding: 24px 0;
         width: 2.1333rem;

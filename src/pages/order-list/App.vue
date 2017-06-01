@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
+      <li v-for="item in responseData.list" @click='jumpUrl(item)'>
         <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
@@ -39,7 +39,6 @@
       <p>暂无数据</p>
     </div>
     <loading :visible="loading"></loading>
-    <Toast :msg.sync="errMsg"></Toast>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -47,7 +46,6 @@
   import Config from '../../methods/Config'
   import Util from '../../methods/Util'
   import loading from '../../components/loading/juhua.vue'
-  import Toast from '../../components/tips/Toast.vue'
 
   export default {
     data () {
@@ -58,7 +56,6 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        errMsg: '',
         responseData: {
           list: []
         },
@@ -77,8 +74,7 @@
       }
     },
     components: {
-      loading: loading,
-      Toast: Toast
+      loading: loading
     },
     created () {
       this.getData()
@@ -112,13 +108,6 @@
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
-              res.data.order_list.map(function (item) {
-                if (item.order_type === 3) {
-                  item.url = `${Config.apiHost}dc/take-out.html#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                } else {
-                  item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                }
-              })
               _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
               if (res.data.order_list.length === 0) {
                 _this.noData = true
@@ -127,13 +116,17 @@
                 _this.loaded = true
               }
             } else {
-              _this.errMsg = res.resper
+              _this.$toast(res.resper)
             }
           })
         }
       },
-      jumpUrl (url) {
-        window.location.href = url
+      jumpUrl (item) {
+        if (item.order_type === 3) {
+          window.location.href = `${window.location.origin}/dc/take-out.html#/order_detail/${item.order_id}/${item.mchnt_id}`
+        } else {
+          window.location.href = `${window.location.origin}/dc/index.html#/order_detail/${item.order_id}/${item.mchnt_id}`
+        }
       },
       theme (id) {
         switch (id) {
