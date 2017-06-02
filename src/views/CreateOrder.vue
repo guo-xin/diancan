@@ -32,7 +32,6 @@
       <span><i></i>微信支付</span>
     </section>
     <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
-    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
   </div>
 </template>
 
@@ -41,16 +40,10 @@
   /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
-  import alert from '../components/alert/alert.vue'
   export default {
     props: ['cart'],
-    components: {
-      alert
-    },
     data () {
       return {
-        alertVisible: false,
-        alertTip: '',
         mchnt_id: '',       // 商户ID
         address: '',        // 桌号
         note: '',           // 备注
@@ -146,7 +139,7 @@
         }).then((response) => {
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.resperr)
+            this.$toast(data.resperr)
             this.btnText = '确认下单'
             return
           }
@@ -158,7 +151,7 @@
       },
       pay (payParams) {
         if (!isWX) {  // 不是微信中打开
-          this.$dispatch('on-toast', '支付失败，请在微信中打开')
+          this.$toast('支付失败，请在微信中打开')
           this.btnText = '确认下单'
           return
         }
@@ -179,8 +172,7 @@
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单即可正常使用。';
-                _this.alertVisible = true;
+                _this.$messagebox('无法唤起微信支付', '请关闭页面，重新下单即可正常使用。')
                 _this.btnText = '支付失败';
               } else {
                 _this.orderPayFail()

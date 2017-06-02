@@ -116,7 +116,7 @@
                 _this.loaded = true
               }
             } else {
-              _this.$toast(res.resper)
+              _this.$toast(res.respmsg)
             }
           })
         }
@@ -142,15 +142,6 @@
 </script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
-
-  html {
-    height: 100%;
-  }
-
-  body{
-    background: #F7F7F7;
-    height: 100%;
-  }
   .no-data{
     position: relative;
     padding: 1px;

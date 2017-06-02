@@ -46,7 +46,6 @@
     <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">
       <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
-    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
     <confirm :visible.sync="visibleConfirm" :content="confirmText" @selectedAddr="selectedAddr"></confirm>
   </div>
 </template>
@@ -55,19 +54,16 @@
   /* eslint-disable  */
   import Config from 'methods/Config'
   import Util from 'methods/Util'
-  import alert from 'components/alert/alert.vue'
   import confirm from 'components/confirm/confirm'
   export default {
     props: ['cart', 'deliver'],
     components: {
-      alert, confirm
+      confirm
     },
     data () {
       return {
-        alertVisible: false,
         confirmText: '',
         visibleConfirm: false,
-        alertTip: '',
         mchnt_id: '',       // 商户ID
         hasAddress: false,
         note: '',           // 备注
@@ -237,8 +233,7 @@
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单即可正常使用。';
-                _this.alertVisible = true;
+                _this.$messagebox('无法唤起微信支付', '请关闭页面，重新下单即可正常使用。')
                 _this.btnText = '支付失败';
               } else {
                 // window.alert(res.err_msg)

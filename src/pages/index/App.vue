@@ -107,38 +107,6 @@
 <style lang="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
   @import "../../styles/iconfont/iconfont.css";
-  /*@import '~vux/dist/vux.css';*/
-
-  html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, big, code, del, em, img, small, strong, dl, dt, dd, ol, ul, li, fieldset, form, textarea, label, table, caption, tbody, tfoot, thead, tr, th, td {
-    padding: 0;
-    margin: 0;
-    border: 0;
-    outline: 0;
-    font-weight: inherit;
-    font-style: inherit;
-    font-size: 100%;
-    vertical-align: baseline;
-  }
-
-  ol, ul, li {
-    list-style: none;
-  }
-
-  // fix Font Boosting
-  p, div {
-    max-height: 999999px;
-  }
-
-  a {
-    text-decoration: none;
-    &:link, &:visited, &:hover, &:active {
-      text-decoration: none;
-    }
-  }
-
-  em {
-    font-style: normal;
-  }
 
   // 文字中划线
   .text-line-through {

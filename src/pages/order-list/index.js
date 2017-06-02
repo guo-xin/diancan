@@ -40,7 +40,7 @@ let jsApiList = [
   'scanQRCode'
 ]
 
-if (isWX) {
+if (process.env.NODE_ENV === 'production' || isWX) {
   verify().then(initVue)
   Wechat.init(jsApiList)
   Wechat.ready()

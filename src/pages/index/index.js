@@ -5,8 +5,8 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
-import { Toast } from 'qfpay-ui'
 import { verify } from 'methods/verify'
+import { Toast, MessageBox } from 'qfpay-ui'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -29,6 +29,8 @@ Vue.use(WechatPlugin)
 
 Vue.component(Toast.name, Toast)
 Vue.prototype.$toast = Toast
+Vue.component(MessageBox.name, MessageBox)
+Vue.prototype.$messagebox = MessageBox
 
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [
@@ -40,7 +42,7 @@ let jsApiList = [
   'scanQRCode'
 ]
 
-if (Util.isWX) {
+if (Util.isWX || process.env.NODE_ENV === 'production') {
   verify().then(initVue)
   Wechat.init(jsApiList)
   Wechat.ready()

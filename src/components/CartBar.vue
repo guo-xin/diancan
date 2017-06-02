@@ -150,6 +150,7 @@
       top: -16px;
       right: -16px;
       padding: 0 10px;
+      box-sizing: border-box;
 
       /*padding: 2px 10px;*/
       min-width: 36px;
