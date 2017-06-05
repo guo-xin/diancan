@@ -65,6 +65,10 @@
         btnText: '确认下单'
       }
     },
+    beforeRouteLeave (to, from, next) {
+      this.$messagebox && this.$messagebox.close()
+      next()
+    },
     created () {
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
