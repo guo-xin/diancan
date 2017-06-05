@@ -54,6 +54,10 @@
       viewport.parentNode.insertBefore(m, viewport.nextSibling)
       viewport.parentNode.removeChild(viewport)
     },
+    beforeRouteLeave (to, from, next) {
+      this.$messagebox && this.$messagebox.close()
+      next()
+    },
     methods: {
       goChoose () {
         this.$parent.tempAddr = this.info

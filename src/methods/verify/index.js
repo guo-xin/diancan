@@ -61,7 +61,7 @@ const getVerify = async (mchtId) => {
   await getWeixinCallBack(data)
 }
 
-const verify = async () => {
+const getMchntId = () => {
   let hashArray, tempHashMchtId
   let LSArray, tempLSMchtId
 
@@ -76,7 +76,25 @@ const verify = async () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  let mchtId = tempHashMchtId || tempLSMchtId
+  let mchntId = tempHashMchtId || tempLSMchtId
+  if (mchntId && !isNaN(mchntId)) {
+    localStorage.setItem('mchntId', mchntId)
+  }
+
+  return mchntId
+}
+
+const hasStoreMchntId = () => {
+  return localStorage.getItem('mchntId')
+}
+
+const verify = async () => {
+  if (hasStoreMchntId()) {
+    return new Promise((resolve, reject) => {
+      resolve()
+    })
+  }
+  let mchtId = getMchntId()
   await getVerify(mchtId)
 }
 
