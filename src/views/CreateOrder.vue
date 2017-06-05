@@ -96,7 +96,7 @@
           }
         })
         let args = {
-          open_id: this.$root.user.open_id,
+          open_id: this.$parent.user.open_id,
           appid: window.localStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           address: this.address,
@@ -119,7 +119,6 @@
           }
           let orderId = data.data.out_trade_no
           this.orderId = orderId
-//          this.$dispatch('on-toast', '订单创建成功：' + orderId)
           this.getPayArgs(data.data)
         }, (response) => {
           // error callback
@@ -155,15 +154,6 @@
           this.btnText = '确认下单'
           return
         }
-        if (typeof payParams !== undefined) {
-          payParams.timestamp = parseInt(payParams.timeStamp)
-          alert(typeof payParams.timestamp)
-          delete payParams.timeStamp
-          delete payParams.appId
-          alert(JSON.stringify(payParams))
-        } else {
-          alert('支付参数为空')
-        }
         let _this = this
         let onBridgeReady = () => {
           window.WeixinJSBridge.invoke(
@@ -180,6 +170,17 @@
               return
             }
           )
+        }
+
+        if (typeof WeixinJSBridge === 'undefined') {
+          if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false)
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', onBridgeReady)
+            document.attachEvent('onWeixinJSBridgeReady', onBridgeReady)
+          }
+        } else {
+          onBridgeReady()
         }
       },
       orderPaySuccess () {
@@ -298,6 +299,7 @@
     div {
       flex: 1;
       strong {
+        font-weight: normal;
         display: block;
       }
       em {

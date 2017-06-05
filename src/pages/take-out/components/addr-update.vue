@@ -22,16 +22,13 @@
     </ul>
     <footer>
       <a @click.prevent="updateAddr" class="save-btn">保存</a>
-      <a @click.prevent="confirm" class="delete-btn">删除地址</a>
+      <a @click.prevent="confirmDelete" class="delete-btn">删除地址</a>
     </footer>
-    <confirm :visible.sync="visibleConfirm" title="确定删除地址？" confirm-event="on-deleteAddr"></confirm>
   </form>
 </template>
 <script>
   import config from '../../../methods/Config'
-  import confirm from '../../../components/confirm/confirm'
   export default {
-    components: {confirm},
     data () {
       return {
         info: {
@@ -45,8 +42,7 @@
         },
         cors: {
           format: 'cors'
-        },
-        visibleConfirm: false
+        }
       }
     },
     created () {
@@ -87,8 +83,15 @@
           }
         })
       },
-      confirm () {
-        this.visibleConfirm = true
+      confirmDelete () {
+        this.$messagebox.confirm('确定删除地址？', '')
+        .then(action => {
+          if (action === 'confirm') {
+            this.goDelete()
+          }
+        })
+        .catch(action => {
+        })
       },
       goDelete () {
         this.$http({
@@ -98,13 +101,10 @@
         }).then(function (res) {
           if (res.data.respcd === '0000') {
             window.history.go(-1)
+          } else {
+            this.$toast(res.data.respmsg)
           }
         })
-      }
-    },
-    events: {
-      'on-deleteAddr' () {
-        this.goDelete()
       }
     }
   }

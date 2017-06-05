@@ -43,10 +43,9 @@
       <em>支付方式</em>
       <span><i></i>微信支付</span>
     </section>
-    <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">
+    <button class="done-btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">
       <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
-    <confirm :visible.sync="visibleConfirm" :content="confirmText" @selectedAddr="selectedAddr"></confirm>
   </div>
 </template>
 <script>
@@ -54,16 +53,10 @@
   /* eslint-disable  */
   import Config from 'methods/Config'
   import Util from 'methods/Util'
-  import confirm from 'components/confirm/confirm'
   export default {
     props: ['cart', 'deliver'],
-    components: {
-      confirm
-    },
     data () {
       return {
-        confirmText: '',
-        visibleConfirm: false,
         mchnt_id: '',       // 商户ID
         hasAddress: false,
         note: '',           // 备注
@@ -129,11 +122,26 @@
     methods: {
       overdist () {
         if (!this.current_addr.longitude) {
-          this.confirmText = '为了让商家更好的为您提供配送服务，请升级您的配送地址。'
-          this.visibleConfirm = true
+          this.$messagebox.confirm('为了让商家更好的为您提供配送服务，请升级您的配送地址。', '')
+          .then((action) => {
+            if (action === 'confirm') {
+              this.createOrder()
+            }
+          })
         } else if (this.current_addr.overdist) {
-          this.confirmText = '这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～'
-          this.visibleConfirm = true
+          this.$messagebox({
+            title: '',
+            message: '这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～',
+            showCancelButton: true,
+            confirmButtonText: '继续下单',
+          })
+          .then(action => {
+            if (action === 'confirm') {
+              this.createOrder()
+            }
+          })
+          .catch(err => {
+          })
         } else {
           this.createOrder()
         }
@@ -164,7 +172,7 @@
           }
         })
         let args = {
-          open_id: this.$root.user.open_id,
+          open_id: this.$parent.user.open_id,
           appid: window.localStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           note: this.note,
@@ -190,7 +198,7 @@
           this.orderId = orderId
           this.getPayArgs(data.data)
         }, (response) => {
-          this.$toast(response)
+          this.$toast(response.data.data.respmsg)
         })
         _hmt.push(['_trackEvent', 'view-create_order', 'click-createOrderBtn'])
       },
@@ -207,15 +215,14 @@
         }).then((response) => {
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.resperr)
-            // transition.abort()
+            this.$toast(data.resperr)
             this.btnText = '确认下单'
             return
           }
           this.pay(data.pay_params)
           this.checkout = data
         }, (response) => {
-          this.$toast(response)
+          this.$toast(response.data.data.respmsg)
         })
       },
       pay (payParams) {
@@ -229,14 +236,12 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-              // window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
                 _this.$messagebox('无法唤起微信支付', '请关闭页面，重新下单即可正常使用。')
                 _this.btnText = '支付失败';
               } else {
-                // window.alert(res.err_msg)
                 _this.orderPayFail()
               }
               return
@@ -290,9 +295,6 @@
             }
           })
         })
-      },
-      selectedAddr () {
-        console.log('selectedAddr')
       },
       goAddAddress () {
         this.$router.push({

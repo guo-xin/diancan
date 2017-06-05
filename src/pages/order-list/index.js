@@ -13,9 +13,7 @@ Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
 // 在使用cors跨域时带上cookie
-Vue.http.options.xhr = {
-  withCredentials: true
-}
+Vue.http.options.credentials = true
 // 将请求的数据url化
 Vue.http.options.emulateJSON = true
 
