@@ -35,6 +35,9 @@ exports.verify = function () {
       tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
     }
     let mchtId = tempHashMchtId || tempLSMchtId
+    if (mchtId) {
+      window.localStorage.setItem('mchtId', mchtId)
+    }
 
     // 获取商户 appid,component_appid,component_access_token
     Vue.http.jsonp(`${Config.apiHost}diancan/c/takeauthinfo?mchnt_id=${mchtId}&format=jsonp`)
@@ -48,7 +51,7 @@ exports.verify = function () {
                 window.localStorage.setItem('dc_openid', res.data.data.openid)
                 resolve()
               } else {
-                url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
+                url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.href)
                 window.location.replace(url)
               }
             })
