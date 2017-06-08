@@ -202,14 +202,13 @@
   /*eslint-disable no-unused-vars*/
   import Wechat from '../../methods/Wechat'
   import Config from '../../methods/Config'
-  import Util from '../../methods/Util'
   import loading from '../../components/loading/juhua.vue'
   import Toast from '../../components/tips/Toast.vue'
   import GetLocation from '../../components/GetLocation.vue'
   export default {
     data () {
       return {
-        mId: Util.getUrlRouteParams('merchant') || '',
+        mId: window.localStorage.getItem('mchtId') || '',
         openId: window.localStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
