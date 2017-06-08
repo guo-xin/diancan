@@ -26,11 +26,9 @@
         cart: [],
         msg: '',
         deliver: {
-          isFee: false,
-          needFee: false,
-          originFee: 0,
-          freeDeliverFee: 0,
-          startDeliveryFee: 0
+          shipping_fee: 0,
+          min_shipping_fee: 0,
+          start_delivery_fee: 0
         },
         current_addr: {},
         tempAddr: {}

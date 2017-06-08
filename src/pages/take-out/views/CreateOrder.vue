@@ -22,18 +22,11 @@
           </div>
           <span>￥{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
         </li>
-        <li class="deliver-fee">
-          <div v-if="!deliver.originFee">
-            配送费<span>（免费配送）</span>
-          </div>
-          <div v-else>
-            配送费<span v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费）</span>
-          </div>
-          <span :class="{'free': cartData.price >= deliver.freeDeliverFee, 'hasfee': !deliver.freeDeliverFee && !deliver.originFee}">
-            ￥{{deliver.originFee | formatCurrency}}
-          </span>
-        </li>
       </ul>
+      <div class="deliver-fee">
+        <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <span :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency}}</span>
+      </div>
       <div class="total">
         <!-- <del>原价¥63</del> -->
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
@@ -320,7 +313,7 @@
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../../../styles/base/_var";
   .create-order-view {
-    font-size: 28px;
+    font-size: 30px;
     color: $black;
   }
   .item {
@@ -392,16 +385,14 @@
     }
   }
   .deliver-fee {
-    div span {
-      font-size: 30px;
-    }
+    display: flex;
+    height: 90px;
+    justify-content: space-between;
+    padding: 0 30px;
     > span {
-      color: $orange;
-      &.free {
+      font-size: 32px;
+      &.except {
         text-decoration: line-through;
-      }
-      &.hasfee {
-        color: $black;
       }
     }
   }

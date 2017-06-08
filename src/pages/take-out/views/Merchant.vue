@@ -147,14 +147,13 @@
         }
         this.isLoading = false
         let mSet = data.data.merchant_setting
-        if (mSet.shipping_fee !== undefined) {
-          let deliver = this.$parent.deliver
-          deliver.isFee = true
-          deliver.originFee = mSet.shipping_fee
-          deliver.freeDeliverFee = mSet.min_shipping_fee
-          deliver.startDeliveryFee = mSet.start_delivery_fee
-          this.$emit('updateDeliver', deliver)
-        }
+        // 配送费
+        let deliver = this.$parent.deliver
+        deliver.shipping_fee = mSet.shipping_fee
+        deliver.min_shipping_fee = mSet.min_shipping_fee
+        deliver.start_delivery_fee = mSet.start_delivery_fee
+        this.$emit('updateDeliver', deliver)
+        // 商品购物车
         this.merchantSetting = mSet
         this.setStorage(data.data)
         this.$emit('getCart', this.mchnt_id)

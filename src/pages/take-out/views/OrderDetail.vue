@@ -36,15 +36,8 @@
         </li>
       </ul>
       <div class="deliver-fee">
-        <div v-if="!deliver.originFee">
-          配送费<span>（免费配送）</span>
-        </div>
-        <div v-else>
-          配送费<span v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费）</span>
-        </div>
-        <span :class="{'free': cartPrice >= order.orderinfo.shipping_fee, 'hasfee': !order.orderinfo.shipping_fee && !deliver.originFee}">
-          <sub>￥</sub>{{order.orderinfo.shipping_fee| formatCurrency}}
-        </span>
+        <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <span :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency | noZeroCurrency}}</span>
       </div>
       <div class="total">
         <strong>总计</strong>
@@ -267,17 +260,13 @@
   }
   .deliver-fee {
     display: flex;
-    margin-bottom: 26px;
-    div {
-      flex: 1;
-    }
+    height: 90px;
+    justify-content: space-between;
+    padding: 0 30px;
     > span {
-      color: $orange;
-      &.free {
+      font-size: 32px;
+      &.except {
         text-decoration: line-through;
-      }
-      &.hasfee {
-        color: $black;
       }
     }
   }

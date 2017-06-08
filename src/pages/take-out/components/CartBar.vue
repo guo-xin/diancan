@@ -8,18 +8,17 @@
           <span class="count" v-show="cartData.count">{{cartData.count}}</span>
         </div>
         <div class="cart-price">
-          <div>
-            <span>总价&nbsp;¥&nbsp;</span>{{cartData.price | formatCurrency}}
-          </div>
-          <div v-if="deliver.isFee">
-            <i :class="{'free': cartData.price >= deliver.freeDeliverFee}">配送费 <em>¥ {{deliver.originFee | formatCurrency}}</em>（<span v-if="deliver.freeDeliverFee">满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}</span>免配送费）</i>
-          </div>
+          <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
+          <p>
+            配送费 <em :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">¥ {{deliver.shipping_fee | formatCurrency}}</em>
+            <span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+          </p>
         </div>
       </div>
       <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
       <span v-else>
-        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.startDeliveryFee <= cartData.price">选好了</a>
-        <a class="row-status gray-status" v-else>{{deliver.startDeliveryFee | formatCurrency | noZeroCurrency}}元起送</a>
+        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.start_delivery_fee <= cartData.price">选好了</a>
+        <a class="row-status gray-status" v-else>{{deliver.start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
       </span>
     </div>
     <!--列表-->
@@ -184,29 +183,24 @@
 
   .cart-price {
     padding-left: 40px;
-    font-size: 40px;
+    font-size: 26px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    div {
-      flex: none;
-      line-height: 1;
+    line-height: 1;
+    span {
+      em {
+        font-size: 40px;
+      }
+    }
+    p {
+      margin-top: 6px;
+      color: #8A8C92;
       span {
         font-size: 26px;
       }
-      i {
-        &.free {
-          color: #8A8C92;
-          em {
-            text-decoration: line-through;
-          }
-        }
-        font-size: 26px;
-        color: #FFFFFF;
-        font-style: normal;
-        em {
-          font-style: normal;
-        }
+      .except {
+        text-decoration: line-through;
       }
     }
   }
