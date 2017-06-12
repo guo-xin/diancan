@@ -15,6 +15,7 @@
           <p v-if="item.delivery_state==1">接单</p>
           <p v-if="item.delivery_state==2">发货</p>
           <p v-if="item.delivery_state==3">送达</p>
+          <p v-if="item.delivery_state==4">取消</p>
         </li>
       </ul>
     </div>
@@ -63,6 +64,9 @@
           <li>订单编号：{{order.orderinfo.order_id}}</li>
           <li>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</li>
         </ul>
+        <button v-if="order.orderinfo.delivery_info.current_state === 0" @click="cancelOrder" :class="{'cancel-style': iscancel}" class="cancel-order" type="button">
+          {{iscancel ? '已取消' : '取消订单'}}
+        </button>
       </section>
     </div>
   </div>
@@ -70,12 +74,14 @@
 
 <script type="text/ecmascript-6">
   import Util from '../../../methods/Util'
+  import Filters from '../../../methods/Filters'
   import Loading from '../../../components/loading/Loading'
   import Config from '../../../methods/Config'
-  import img0 from '../assets/img_progress_0_white_label@2x.png'
-  import img1 from '../assets/img_progress_1_white_label@2x.png'
-  import img2 from '../assets/img_progress_2_white_label@2x.png'
-  import img3 from '../assets/img_progress_3_white_label@2x.png'
+  import img0 from '../assets/img_progress_0@2x.png'
+  import img1 from '../assets/img_progress_1@2x.png'
+  import img2 from '../assets/img_progress_2@2x.png'
+  import img3 from '../assets/img_progress_3@2x.png'
+  import img4 from '../assets/img_progress_4@2x.jpg'
   //  import Api from '../api/mock'
 
   export default {
@@ -95,7 +101,8 @@
           }
         },
         type: 'android',
-        deliveryImg: ''
+        deliveryImg: '',
+        iscancel: false
       }
     },
     computed: {
@@ -155,11 +162,54 @@
               this.deliveryImg = img3
               break
             }
+            case 4: {
+              this.deliveryImg = img4
+              break
+            }
           }
           const shopname = data.data.orderinfo.shop_name
           Util.setTitle(shopname)
         }, function (response) {
           // error callback
+        })
+      }
+    },
+    methods: {
+      cancelOrder () {
+        if (this.iscancel) {
+          return
+        }
+        let orderinfo = this.order.orderinfo
+        let args = {
+          delivery_state: orderinfo.delivery_info.current_state,
+          syssn: orderinfo.syssn,
+          order_id: orderinfo.order_id,
+          txamt: orderinfo.txamt,
+          txdtm: Filters.formatTime(orderinfo.pay_time, 'yyyy-MM-dd hh:mm:ss'),
+          mchnt_id: window.localStorage.getItem('mchtId'),
+          format: 'jsonp'
+        }
+        this.$http({
+          url: Config.dcHost + 'diancan/c/cancel_order',
+          method: 'JSONP',
+          data: args
+        })
+        .then(function (response) {
+          let ctime = parseInt(new Date().getTime() / 1000)
+          let data = response.data
+          if (data.respcd === '0000') {
+            this.deliveryImg = img4
+            this.iscancel = true
+            this.order.orderinfo.delivery_info.info.push({
+              ctime: ctime,
+              delivery_state: 4
+            })
+            this.$dispatch('on-toast', '取消订单成功')
+          } else {
+            this.$dispatch('on-toast', data.respmsg)
+          }
+        })
+        .catch(function (response) {
         })
       }
     }
@@ -261,7 +311,10 @@
       align-items: center;
       height: 144px;
       li {
-        width: 125px;
+        &:first-child {
+          width: 16%;
+        }
+        width: 18%;
         p {
           text-align: center;
           color: #FFFFFF;
@@ -410,8 +463,26 @@
   .order-info {
     font-size: 26px;
     color: #8A8C92;
+    position: relative;
     li {
       margin-bottom: 16px;
+    }
+    .cancel-order {
+      &.cancel-style {
+        display: none;
+      }
+      width: 180px;
+      height: 64px;
+      position: absolute;
+      right: 30px;
+      top: 40px;
+      background-color: transparent;
+      border: 2px solid #FE9B20;
+      border-radius: 6px;
+      color: #FE9B20;
+      font-size: 30px;
+      float: right;
+      padding: 0;
     }
   }
 </style>
