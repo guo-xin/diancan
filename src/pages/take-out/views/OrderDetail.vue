@@ -64,7 +64,7 @@
           <li>订单编号：{{order.orderinfo.order_id}}</li>
           <li>购买时间：{{order.orderinfo.pay_time | formatTime 'yyyy-MM-dd hh:mm'}}</li>
         </ul>
-        <button v-if="order.orderinfo.delivery_info.current_state === 0" @click="cancelOrder" :class="{'cancel-style': iscancel}" class="cancel-order" type="button">
+        <button v-if="false" @click="cancelOrder" :class="{'cancel-style': iscancel}" class="cancel-order" type="button">
           {{iscancel ? '已取消' : '取消订单'}}
         </button>
       </section>
