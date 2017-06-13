@@ -33,12 +33,12 @@ if (test) {
 
 // 开发配置
 if (dev) {
-  rootHost = 'https://o.qfpay.com/dc/'
-  payHost = 'https://openapi.qfpay.com/'
-  apiHost = 'https://o.qfpay.com/'
-  dcHost = 'https://o.qfpay.com/'
-  o2Host = 'https://o2.qfpay.com/'  // 获取微信openid
-  wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
+  rootHost = 'https://o.qa.qfpay.net/dc/'
+  payHost = 'https://openapi.qa.qfpay.net/'
+  apiHost = 'https://o.qa.qfpay.net/'
+  dcHost = 'https://o.qa.qfpay.net/'
+  o2Host = 'https://o2.qa.qfpay.net/'
+  wxmpHost = 'https://wxmp.qa.qfpay.net/'
 }
 
 module.exports = {

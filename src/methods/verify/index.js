@@ -46,7 +46,7 @@ const getWeixinCallBack = (data) => {
         resolve()
       } else {
         // reject(data)
-        let url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.origin + window.location.pathname + window.location.search)
+        let url = `${Config.o2Host}trade/v1/customer/get?appid=${data.appid}&redirect_uri=` + encodeURIComponent(window.location.href)
         window.location.replace(url)
       }
     })
