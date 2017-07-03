@@ -158,7 +158,6 @@
           let mSet = data.data.merchant_setting
           if (mSet.shipping_fee !== undefined) {
             let deliver = this.$root.deliver
-            deliver.isFee = true
             deliver.originFee = mSet.shipping_fee
             deliver.freeDeliverFee = mSet.min_shipping_fee
             deliver.startDeliveryFee = mSet.start_delivery_fee

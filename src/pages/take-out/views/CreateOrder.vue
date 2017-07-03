@@ -45,9 +45,12 @@
         </div>
       </li>
     </ul>
-    <div class="extra-info" v-if="deliver.isFee">
+    <div class="extra-info">
       <h4>补充信息</h4>
-      <p>配送费（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}免配送费） <span :class="{'free': cartData.price >= deliver.freeDeliverFee}">￥<i>{{deliver.originFee | formatCurrency}}</i></span></p>
+      <p>
+        配送费 <em v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}元免配送费）</em>
+        <span :class="{'free': deliver.freeDeliverFee && cartData.price >= deliver.freeDeliverFee }">￥<i>{{deliver.originFee | formatCurrency}}</i></span>
+      </p>
     </div>
     <div class="l-r-lr order-bar">
       <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{payAmt | formatCurrency}}</div>
@@ -146,7 +149,9 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
-        if (this.deliver.isFee && this.deliver.needFee) {
+        if (this.deliver.originFee && payAmt < this.deliver.freeDeliverFee) {
+          payAmt += this.deliver.originFee
+        } else if (this.deliver.originFee && this.deliver.freeDeliverFee === 0) {
           payAmt += this.deliver.originFee
         }
         return payAmt
@@ -595,6 +600,9 @@
       font-size: 30px;
       color: #2F323A;
       border-bottom: 2px solid #e5e5e5;
+      em {
+        font-style: normal;
+      }
       span {
         float: right;
         font-size: 26px;
