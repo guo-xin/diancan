@@ -151,6 +151,8 @@
         let payAmt = this.cartData.price
         if (this.deliver.originFee && payAmt < this.deliver.freeDeliverFee) {
           payAmt += this.deliver.originFee
+        } else if (this.deliver.originFee && this.deliver.freeDeliverFee === 0) {
+          payAmt += this.deliver.originFee
         }
         return payAmt
       },
