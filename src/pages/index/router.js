@@ -23,6 +23,10 @@ const routes = [
     }]
   },
   {
+    path: '/!/merchant/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+    redirect: { name: 'merchant' }
+  },
+  {
     path: '/create_order/:mchnt_id/:address', // 创建订单
     name: 'createOrder',
     component: CreateOrder

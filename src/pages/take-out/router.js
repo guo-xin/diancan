@@ -16,6 +16,10 @@ let routes = [
     name: 'merchant',
     component: Merchant
   },
+  {
+    path: '/!/merchant/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+    redirect: { name: 'merchant' }
+  },
   { // 创建订单
     path: '/create_order/:mchnt_id',
     name: 'createOrder',
