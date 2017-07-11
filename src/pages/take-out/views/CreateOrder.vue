@@ -29,7 +29,7 @@
       </div>
       <div class="total">
         <!-- <del>原价¥63</del> -->
-        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
+        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>
     <section class="payment item">
@@ -37,7 +37,7 @@
       <span><i></i>微信支付</span>
     </section>
     <button class="done-btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">
-      <em>¥{{cartData.price | formatCurrency}}</em>&nbsp;{{btnText}}
+      <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
   </div>
 </template>
@@ -65,9 +65,6 @@
     created () {
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
-      // let deliver = this.deliver
-      // deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
-      // this.$emit('updateDeliver', deliver)
       this.$http({
         url: Config.dcHost + 'diancan/c/get_addr',
         method: 'JSONP',
@@ -107,9 +104,11 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
-        if (this.deliver.isFee && this.deliver.needFee) {
-          payAmt += this.deliver.originFee
-        }
+        if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
+           payAmt += this.deliver.shipping_fee
+         } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
+           payAmt += this.deliver.shipping_fee
+         }
         return payAmt
       },
       current_addr () {
