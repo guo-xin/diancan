@@ -168,7 +168,7 @@
           }
         })
         let args = {
-          open_id: this.$parent.user.open_id,
+          open_id: this.$parent.user.open_id || window.localStorage.getItem('dc_openid'),
           appid: window.localStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           note: this.note,

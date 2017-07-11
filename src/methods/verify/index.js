@@ -85,7 +85,9 @@ const getMchntId = () => {
 }
 
 const hasStoreMchntId = () => {
-  return localStorage.getItem('mchntId')
+  let hashArray = window.location.hash.split('/')
+  let tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+  return localStorage.getItem('mchntId') === tempHashMchtId
 }
 
 const verify = async () => {
