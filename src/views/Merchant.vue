@@ -30,7 +30,7 @@
                   <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
                 </div>
                 <div class="l_auto list-content">
-                  <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
+                  <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
                   <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
                   <p v-else class="old-price"></p>
                   <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
@@ -176,12 +176,14 @@
             this.typeScroller = new BScroll(this.$els.type, {
               startX: 0,
               startY: 0,
-              click: true
+              click: true,
+              bounce: false
             })
             this.menuScroller = new BScroll(this.$els.menu, {
               startX: 0,
               startY: 0,
-              click: true
+              click: true,
+              bounce: false
             })
           })
           const shopname = data.data.shopname
@@ -476,7 +478,6 @@
     padding-left: 24px;
     .wrap {
       position: relative;
-      align-items: center;
       padding: 24px 0;
       border-bottom: 2px solid #E5E5E5; /*px*/
     }
@@ -503,7 +504,7 @@
       .title {
         color: #4d4d4d;
         font-size: 32px;
-        /*line-height: 32px;*/
+        padding-right: 24px;
         color: #2f323a;
       }
 
