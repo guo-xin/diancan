@@ -187,14 +187,12 @@
             this.typeScroller = new BScroll(this.$els.type, {
               startX: 0,
               startY: 0,
-              click: true,
-              bounce: false
+              click: true
             })
             this.menuScroller = new BScroll(this.$els.menu, {
               startX: 0,
               startY: 0,
-              click: true,
-              bounce: false
+              click: true
             })
           })
           const shopname = data.data.shopname
