@@ -52,6 +52,7 @@
   }
   header {
     padding: 16px 30px;
+    background-color: #fff;
     border-bottom: 2px solid $midGray;
     display: flex;
     strong {

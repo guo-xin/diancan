@@ -11,47 +11,44 @@
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <scroller class="scroller-left" lock-x v-ref:scrollerleft height="100%">
-          <div class="list-group">
-            <ul class="">
-              <li v-for="group in groupList" :class="{'active': selectIndex===$index}"
-                  @click="select($index, group)">
-                <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </scroller>
+        <div class="list-group" v-el:type>
+          <ul>
+            <li v-for="group in groupList" :class="{'active': selectIndex===$index}"
+                @click="select($index, group)">
+              <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
+              </div>
+            </li>
+            <li></li>
+          </ul>
+        </div>
       </div>
       <div class="l_auto shopmenu-list-container">
-        <scroller class="scroller-right" lock-x v-ref:scroller height="100%">
-          <div class="shopmenu-list">
-            <no-data v-if="!goodsList.length" class="no-data"></no-data>
-            <ul class="listgroup" v-else>
-              <li v-for="goods in goodsList" class="list-item">
-                <div class="l-r wrap">
-                  <div class="list-img" @click.stop="showDetailHandler(goods)">
-                    <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
-                  </div>
-                  <div class="l_auto list-content">
-                    <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
-                    <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
-                    <p v-else class="old-price"></p>
-                    <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
-                  </div>
+        <div class="shopmenu-list" v-el:menu>
+          <ul class="listgroup">
+            <li v-for="goods in goodsList" class="list-item">
+              <div class="l-r wrap">
+                <div class="list-img" @click.stop="showDetailHandler(goods)">
+                  <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
                 </div>
-                <!--商品选择-->
-                <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
-                              :goods="goods"
-                              :plus="plusHandler"
-                              :minus="minusHandler"
-                              :diy="diyHandler">
-                </goods-select>
-                <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
-              </li>
-            </ul>
-          </div>
-        </scroller>
+                <div class="l_auto list-content">
+                  <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
+                  <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
+                  <p v-else class="old-price"></p>
+                  <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
+                </div>
+              </div>
+              <!--商品选择-->
+              <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
+                            :goods="goods"
+                            :plus="plusHandler"
+                            :minus="minusHandler"
+                            :diy="diyHandler">
+              </goods-select>
+              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
+            </li>
+            <li></li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -79,9 +76,6 @@
 <script type="text/ecmascript-6">
   /* global _hmt */
   import Util from '../../../methods/Util'
-  import Scroller from 'vux-components/scroller'
-
-  import NoData from '../../../components/NoData'
   import Loading from '../../../components/loading/Loading'
   import GoodsSelect from '../../../components/GoodsSelect'
   import SelectSpec from '../../../components/SelectSpec'
@@ -90,12 +84,13 @@
   import ScanQrcode from '../../../components/ScanQrcode.vue'
   import GetLocation from '../../../components/GetLocation.vue'
   import Config from '../../../methods/Config'
+  import BScroll from 'better-scroll'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
     },
     data () {
       return {
@@ -109,7 +104,9 @@
         selectDetail: null,
         order_info: {}, // 是否已存在订单
         isExpire: false,
-        merchantSetting: {}
+        merchantSetting: {},
+        typeScroller: null,
+        menuScroller: null
       }
     },
     computed: {
@@ -184,10 +181,19 @@
 //            }
           })
           this.$nextTick(() => {
-            document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-            document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-            this.$refs.scrollerleft.reset()
-            this.$refs.scroller.reset()
+            let topbarHeight = document.getElementsByTagName('header')[0].offsetHeight
+            document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - topbarHeight + 'px'
+            document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - topbarHeight + 'px'
+            this.typeScroller = new BScroll(this.$els.type, {
+              startX: 0,
+              startY: 0,
+              click: true
+            })
+            this.menuScroller = new BScroll(this.$els.menu, {
+              startX: 0,
+              startY: 0,
+              click: true
+            })
           })
           const shopname = data.data.shopname
           let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
@@ -273,9 +279,8 @@
         this.selectIndex = index
         this.$set('goodsList', item.goods_list)
         this.$nextTick(function () {
-          let scroller = this.$refs.scroller
-          scroller.reset()
-          scroller._xscroll.scrollTop()
+          this.menuScroller.refresh()
+          this.menuScroller.scrollTo(0, 0)
         })
       },
       plusHandler (events, goods, specIndex) {
@@ -413,21 +418,15 @@
       }
     }
   }
-  .no-data {
-    height: 300px !important;
-  }
 
   /*左侧分类列表*/
   .list-group-box {
-    /*padding-bottom: 104px;*/
-    /*height: 100%;*/
     width: 156px;
     background-color: #F7F7F7;
   }
 
   .list-group {
-    /*padding-bottom: 70px;*/
-    padding-bottom: 104px;
+    overflow: hidden;
     li {
       position: relative;
       text-align: center;
@@ -435,12 +434,15 @@
       font-size: 28px;
       color: #2F323A;
       border-bottom: 2px solid #E5E5E5; /*px*/
-
       &.active {
         background-color: #fff;
         color: #FE9B20;
       }
-
+      // 购物车遮挡
+      &:last-child {
+        border-bottom: none;
+        height: 104px;
+      }
       /*&:before {*/
       .count {
         position: absolute;
@@ -465,21 +467,17 @@
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
-    overflow: hidden;
-    /*padding-bottom: 104px;*/
     height: 100%;
     background-color: #fff;
-
-    & > div:first-child {
-      /*background: #f2f2f2;*/
-      /*background: url() center 10px no-repeat;*/
-      /*background-size: 90px;*/
-    }
   }
 
   .shopmenu-list {
-    padding-bottom: 104px;
-    background-color: #fff;
+    overflow: hidden;
+    // 购物车遮挡
+    li:last-child {
+      border-bottom: none;
+      height: 104px;
+    }
   }
 
   li.list-item {
@@ -487,7 +485,6 @@
     padding-left: 24px;
     .wrap {
       position: relative;
-      align-items: center;
       padding: 24px 0;
       border-bottom: 2px solid #E5E5E5; /*px*/
     }
@@ -514,7 +511,7 @@
       .title {
         color: #4d4d4d;
         font-size: 32px;
-        /*line-height: 32px;*/
+        padding-right: 24px;
         color: #2f323a;
       }
 
