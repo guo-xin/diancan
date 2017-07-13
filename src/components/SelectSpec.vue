@@ -1,7 +1,7 @@
 <template>
-  <div class="container" v-show="visible" @click="visible=false">
-    <div class="spec" v-if="visible" transition="zoomInOut" @click.stop.prevent="nullFunction">
-      <div class="close" @click="visible=false"><i class="iconfont">&#xe604;</i></div>
+  <div class="container" v-if="visible">
+    <div class="spec" transition="zoomInOut">
+      <div class="close" @click="hideSpec"><i class="iconfont">&#xe604;</i></div>
       <div class="head line">{{goods.name}}</div>
       <section class="body">
         <ul class="spec-list line">
@@ -27,6 +27,7 @@
                     :minus="minus"
                     :diy="diy"></goods-select>
     </div>
+    <div class="mark" @click="hideSpec" v-show="showMark"></div>
   </div>
 </template>
 
@@ -34,12 +35,13 @@
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
-    props: ['visible', 'goods', 'plus', 'minus', 'diy'],
+    props: ['goods', 'plus', 'minus', 'diy'],
     data () {
       return {
+        visible: false,
+        showMark: false,
+        timer: null
       }
-    },
-    created () {
     },
     computed: {
       lastSpec () {
@@ -54,7 +56,17 @@
         this.goods._lastSpec = $index
         this.$dispatch('on-selectSpec', this.goods, $index)
       },
-      nullFunction () {
+      showSpec () {
+        this.visible = true
+        let _this = this
+        this.timer = setTimeout(function () {
+          _this.showMark = true
+        }, 200)
+      },
+      hideSpec () {
+        this.visible = false
+        this.showMark = false
+        clearTimeout(this.timer)
       }
     }
   }
@@ -73,6 +85,15 @@
     align-items: center;
     background-color: rgba(0, 0, 0, .7);
     z-index: 112;
+  }
+
+  .mark {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
   }
 
   .spec {

@@ -43,7 +43,9 @@
                             :minus="minusHandler"
                             :diy="diyHandler">
               </goods-select>
-              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
+              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}">
+                <button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button>
+              </div>
             </li>
             <li></li>
           </ul>
@@ -52,7 +54,7 @@
     </div>
 
     <!--选择规格-->
-    <select-spec :visible.sync="showSpec"
+    <select-spec v-ref:spec
                  :goods.sync="selectSpecGoods"
                  :plus="plusHandler"
                  :minus="minusHandler"
@@ -344,7 +346,7 @@
       },
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
-        this.showSpec = true
+        this.$refs.spec.showSpec()
       },
       showDetailHandler (goods) {
         this.selectDetail = goods
