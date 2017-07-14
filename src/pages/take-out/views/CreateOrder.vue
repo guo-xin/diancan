@@ -318,23 +318,19 @@
           method: 'GET',
           data: args
         }).then((response) => {
-          // success callback
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
-        }, (response) => {
-          // error callback
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            this.$router.replace({
+              name: 'orderDetail',
+              params: {
+                'order_id': this.orderId,
+                'mchnt_id': this.mchnt_id
+              }
+            })
+          } else {
+            this.$dispatch('on-toast', data.respcd.respmsg)
+            this.btnText = '确定下单'
+          }
         })
       },
       goAddAddress () {
