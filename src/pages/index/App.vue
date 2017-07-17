@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
   import Store from 'methods/Store'
   import { STORE_CART } from 'methods/Config'
 
