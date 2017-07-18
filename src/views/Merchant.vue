@@ -26,8 +26,7 @@
       <div class="l_auto shopmenu-list-container">
         <scroller class="scroller-right" lock-x ref="scroller" height="100%">
           <div class="shopmenu-list">
-            <no-data v-if="goodsList && !goodsList.length" class="no-data"></no-data>
-            <ul class="listgroup" v-else>
+            <ul class="listgroup">
               <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
                   <div class="list-img" @click.stop="showDetailHandler(goods)">
@@ -79,7 +78,6 @@
   import Util from 'methods/Util'
   import Scroller from 'vux-components/scroller'
 
-  import NoData from 'components/NoData'
   import Loading from 'components/loading/Loading'
   import GoodsSelect from 'components/GoodsSelect'
   import SelectSpec from 'components/SelectSpec'
@@ -94,7 +92,7 @@
   export default {
     props: ['cart'],
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
+      Loading, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
     },
     data () {
       return {

@@ -82,6 +82,7 @@
           }
           this.hasAddress = true
           this.$parent.current_addr = _data
+          this.getDeliverFee()
         } else {
           this.$toast(data.respmsg)
         }
@@ -116,12 +117,40 @@
       }
     },
     methods: {
+      getDeliverFee () { // 获取达达等第三方配送费
+        let now = new Date().getTime()
+        let current_addr = this.current_addr
+        this.$http({
+          url: Config.dcHost + 'diancan/dada/query_deliver_fee',
+          method: 'POST',
+          params: {
+            mchnt_id: this.mchnt_id,
+            city_code: '010', // current_addr.city_code
+            third_order_id: `${this.mchnt_id}${current_addr.mobile}${now}`,
+            cargo_price: this.cartData.price,
+            is_prepay: 1,
+            receiver_name: current_addr.contact_name,
+            receiver_addr: `${current_addr.location} ${current_addr.detail_addr}`,
+            receiver_phone: current_addr.mobile,
+            receiver_lat: current_addr.latitude,
+            receiver_lng: current_addr.longitude,
+            format: 'cors'
+          }
+        }).then(function (res) {
+          let data = res.data
+          if (data.respcd === '0000') {
+
+          } else {
+
+          }
+        })
+      },
       overdist () {
         if (!this.current_addr.longitude) {
           this.$messagebox.confirm('为了让商家更好的为您提供配送服务，请升级您的配送地址。', '')
           .then((action) => {
             if (action === 'confirm') {
-              this.createOrder()
+              this.goUpdateAddress()
             }
           })
         } else if (this.current_addr.overdist) {
@@ -295,6 +324,11 @@
       goAddAddress () {
         this.$router.push({
           path: '/address/add'
+        })
+      },
+      goUpdateAddress () {
+        this.$router.push({
+          path: '/address/update'
         })
       },
       goList () {

@@ -38,7 +38,8 @@
           location: '',
           longitude: 0,
           latitude: 0,
-          adcode: 0
+          adcode: 0,
+          city_code: 0
         },
         cors: {
           format: 'cors'

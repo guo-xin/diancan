@@ -9,7 +9,7 @@
         </div>
         <div class="cart-price">
           <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
-          <p>
+          <p v-show="deliver.shipping_fee">
             配送费 <em :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">¥ {{deliver.shipping_fee | formatCurrency}}</em>
             <span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
           </p>

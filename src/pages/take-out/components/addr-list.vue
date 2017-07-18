@@ -156,6 +156,10 @@
       font-size: 42px;
     }
   }
+  .update-tip {
+    color: #06B390;
+    font-size: 24px;
+  }
   .warn-tip {
     color: #E73B48;
     font-size: 24px;

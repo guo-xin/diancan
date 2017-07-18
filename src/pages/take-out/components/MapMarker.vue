@@ -13,7 +13,8 @@
           location: '',
           longitude: 0,
           latitude: 0,
-          adcode: 0
+          adcode: 0,
+          city_code: 0
         }
       }
     },
@@ -36,8 +37,7 @@
           coord = e.data.location.split(',')
           _this.info.longitude = coord[0]
           _this.info.latitude = coord[1]
-          _this.$parent.tempAddr = _this.info
-          window.history.go(-1)
+          _this.getAdcode(coord[0], coord[1])
         }
       }
       window.addEventListener('message', listener, false)
@@ -47,6 +47,22 @@
       element.parentNode.removeChild(element)
     },
     methods: {
+      getAdcode (longitude, latitude) {
+        this.$http({
+          url: 'http://restapi.amap.com/v3/geocode/regeo',
+          method: 'JSONP',
+          params: {
+            format: 'jsonp',
+            key: '9eb1cfce5386a0d7ad316255968c78bd',
+            location: `${longitude},${latitude}`
+          }
+        }).then(function (res) {
+          this.info.adcode = res.data.regeocode.addressComponent.adcode
+          this.info.city_code = res.data.regeocode.addressComponent.citycode
+          this.$parent.tempAddr = this.info
+          window.history.go(-1)
+        })
+      },
       resetViewport () {
         let m = document.createElement('meta')
         m.id = 'm'

@@ -36,7 +36,8 @@
           location: '',
           longitude: 0,
           latitude: 0,
-          adcode: 0
+          adcode: 0,
+          city_code: 0
         },
         cors: {
           format: 'cors'
@@ -45,7 +46,6 @@
     },
     created () {
       Object.assign(this.info, this.$parent.tempAddr)
-      this.getAdcode()
       let viewport = document.querySelector('meta[name=viewport]')
       let m = document.createElement('meta')
       m.setAttribute('name', 'viewport')
@@ -69,19 +69,6 @@
           query: {
             src: src
           }
-        })
-      },
-      getAdcode () {
-        this.$http({
-          url: 'http://restapi.amap.com/v3/geocode/regeo',
-          method: 'JSONP',
-          params: {
-            format: 'jsonp',
-            key: '9eb1cfce5386a0d7ad316255968c78bd',
-            location: `${this.info.longitude},${this.info.latitude}`
-          }
-        }).then(function (res) {
-          this.info.adcode = res.data.regeocode.addressComponent.adcode
         })
       },
       goAdd () {

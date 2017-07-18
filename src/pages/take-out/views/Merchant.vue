@@ -26,8 +26,7 @@
       <div class="l_auto shopmenu-list-container">
         <scroller class="scroller-right" lock-x ref="scroller" height="100%">
           <div class="shopmenu-list">
-            <no-data v-if="!goodsList.length" class="no-data"></no-data>
-            <ul class="listgroup" v-else>
+            <ul class="listgroup">
               <li v-for="goods in goodsList" class="list-item">
                 <div class="l-r wrap">
                   <div class="list-img" @click.stop="showDetailHandler(goods)">
@@ -85,7 +84,6 @@
   import Util from '../../../methods/Util'
   import Scroller from 'vux-components/scroller'
 
-  import NoData from '../../../components/NoData'
   import Loading from '../../../components/loading/Loading'
   import GoodsSelect from '../../../components/GoodsSelect'
   import SelectSpec from '../../../components/SelectSpec'
@@ -100,7 +98,7 @@
   export default {
     props: ['cart', 'deliver'],
     components: {
-      Loading, NoData, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
+      Loading, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
     },
     data () {
       return {
@@ -149,8 +147,10 @@
         let mSet = data.data.merchant_setting
         // 配送费
         let deliver = this.$parent.deliver
-        deliver.shipping_fee = mSet.shipping_fee
-        deliver.min_shipping_fee = mSet.min_shipping_fee
+        if (mSet.distribution === 0) {
+          deliver.shipping_fee = mSet.shipping_fee
+          deliver.min_shipping_fee = mSet.min_shipping_fee
+        }
         deliver.start_delivery_fee = mSet.start_delivery_fee
         this.$emit('updateDeliver', deliver)
         // 商品购物车
@@ -404,9 +404,6 @@
         line-height: 1;
       }
     }
-  }
-  .no-data {
-    height: 300px !important;
   }
 
   /*左侧分类列表*/
