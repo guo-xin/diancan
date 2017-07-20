@@ -55,7 +55,8 @@
         note: '',           // 备注
         orderId: '',        // 订单ID
         checkout: {},
-        btnText: '确认下单'
+        btnText: '确认下单',
+        third_order_id: ''
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -120,13 +121,14 @@
       getDeliverFee () { // 获取达达等第三方配送费
         let now = new Date().getTime()
         let current_addr = this.current_addr
+        this.third_order_id = `${this.mchnt_id}${current_addr.mobile}${now}`
         this.$http({
           url: Config.dcHost + 'diancan/dada/query_deliver_fee',
           method: 'POST',
           params: {
             mchnt_id: this.mchnt_id,
             city_code: '010', // current_addr.city_code
-            third_order_id: `${this.mchnt_id}${current_addr.mobile}${now}`,
+            third_order_id: this.third_order_id,
             cargo_price: this.cartData.price,
             is_prepay: 1,
             receiver_name: current_addr.contact_name,
@@ -207,6 +209,11 @@
           format: 'cors',
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id
+        }
+        // 达达配送需要多传参数
+        if (this.$route.query.distribution) {
+          args.distribution = this.$route.query.distribution
+          args.third_order_id = this.third_order_id
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',

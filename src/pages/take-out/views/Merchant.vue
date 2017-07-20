@@ -70,6 +70,7 @@
     <cart-bar v-if="cart.length"
       :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
       :overtime="merchantSetting.overtime"
+      :distribution="merchantSetting.distribution"
       :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
       @cleanGoods="cleanGoods">
     </cart-bar>
@@ -384,7 +385,6 @@
   }
   .order-info {
     background-color: #FFEAD1;
-    line-height: 60px;
     padding: 20px;
     transition: all .5s linear;
     height: 100px;
