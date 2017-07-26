@@ -5,9 +5,8 @@
       <loading :visible="isLoading"></loading>
     </div>
     <div class="order-info" v-if="isEmptyOrder">
-      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
-        <a @click="goDetail">查看订单</a>
-      </p>
+      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单</p>
+      <button class="default-button" type="button" @click="goDetail">查看订单</button>
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
@@ -70,8 +69,8 @@
     <cart-bar v-if="cart.length"
       :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
       :overtime="merchantSetting.overtime"
-      :distribution="merchantSetting.distribution"
       :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
+      :isDadaDeliver="merchantSetting.distribution === 1"
       @cleanGoods="cleanGoods">
     </cart-bar>
 
@@ -373,7 +372,7 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-
+  @import "../../../styles/main.scss";
   .c-loading-container {
     position: fixed;
     top: 0;
@@ -386,23 +385,15 @@
   .order-info {
     background-color: #FFEAD1;
     padding: 20px;
-    transition: all .5s linear;
-    height: 100px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
     p {
       font-size: 30px;
       color: #2F323A;
-      a {
-        display: block;
-        float: right;
-        padding: 16px 24px;
-        color: #fff;
-        text-align: center;
-        font-size: 30px;
-        border-radius: 6px;
-        background-color: #FE9B20;
-        line-height: 1;
-      }
+      flex: 1;
+    }
+    button {
+      display: block;
     }
   }
 

@@ -45,7 +45,6 @@
       }
     },
     created () {
-      Object.assign(this.info, this.$parent.tempAddr)
       let viewport = document.querySelector('meta[name=viewport]')
       let m = document.createElement('meta')
       m.setAttribute('name', 'viewport')
@@ -55,20 +54,8 @@
     },
     methods: {
       goChoose () {
-        this.$parent.tempAddr = this.info
-        let longitude = window.localStorage.getItem('longitude')
-        let latitude = window.localStorage.getItem('latitude')
-        let src = ''
-        if (longitude && latitude) {
-          src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
-        } else {
-          src = `https://m.amap.com/picker/?key=608d75903d29ad471362f8c58c550daf`
-        }
         this.$router.push({
-          name: 'addressMarker',
-          query: {
-            src: src
-          }
+          name: 'addressMarker'
         })
       },
       goAdd () {
@@ -98,6 +85,7 @@
           }).then(function (res) {
             this.loadingData = false
             if (res.data.respcd === '0000') {
+              Object.assign(this.$parent.current_addr, this.info)
               window.history.go(-1)
             } else {
               window.alert(res.data.resperr)

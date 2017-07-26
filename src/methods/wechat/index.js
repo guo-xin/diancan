@@ -52,7 +52,9 @@ const getWxConfig = (args, jsApis = jsApiList) => {
   })
 }
 const init = async (jsApis = jsApiList) => {
+  // 如果 appid 拿不到，再加上 diancan/c/takeauthinfo 请求拿的逻辑
   let args = {
+    app_id: window.localStorage.getItem('dc_appid'),
     format: 'jsonp',
     url: window.location.href
   }

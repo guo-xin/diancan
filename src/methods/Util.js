@@ -75,6 +75,13 @@ let checkEmail = function (email) {
   return correctEmail.test(email)
 }
 
+// 获取 Cookie Value
+let getCookie = function (name) {
+  var value = '; ' + document.cookie
+  var parts = value.split('; ' + name + '=')
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
 exports.isWX = isWX()
 exports.isAPP = isAPP()
 exports.isIOS = isIOS
@@ -83,3 +90,4 @@ exports.getRequestParams = getRequestParams
 exports.checkEmail = checkEmail
 exports.setTitle = setTitle
 exports.isEmptyObject = isEmptyObject
+exports.getCookie = getCookie

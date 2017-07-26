@@ -69,6 +69,7 @@
       }
     }
     button {
+      display: block;
       font-size: 28px;
       border: 2px solid $orange;
       background-color: transparent;

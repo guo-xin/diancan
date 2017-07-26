@@ -9,11 +9,11 @@
         <p>
           <span>{{item.contact_name}} {{item.mobile}}</span>
           <strong>{{item.location}} {{item.detail_addr}}</strong>
-          <em v-if="!item.longitude" class="update-tip">配送地址需要升级</em>
+          <em v-if="!item.longitude" class="update-tip">需要升级地址</em>
           <em v-if="item.longitude && item.overdist" class="warn-tip"><i></i>超出配送范围</em>
         </p>
         <a v-if="item.longitude" class="touch-btn" @click.prevent.stop="goEdit(item.addr_id)"><i class="icon-edit"></i></a>
-        <a v-else class="touch-btn" @click.prevent.stop="goEdit(item.addr_id)"><i class="icon-update"></i></a>
+        <a v-else class="touch-btn" @click.prevent.stop="goUpdate(item.addr_id)"><i class="icon-update"></i></a>
       </li>
     </ul>
   </div>
@@ -77,6 +77,22 @@
         }
         this.$parent.tempAddr = addrInfo()
         this.$router.push({name: 'addressUpdate'})
+      },
+      goUpdate (id) {
+        var addrInfo = () => {
+          for (var i = 0; i < this.addressList.length; i++) {
+            if (this.addressList[i].addr_id === id) {
+              return this.addressList[i]
+            }
+          }
+        }
+        this.$parent.tempAddr = addrInfo()
+        this.$router.push({
+          name: 'addressMarker',
+          param: {
+            from: 'addressList'
+          }
+        })
       }
     }
   }

@@ -6,7 +6,7 @@
     <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
       <p>{{current_addr.contact_name}}　{{current_addr.mobile}}</p>
       <p>{{current_addr.location}} {{current_addr.detail_addr}}</p>
-      <p v-if="!current_addr.longitude" class="update-tip">配送地址需要升级</p>
+      <p v-if="!current_addr.longitude" class="update-tip">需要升级地址</p>
       <p v-if="current_addr.longitude && current_addr.overdist" class="warn-tip"><i></i>超出配送范围</p>
     </section>
     <section class="note item">
@@ -25,7 +25,8 @@
       </ul>
       <div class="deliver-fee">
         <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
-        <span :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency}}</span>
+        <span v-if="deliveryStatus">{{deliveryStatus}}</span>
+        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency}}</span>
       </div>
       <div class="total">
         <!-- <del>原价¥63</del> -->
@@ -36,18 +37,18 @@
       <em>支付方式</em>
       <span><i></i>微信支付</span>
     </section>
-    <button class="done-btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">
+    <button class="done-btn" @click.stop="reviewOrder" :disabled="btnText!=='确认下单'">
       <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
   </div>
 </template>
-<script>
+<script type="text/ecmascript-6">
   /* global _hmt */
   /* eslint-disable  */
   import Config from 'methods/Config'
   import Util from 'methods/Util'
   export default {
-    props: ['cart', 'deliver'],
+    props: ['cart', 'deliver', 'isDadaDeliver'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -56,7 +57,9 @@
         orderId: '',        // 订单ID
         checkout: {},
         btnText: '确认下单',
-        third_order_id: ''
+        third_order_id: '',   // 达达特需
+        delivery_no: '',   // 达达特需
+        deliveryStatus: ''    // 达达配送费状态
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -83,9 +86,9 @@
           }
           this.hasAddress = true
           this.$parent.current_addr = _data
-          this.getDeliverFee()
-        } else {
-          this.$toast(data.respmsg)
+          if (this.isDadaDeliver) {
+            this.getDeliverFee()
+          }
         }
       })
     },
@@ -119,6 +122,7 @@
     },
     methods: {
       getDeliverFee () { // 获取达达等第三方配送费
+        this.deliveryStatus = '正在获取...'
         let now = new Date().getTime()
         let current_addr = this.current_addr
         this.third_order_id = `${this.mchnt_id}${current_addr.mobile}${now}`
@@ -141,16 +145,37 @@
         }).then(function (res) {
           let data = res.data
           if (data.respcd === '0000') {
-
+            let dadaDeliveryFee = (data.data.fee / 100).toFixed(2)
+            this.deliveryStatus = `￥${dadaDeliveryFee}`
+            this.delivery_no = data.data.deliveryNo
           } else {
-
+            this.deliveryStatus = '获取失败'
           }
         })
       },
-      overdist () {
-        if (!this.current_addr.longitude) {
-          this.$messagebox.confirm('为了让商家更好的为您提供配送服务，请升级您的配送地址。', '')
-          .then((action) => {
+      reviewOrder () {
+        if (!this.hasAddress) {
+          this.$messagebox({
+            title: '',
+            message: '您还没有填配送地址哦～',
+            showCancelButton: true,
+            confirmButtonText: '填地址',
+          })
+          .then(action => {
+            if (action === 'confirm') {
+              this.goAddAddress()
+            }
+          })
+          .catch(err => {
+          })
+        } else if (!this.current_addr.longitude) {
+          this.$messagebox({
+            title: '',
+            message: '为了让商家能够精确的知道您在哪，请升级您的配送地址',
+            showCancelButton: false,
+            confirmButtonText: '升级地址',
+          })
+          .then(action => {
             if (action === 'confirm') {
               this.goUpdateAddress()
             }
@@ -158,7 +183,7 @@
         } else if (this.current_addr.overdist) {
           this.$messagebox({
             title: '',
-            message: '这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～',
+            message: '这个地址太远了，超出了商家的配送范围，可能会被商户拒单',
             showCancelButton: true,
             confirmButtonText: '继续下单',
           })
@@ -166,8 +191,6 @@
             if (action === 'confirm') {
               this.createOrder()
             }
-          })
-          .catch(err => {
           })
         } else {
           this.createOrder()
@@ -183,9 +206,11 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        if (!this.$parent.current_addr.addr_id) {
-          this.$dispatch('on-toast', '请添加配送地址!')
-          return
+        // 达达配送需要多传参数
+        let dada_args = {}
+        if (this.isDadaDeliver) {
+          dada_args.delivery_no = this.delivery_no
+          dada_args.third_order_id = this.third_order_id
         }
         this.btnText = '支付中'
         this.note = ('' + this.note).trim()
@@ -210,15 +235,10 @@
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id
         }
-        // 达达配送需要多传参数
-        if (this.$route.query.distribution) {
-          args.distribution = this.$route.query.distribution
-          args.third_order_id = this.third_order_id
-        }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
           method: 'POST',
-          params: args
+          params: Object.assign(args, dada_args)
         }).then((response) => {
           let data = response.data
           if (data.respcd !== Config.code.OK) {
@@ -334,8 +354,9 @@
         })
       },
       goUpdateAddress () {
+        this.$parent.tempAddr = this.$parent.current_addr
         this.$router.push({
-          path: '/address/update'
+          name: 'addressMarker'
         })
       },
       goList () {

@@ -2,6 +2,7 @@
 import Config from '../Config'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import Util from 'methods/Util'
 
 Vue.use(VueResource)
 
@@ -66,32 +67,31 @@ const getMchntId = () => {
   let LSArray, tempLSMchtId
 
   if (window.location.hash) {
-    window.localStorage.setItem('redirect_uri', window.location.hash)
+    sessionStorage.setItem('redirect_uri', window.location.hash)
     hashArray = window.location.hash.split('/')
     tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
   }
 
-  if (window.localStorage.getItem('redirect_uri')) {
-    LSArray = window.localStorage.getItem('redirect_uri').split('/')
+  if (sessionStorage.getItem('redirect_uri')) {
+    LSArray = sessionStorage.getItem('redirect_uri').split('/')
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
   let mchntId = tempHashMchtId || tempLSMchtId
   if (mchntId && !isNaN(mchntId)) {
-    localStorage.setItem('mchntId', mchntId)
+    sessionStorage.setItem('mchntId', mchntId)
   }
 
   return mchntId
 }
 
-const hasStoreMchntId = () => {
-  let hashArray = window.location.hash.split('/')
-  let tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
-  return localStorage.getItem('mchntId') === tempHashMchtId
+const isLogin = () => {
+  let hasCsid = Util.getCookie('csid')
+  return sessionStorage.getItem('mchntId') && hasCsid
 }
 
 const verify = async () => {
-  if (hasStoreMchntId()) {
+  if (isLogin()) {
     return new Promise((resolve, reject) => {
       resolve()
     })

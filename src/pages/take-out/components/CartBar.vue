@@ -65,7 +65,7 @@
     components: {
       Scroller, GoodsSelect
     },
-    props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery', 'distribution'],
+    props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery', 'isDadaDeliver'],
     data () {
       return {
         mchnt_id: this.$route.params.mchnt_id,
@@ -118,9 +118,6 @@
           name: 'createOrder',
           params: {
             mchnt_id: this.$route.params.mchnt_id
-          },
-          query: {
-            distribution: this.distribution
           }
         })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])

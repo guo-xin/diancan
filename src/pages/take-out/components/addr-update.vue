@@ -43,8 +43,14 @@
         },
         cors: {
           format: 'cors'
-        }
+        },
+        fromPath: ''
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fromPath = from.path
+      })
     },
     created () {
       Object.assign(this.info, this.$parent.tempAddr)
@@ -61,20 +67,8 @@
     },
     methods: {
       goChoose () {
-        this.$parent.tempAddr = this.info
-        let longitude = window.localStorage.getItem('longitude')
-        let latitude = window.localStorage.getItem('latitude')
-        let src = ''
-        if (longitude && latitude) {
-          src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
-        } else {
-          src = `https://m.amap.com/picker/?key=608d75903d29ad471362f8c58c550daf`
-        }
         this.$router.push({
-          name: 'addressMarker',
-          query: {
-            src: src
-          }
+          name: 'addressMarker'
         })
       },
       updateAddr () {
@@ -89,7 +83,13 @@
           params: Object.assign(this.info, this.cors)
         }).then(function (res) {
           if (res.data.respcd === '0000') {
-            window.history.go(-1)
+            Object.assign(this.$parent.tempAddr, this.info)
+            if (this.fromPath === '/address/marker') {
+              this.$toast('升级地址成功')
+              this.$router.go(-2)
+            } else {
+              window.history.go(-1)
+            }
           }
         })
       },

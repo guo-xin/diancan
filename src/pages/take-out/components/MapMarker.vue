@@ -1,26 +1,31 @@
 <template>
-  <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" id="test" :src="$route.query.src"></iframe>
+  <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" id="test"
+  :src="src"></iframe>
 </template>
 
 <script type="text/ecmascript-6">
   export default {
     data () {
       return {
+        src: '',
         info: {
-          contact_name: '',
-          mobile: '',
-          detail_addr: '',
           location: '',
           longitude: 0,
           latitude: 0,
           adcode: 0,
           city_code: 0
-        }
+        },
+        fromName: ''
       }
     },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fromName = from.name
+      })
+    },
     created () {
-      Object.assign(this.info, this.$parent.tempAddr)
       this.resetViewport()
+      this.getMapSrc()
     },
     mounted () {
       /* eslint-disable */
@@ -47,6 +52,15 @@
       element.parentNode.removeChild(element)
     },
     methods: {
+      getMapSrc () {
+        let longitude = window.localStorage.getItem('longitude')
+        let latitude = window.localStorage.getItem('latitude')
+        if (longitude && latitude) {
+          this.src = `https://m.amap.com/picker/?center=${longitude},${latitude}&key=608d75903d29ad471362f8c58c550daf`
+        } else {
+          this.src = `https://m.amap.com/picker/?key=608d75903d29ad471362f8c58c550daf`
+        }
+      },
       getAdcode (longitude, latitude) {
         this.$http({
           url: 'http://restapi.amap.com/v3/geocode/regeo',
@@ -59,8 +73,14 @@
         }).then(function (res) {
           this.info.adcode = res.data.regeocode.addressComponent.adcode
           this.info.city_code = res.data.regeocode.addressComponent.citycode
-          this.$parent.tempAddr = this.info
-          window.history.go(-1)
+          Object.assign(this.$parent.tempAddr, this.info)
+          if (this.fromName === 'addressList' || this.fromName === 'createOrder') {
+            this.$router.push({
+              name: 'addressUpdate'
+            })
+          } else {
+            window.history.go(-1)
+          }
         })
       },
       resetViewport () {
