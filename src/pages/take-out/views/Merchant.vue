@@ -70,7 +70,6 @@
       :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
       :overtime="merchantSetting.overtime"
       :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
-      :isDadaDeliver="merchantSetting.distribution === 1"
       @cleanGoods="cleanGoods">
     </cart-bar>
 
@@ -145,6 +144,7 @@
         }
         this.isLoading = false
         let mSet = data.data.merchant_setting
+        sessionStorage.setItem('isDadaDeliver', 1)
         // 配送费
         let deliver = this.$parent.deliver
         if (mSet.distribution === 0) {

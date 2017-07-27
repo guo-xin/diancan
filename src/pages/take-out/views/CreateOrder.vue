@@ -48,7 +48,7 @@
   import Config from 'methods/Config'
   import Util from 'methods/Util'
   export default {
-    props: ['cart', 'deliver', 'isDadaDeliver'],
+    props: ['cart', 'deliver'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -57,9 +57,11 @@
         orderId: '',        // 订单ID
         checkout: {},
         btnText: '确认下单',
+        isDadaDeliver: 0,
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
-        deliveryStatus: ''    // 达达配送费状态
+        deliveryStatus: '',    // 达达配送费状态
+        getDeliverFeeTimestamp: 0
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -69,6 +71,7 @@
     created () {
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
+      this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
         url: Config.dcHost + 'diancan/c/get_addr',
         method: 'JSONP',
@@ -123,9 +126,9 @@
     methods: {
       getDeliverFee () { // 获取达达等第三方配送费
         this.deliveryStatus = '正在获取...'
-        let now = new Date().getTime()
+        this.getDeliverFeeTimestamp = new Date().getTime()
         let current_addr = this.current_addr
-        this.third_order_id = `${this.mchnt_id}${current_addr.mobile}${now}`
+        this.third_order_id = `${this.mchnt_id}${current_addr.mobile}${this.getDeliverFeeTimestamp}`
         this.$http({
           url: Config.dcHost + 'diancan/dada/query_deliver_fee',
           method: 'POST',
@@ -146,14 +149,28 @@
           let data = res.data
           if (data.respcd === '0000') {
             let dadaDeliveryFee = (data.data.fee / 100).toFixed(2)
-            this.deliveryStatus = `￥${dadaDeliveryFee}`
+            this.deliveryStatus = `￥${this.dadaDeliveryFee}`
             this.delivery_no = data.data.deliveryNo
+            if (this.dadaDeliveryFee === dadaDeliveryFee) {
+              this.createOrder()
+            }
+            if (this.dadaDeliveryFee) {
+              this.$messagebox({
+                title: '',
+                message: '配送费发生了变化，请重新下单',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: '好的'
+              })
+            }
+            this.dadaDeliveryFee = dadaDeliveryFee
           } else {
             this.deliveryStatus = '获取失败'
           }
         })
       },
       reviewOrder () {
+        let now = new Date().getTime()
         if (!this.hasAddress) {
           this.$messagebox({
             title: '',
@@ -183,15 +200,14 @@
         } else if (this.current_addr.overdist) {
           this.$messagebox({
             title: '',
-            message: '这个地址太远了，超出了商家的配送范围，可能会被商户拒单',
+            message: '您的配送地址超出了商家配送范围，商家无法送餐',
+            showConfirmButton: false,
             showCancelButton: true,
-            confirmButtonText: '继续下单',
+            cancelButtonText: '好的'
           })
-          .then(action => {
-            if (action === 'confirm') {
-              this.createOrder()
-            }
-          })
+        } else if (this.isDadaDeliver && (now - this.getDeliverFeeTimestamp) >= 160 * 1000) {
+          // 查询配送费后超时下单，需重新查询
+          this.getDeliverFee()
         } else {
           this.createOrder()
         }
@@ -207,12 +223,13 @@
          * goods_info // 商品信息 json
          */
         // 达达配送需要多传参数
+
         let dada_args = {}
         if (this.isDadaDeliver) {
           dada_args.delivery_no = this.delivery_no
           dada_args.third_order_id = this.third_order_id
         }
-        this.btnText = '支付中'
+        this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
         let goodsItem = cart.map((goods) => {
@@ -496,6 +513,9 @@
     position: fixed;
     bottom: 0;
     left: 0;
+    &:disabled{
+      background-color: #8A8C92;
+    }
   }
   .update-tip {
     color: #06B390;

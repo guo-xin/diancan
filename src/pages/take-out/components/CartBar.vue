@@ -65,7 +65,7 @@
     components: {
       Scroller, GoodsSelect
     },
-    props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery', 'isDadaDeliver'],
+    props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery'],
     data () {
       return {
         mchnt_id: this.$route.params.mchnt_id,
