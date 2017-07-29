@@ -168,8 +168,9 @@
         })()
         this.order_info = data.data.order_info
         this.$nextTick(() => {
-          document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-          document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
+          let topbarHeight = document.getElementsByTagName('header')[0].offsetHeight
+          document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight - topbarHeight + 'px'
+          document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight - topbarHeight + 'px'
           this.$refs.scrollerleft.reset()
           this.$refs.scroller.reset()
         })

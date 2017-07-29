@@ -55,6 +55,7 @@
     strong {
       font-size: 28px;
       font-weight: normal;
+      display: block;
       flex: 1;
       align-self: center;
       padding-left: 36px;

@@ -19,7 +19,7 @@
             <strong>{{goods.name}}</strong>
             <em>{{goods.spec_list[goods._specIndex].name}}</em>
           </div>
-          <span>￥{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
         </li>
       </ul>
       <div class="total">
@@ -277,6 +277,7 @@
       line-height: 1.5;
     }
     textarea {
+      display: block;
       flex: 1;
       border: none;
       line-height: 1.5;
@@ -332,6 +333,9 @@
   .payment {
     display: flex;
     span {
+      display: block;
+      flex: 1;
+      text-align: right;
       i {
         width: 42px;
         height: 40px;
@@ -340,8 +344,6 @@
         vertical-align: middle;
         background: url('../assets/wechat.svg') no-repeat;
       }
-      flex: 1;
-      text-align: right;
     }
   }
   .done-btn {

@@ -20,13 +20,13 @@
             <strong>{{goods.name}}</strong>
             <em>{{goods.spec_list[goods._specIndex].name}}</em>
           </div>
-          <span>￥{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
         </li>
       </ul>
       <div class="deliver-fee">
         <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
-        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency}}</span>
+        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span>
       </div>
       <div class="total">
         <!-- <del>原价¥63</del> -->
@@ -426,6 +426,7 @@
       line-height: 1.5;
     }
     textarea {
+      display: block;
       flex: 1;
       padding: 0;
       border: none;
@@ -438,16 +439,18 @@
   }
   .goods-list {
     font-size: 30px;
-    padding: 10px 30px;
+    padding: 24px 30px 0;
     li {
       display: flex;
-      line-height: 80px;
+      align-items: center;
+      padding-bottom: 24px;
     }
     div {
       flex: 1;
       strong {
         display: block;
         font-weight: normal;
+        line-height: 1.4;
       }
       em {
         font-size: 26px;
@@ -464,10 +467,10 @@
   }
   .deliver-fee {
     display: flex;
-    height: 90px;
     justify-content: space-between;
-    padding: 0 30px;
+    padding: 0 30px 30px;
     > span {
+      display: block;
       font-size: 32px;
       &.except {
         text-decoration: line-through;
@@ -491,6 +494,9 @@
   .payment {
     display: flex;
     span {
+      display: block;
+      flex: 1;
+      text-align: right;
       i {
         width: 42px;
         height: 40px;
@@ -499,8 +505,6 @@
         vertical-align: middle;
         background: url('../assets/wechat.svg') no-repeat;
       }
-      flex: 1;
-      text-align: right;
     }
   }
   .done-btn {
