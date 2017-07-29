@@ -348,21 +348,19 @@
           method: 'GET',
           params: args
         }).then((response) => {
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
-        }, (response) => {
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            this.$router.replace({
+              name: 'orderDetail',
+              params: {
+                'order_id': this.orderId,
+                'mchnt_id': this.mchnt_id
+              }
+            })
+          } else {
+            this.$toast(data.respmsg)
+            this.btnText = '确定下单'
+          }
         })
       },
       goAddAddress () {
@@ -450,7 +448,7 @@
       strong {
         display: block;
         font-weight: normal;
-        line-height: 1.4;
+        line-height: 1.2;
       }
       em {
         font-size: 26px;

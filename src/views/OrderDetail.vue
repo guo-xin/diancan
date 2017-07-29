@@ -1,8 +1,5 @@
 <template>
   <div class="order-detail-view">
-    <div class="c-loading-container" v-if="$loadingRouteData">
-      <loading :visible="$loadingRouteData"></loading>
-    </div>
     <section class="shop">
       <div class="l-r">
         <h2 class="l_auto shopname">{{order.orderinfo.shop_name}}</h2>
@@ -45,66 +42,53 @@
       </ul>
     </section>
     </div>
+    <loading :visible="isLoading"></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import Util from '../methods/Util'
-  import Loading from '../components/loading/Loading'
-  import Config from '../methods/Config'
-
-  //  import Api from '../api/mock'
+  import util from 'methods/Util'
+  import loading from '../components/loading/Loading'
+  import config from 'methods/Config'
 
   export default {
     components: {
-      Loading
+      loading
     },
     data () {
       return {
+        isLoading: false,
         order: {
           orderinfo: ''
         },
-        type: 'android',
         hasDetail: false
       }
     },
-    computed: {
-      cart () {
-      }
-    },
     created () {
-//      let Api = require('../api/mock')
-//      this.$set('order', Api.order_detail)
+      this.fetchData()
     },
-    mounted () {
-      document.getElementsByClassName('view-container')[0].style.minHeight = window.innerHeight + 'px'
-    },
-    route: {
-      data (transition) {
-        let args = this.$route.params
+    methods: {
+      fetchData () {
         /**
          * order_id     // 订单id
          * mchnt_id     // 商户id
-         * customer_id  // 用户id(去掉)
          */
+        let args = this.$route.params
         args.format = 'jsonp'
         this.$http({
-          url: Config.apiHost + 'diancan/c/order_detail',
+          url: `${config.apiHost}diancan/c/order_detail`,
           method: 'JSONP',
-          data: args
+          params: args
         }).then(function (response) {
-          // success callback
           let data = response.data
-          if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
-            return
+          if (data.respcd === config.code.OK) {
+            this.hasDetail = data.data.goods_list
+            this.order = data.data
+            const shopname = data.data.orderinfo.shop_name
+            util.setTitle(shopname)
+          } else {
+            this.$toast(data.respmsg)
           }
-          transition.next({order: data.data})
-          const shopname = data.data.orderinfo.shop_name
-          Util.setTitle(shopname)
-        }, function (response) {
-          // error callback
         })
       }
     }
@@ -254,6 +238,7 @@
     .allPrice {
       font-size: 40px;
       color: #FE9B20;
+      text-align: right;
     }
   }
 
@@ -278,8 +263,5 @@
   .order-info {
     font-size: 26px;
     color: #8A8C92;
-    li {
-      margin-bottom: 16px;
-    }
   }
 </style>

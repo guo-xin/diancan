@@ -59,6 +59,7 @@
                  :plus="plusHandler"
                  :minus="minusHandler"
                  :diy="diyHandler"
+                 @hideSpecHandler="hideSpecHandler"
                  @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
@@ -331,6 +332,9 @@
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
         this.showSpec = true
+      },
+      hideSpecHandler () {
+        this.showSpec = false
       },
       showDetailHandler (goods) {
         this.selectDetail = goods

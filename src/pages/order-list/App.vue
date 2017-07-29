@@ -122,11 +122,9 @@
         }
       },
       jumpUrl (item) {
-        if (item.order_type === 3) {
-          window.location.href = `${window.location.origin}/dc/take-out.html#/order_detail/${item.order_id}/${item.mchnt_id}`
-        } else {
-          window.location.href = `${window.location.origin}/dc/index.html#/order_detail/${item.order_id}/${item.mchnt_id}`
-        }
+        let path = Config.env === 'development' ? '' : 'dc/'
+        let type = item.order_type === 3 ? 'take-out' : 'index'
+        window.location.href = `${window.location.origin}/${path}${type}.html#/order_detail/${item.order_id}/${item.mchnt_id}`
       },
       theme (id) {
         switch (id) {

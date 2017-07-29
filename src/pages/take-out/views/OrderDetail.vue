@@ -11,6 +11,7 @@
           <p v-if="item.delivery_state==1">接单</p>
           <p v-if="item.delivery_state==2">发货</p>
           <p v-if="item.delivery_state==3">送达</p>
+          <p v-if="item.delivery_state==4">取消</p>
         </li>
       </ul>
     </section>
@@ -21,7 +22,7 @@
     <section class="order-info item">
       <p>订单编号：<span>{{order.orderinfo.order_id}}</span></p>
       <p>购买时间：<span>{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</span></p>
-      <button type="button">取消订单</button>
+      <!-- <button type="button">取消订单</button> -->
     </section>
     <section class="order-content item">
       <ul class="goods-list">
@@ -36,8 +37,10 @@
         </li>
       </ul>
       <div class="deliver-fee">
-        <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
-        <span :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">￥{{deliver.shipping_fee | formatCurrency | noZeroCurrency}}</span>
+        <em>配送费</em>
+        <!-- 达达配送费 -->
+        <!-- <span v-if="deliveryStatus">{{deliveryStatus}}</span> -->
+        <span v-if="order.orderinfo.shipping_fee"><sub>￥</sub>{{order.orderinfo.shipping_fee | formatCurrency}}</span>
       </div>
       <div class="total">
         <strong>总计</strong>
@@ -55,29 +58,29 @@
         </figure>
         <div>
           <h2>{{order.orderinfo.shop_name}}</h2>
-          <p><i class="icon-marker"></i>店铺地址</p>
+          <p v-show="order.orderinfo.address"><i class="icon-marker"></i>{{order.orderinfo.address}}</p>
           <!-- <p><i class="icon-marker"></i>{{order.merchant_info.address}}</p> -->
         </div>
       </div>
       <a :href="'tel:' + order.orderinfo.merchant_info.mobile"><i class="icon-phone"></i></a>
     </section>
-    <section class="follow">
+    <!-- 接口不支持，先注释掉 -->
+    <!-- <section class="follow">
       <p>长按二维码关注，<br/>获取更多店铺福利！</p>
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
-    </section>
+    </section> -->
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import Util from '../../../methods/Util'
-  import Loading from '../../../components/loading/Loading'
-  import Config from '../../../methods/Config'
+  import Util from 'methods/Util'
+  import Loading from 'components/loading/Loading'
+  import Config from 'methods/Config'
   import img0 from '../assets/img_progress_0@2x.png'
   import img1 from '../assets/img_progress_1@2x.png'
   import img2 from '../assets/img_progress_2@2x.png'
   import img3 from '../assets/img_progress_3@2x.png'
-  // import img4 from '../assets/img_progress_4@2x.png'
-  //  import Api from '../api/mock'
+  import img4 from '../assets/img_progress_4@2x.jpg'
 
   export default {
     components: {
@@ -102,9 +105,6 @@
       }
     },
     computed: {
-      deliver () {
-        return this.$parent.deliver
-      },
       backgroundObj () {
         return {
           backgroundImage: 'url(' + this.deliveryImg + ')',
@@ -149,6 +149,10 @@
           }
           case 3: {
             this.deliveryImg = img3
+            break
+          }
+          case 4: {
+            this.deliveryImg = img4
             break
           }
         }
@@ -197,7 +201,10 @@
       align-items: center;
       height: 144px;
       li {
-        width: 125px;
+        &:first-child {
+          width: 16%;
+        }
+        width: 18%;
         p {
           text-align: center;
           color: #fff;
@@ -261,10 +268,11 @@
   }
   .deliver-fee {
     display: flex;
-    height: 90px;
     justify-content: space-between;
-    padding: 0 30px;
+    align-items: center;
+    margin-bottom: 26px;
     > span {
+      display: block;
       font-size: 32px;
       &.except {
         text-decoration: line-through;
@@ -310,7 +318,7 @@
         width: 106px;
         img {
           max-width: 100%;
-          vertical-align: bottom;
+          vertical-align: top;
         }
       }
       div {

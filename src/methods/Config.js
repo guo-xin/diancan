@@ -48,6 +48,7 @@ module.exports = {
   o2Host,
   wxmpHost,
   dcHost,
+  env: process.env.NODE_ENV,
   // appid,
   code: {
     OK: '0000', // 成功

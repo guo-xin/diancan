@@ -58,7 +58,7 @@
         this.$emit('selectSpecBtn', goods, index)
       },
       closeSpec () {
-        this.$emit('update:visible', false)
+        this.$emit('hideSpecHandler')
       },
       nullFunction () {
       }
@@ -82,11 +82,10 @@
   }
 
   .spec {
+    box-sizing: border-box;
     position: relative;
-    margin: 0 30px;
     padding: 0 30px;
-    /*height: 410px;*/
-    width: 100%;
+    width: 92%;
     background-color: #fff;
     border-radius: 6px;
   }
@@ -108,6 +107,9 @@
     line-height: 86px;
     font-size: 34px;
     color: #2F323A;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .line {
@@ -129,11 +131,11 @@
     border-radius: 32px;
     font-size: 30px;
 
-    color: #FE9B20;
-    border: 2px solid #C2C2C2;  /*px*/
+    color: #FF8100;
+    border: 2px solid #FF8100;  /*px*/
 
     &.activate {
-      background-color: #FE9B20;
+      background-color: #FF8100;
       color: #fff;
       border: none;
     }
@@ -167,12 +169,11 @@
     bottom: 40px;
     width: 222px;
     height: 60px;
-    line-height: 60px;
     border-radius: 30px;
     font-size: 30px;
     border: 0;
     color: #fff;
-    background-color: #FE9B20;
+    background-color: #FF8100;
   }
 
 </style>

@@ -204,21 +204,19 @@
           method: 'GET',
           params: args
         }).then((response) => {
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
-        }, (response) => {
-          this.$router.replace({
-            name: 'orderDetail',
-            params: {
-              'order_id': this.orderId,
-              'mchnt_id': this.mchnt_id
-            }
-          })
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            this.$router.replace({
+              name: 'orderDetail',
+              params: {
+                'order_id': this.orderId,
+                'mchnt_id': this.mchnt_id
+              }
+            })
+          } else {
+            this.$toast(data.respmsg)
+            this.btnText = '确定下单'
+          }
         })
       }
     }
@@ -248,6 +246,7 @@
     padding-bottom: 0;
     input {
       flex: 1;
+      display: block;
       padding: 24px 0;
       border: none;
       vertical-align: middle;
@@ -292,16 +291,18 @@
   }
   .goods-list {
     font-size: 30px;
-    padding: 10px 30px;
+    padding: 24px 30px 0;
     li {
       display: flex;
-      line-height: 80px;
+      align-items: center;
+      padding-bottom: 24px;
     }
     div {
       flex: 1;
       strong {
         font-weight: normal;
         display: block;
+        line-height: 1.2;
       }
       em {
         font-size: 26px;
