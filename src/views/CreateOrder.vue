@@ -185,7 +185,8 @@
       },
       orderPaySuccess () {
         // 订单支付成功
-        this.$dispatch('on-cleanCart', this.mchnt_id)
+        // this.$dispatch('on-cleanCart', this.mchnt_id)
+        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
         this.queryOrder()
       },
       orderPayFail () {

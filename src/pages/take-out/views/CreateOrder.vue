@@ -149,7 +149,8 @@
           let data = res.data
           if (data.respcd === '0000') {
             let dadaDeliveryFee = (data.data.fee / 100).toFixed(2)
-            this.deliveryStatus = `￥${this.dadaDeliveryFee}`
+            console.log(dadaDeliveryFee)
+            this.deliveryStatus = `￥${dadaDeliveryFee}`
             this.delivery_no = data.data.deliveryNo
             if (this.dadaDeliveryFee === dadaDeliveryFee) {
               this.createOrder()
@@ -296,7 +297,7 @@
       },
       pay (payParams) {
         if (!Util.isWX) {  // 不是微信中打开
-          this.$dispatch('on-toast', '支付失败，请在微信中打开')
+          this.$toast('支付失败，请在微信中打开')
           this.btnText = '确认下单'
           return
         }
@@ -330,7 +331,8 @@
         }
       },
       orderPaySuccess () {  // 订单支付成功
-        this.$dispatch('on-cleanCart', this.mchnt_id)
+        // this.$dispatch('on-cleanCart', this.mchnt_id)
+        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
         this.queryOrder()
       },
       orderPayFail () { // 支付失败

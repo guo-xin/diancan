@@ -65,6 +65,7 @@ const getVerify = async (mchtId) => {
 const getMchntId = () => {
   let hashArray, tempHashMchtId
   let LSArray, tempLSMchtId
+  let QueryArray, tempQueryMchtId
 
   if (window.location.hash) {
     sessionStorage.setItem('redirect_uri', window.location.hash)
@@ -77,11 +78,15 @@ const getMchntId = () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  let mchntId = tempHashMchtId || tempLSMchtId
+  if (window.location.search) {
+    QueryArray = window.location.search.split('=')
+    tempQueryMchtId = QueryArray[0] === '?mchnt_id' ? QueryArray[1] : QueryArray[2]
+  }
+
+  let mchntId = tempHashMchtId || tempLSMchtId || tempQueryMchtId
   if (mchntId && !isNaN(mchntId)) {
     sessionStorage.setItem('mchntId', mchntId)
   }
-
   return mchntId
 }
 

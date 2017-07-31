@@ -30,7 +30,8 @@
       },
       confirm () {
         this.visible = false
-        this.$dispatch(this.confirmEvent)
+        this.$emit('confirmEvent')
+        // this.$dispatch(this.confirmEvent)
       }
     }
   }
