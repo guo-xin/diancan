@@ -40,7 +40,7 @@
         <em>配送费</em>
         <!-- 达达配送费 -->
         <!-- <span v-if="deliveryStatus">{{deliveryStatus}}</span> -->
-        <span v-if="order.orderinfo.shipping_fee"><sub>￥</sub>{{order.orderinfo.shipping_fee | formatCurrency}}</span>
+        <span><sub>￥</sub>{{order.orderinfo.shipping_fee | formatCurrency}}</span>
       </div>
       <div class="total">
         <strong>总计</strong>
@@ -134,7 +134,7 @@
           return
         }
         this.order = data.data
-        switch (this.order.orderinfo.delivery_info.current_state) {
+        switch (data.data.orderinfo.delivery_info.current_state) {
           case 0: {
             this.deliveryImg = img0
             break
@@ -283,6 +283,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    strong, span {
+      display: block;
+    }
     strong {
       font-weight: normal;
     }

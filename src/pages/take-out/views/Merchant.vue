@@ -63,7 +63,8 @@
                  @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
-    <goods-detail :visible.sync="showDetail"
+    <goods-detail :visible="showDetail"
+                  @hideDetailHandler="hideDetailHandler"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
@@ -123,8 +124,9 @@
     },
     created () {
       this.isLoading = true
+      this.mchnt_id = this.$route.params.mchnt_id || window.sessionStorage.getItem('mchntId')
       let args = {
-        mchnt_id: this.$route.params.mchnt_id,
+        mchnt_id: this.mchnt_id,
         format: 'jsonp',
         open_id: window.localStorage.getItem('dc_openid') || '',
         sale_type: 3
@@ -339,6 +341,9 @@
       showDetailHandler (goods) {
         this.selectDetail = goods
         this.showDetail = true
+      },
+      hideDetailHandler () {
+        this.showDetail = false
       },
       shareStore (shopname, logourl) {
         let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + this.mchnt_id

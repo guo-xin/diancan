@@ -7,6 +7,7 @@ import VueResource from 'vue-resource'
 import router from './router'
 import { verify } from 'methods/verify'
 import { Toast, MessageBox } from 'qfpay-ui'
+import config from 'methods/Config'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -16,6 +17,18 @@ Vue.http.options.headers = {
 Vue.http.options.credentials = true
 // 将请求的数据url化
 Vue.http.options.emulateJSON = true
+
+// 接口返回未登录时，重新获取 csid
+Vue.http.interceptors.push(function (request, next) {
+  next(function (response) {
+    let data = response.body
+    if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
+      let appid = config.env === 'production' ? 'wxeb6e671f5571abce' : 'wx087a3fc3f3757766'
+      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      window.location.replace(url)
+    }
+  })
+})
 
 import App from './App'
 import 'filters/index'

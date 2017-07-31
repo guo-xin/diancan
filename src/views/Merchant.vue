@@ -63,7 +63,8 @@
                  @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
-    <goods-detail :visible.sync="showDetail"
+    <goods-detail :visible="showDetail"
+                  @hideDetailHandler="hideDetailHandler"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
@@ -330,6 +331,9 @@
       showDetailHandler (goods) {
         this.selectDetail = goods
         this.showDetail = true
+      },
+      hideDetailHandler () {
+        this.showDetail = false
       },
       cleanGoods () {
         let data = this.getStorage() || {}

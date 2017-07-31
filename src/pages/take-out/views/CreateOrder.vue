@@ -149,7 +149,6 @@
           let data = res.data
           if (data.respcd === '0000') {
             let dadaDeliveryFee = (data.data.fee / 100).toFixed(2)
-            console.log(dadaDeliveryFee)
             this.deliveryStatus = `￥${dadaDeliveryFee}`
             this.delivery_no = data.data.deliveryNo
             if (this.dadaDeliveryFee === dadaDeliveryFee) {
