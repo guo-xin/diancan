@@ -503,6 +503,7 @@
         display: inline-block;
         vertical-align: middle;
         background: url('../assets/wechat.svg') no-repeat;
+        background-size: 100% auto;
       }
     }
   }
