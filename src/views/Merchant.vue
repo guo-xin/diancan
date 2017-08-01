@@ -370,7 +370,6 @@
     line-height: 60px;
     padding: 20px;
     transition: all .5s linear;
-    height: 100px;
     overflow: hidden;
     p {
       font-size: 30px;

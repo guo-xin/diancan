@@ -1,17 +1,15 @@
 <template>
   <div class="create-order-view">
-    <section v-if="address" class="table-number">
+    <section v-if="hasAddress" class="table-number">
       <strong>&#8901;<span>{{address}}号桌</span>&#8901;</strong>
     </section>
     <section v-else class="fill-table-number item">
       <label for="table-number-input">桌号：</label>
-      <input id="table-number-input" type="text" value="" placeholder="请填写餐桌号码（选填）"/>
+      <input id="table-number-input" type="text" v-model="address" maxlength="8" placeholder="请填写餐桌号码（选填）"/>
     </section>
-
-
     <section class="note item">
       <label for="note">备注：</label>
-      <textarea v-model="note" id="note" placeholder="可填写口味要求或忌口等信息"></textarea>
+      <textarea v-model="note" id="note" maxlength="70" placeholder="可填写口味要求或忌口等信息"></textarea>
     </section>
     <section class="order item">
       <ul class="goods-list">
@@ -46,6 +44,7 @@
     data () {
       return {
         mchnt_id: '',       // 商户ID
+        hasAddress: false,
         address: '',        // 桌号
         note: '',           // 备注
         orderId: '',
@@ -55,8 +54,10 @@
     },
     created () {
       let params = this.$route.params
+      this.hasAddress = params.address !== ':address'
       this.mchnt_id = params.mchnt_id
-      this.address = params.address && params.address !== ':address' ? decodeURIComponent(params.address) : ''
+      console.log(params.address)
+      this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
     },
     computed: {
       cartData () {
