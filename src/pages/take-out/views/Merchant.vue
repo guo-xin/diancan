@@ -150,10 +150,11 @@
         sessionStorage.setItem('isDadaDeliver', 1)
         // 配送费
         let deliver = this.$parent.deliver
-        if (mSet.distribution === 0) {
-          deliver.shipping_fee = mSet.shipping_fee
-          deliver.min_shipping_fee = mSet.min_shipping_fee
-        }
+        // 之后接达达，需要取消注释
+        // if (mSet.distribution === 0) {
+        deliver.shipping_fee = mSet.shipping_fee
+        deliver.min_shipping_fee = mSet.min_shipping_fee
+        // }
         deliver.start_delivery_fee = mSet.start_delivery_fee
         this.$emit('updateDeliver', deliver)
         // 商品购物车
