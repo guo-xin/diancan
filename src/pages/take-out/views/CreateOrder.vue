@@ -57,7 +57,7 @@
         orderId: '',        // 订单ID
         checkout: {},
         btnText: '确认下单',
-        isDadaDeliver: 0,
+        isDadaDeliver: false,
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
         deliveryStatus: '',    // 达达配送费状态
@@ -71,7 +71,7 @@
     created () {
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
-      this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
+      // this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
         url: Config.dcHost + 'diancan/c/get_addr',
         method: 'JSONP',
