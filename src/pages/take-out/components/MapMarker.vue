@@ -63,7 +63,7 @@
       },
       getAdcode (longitude, latitude) {
         this.$http({
-          url: 'http://restapi.amap.com/v3/geocode/regeo',
+          url: 'https://restapi.amap.com/v3/geocode/regeo',
           method: 'JSONP',
           params: {
             format: 'jsonp',
