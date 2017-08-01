@@ -79,7 +79,7 @@
               name: 'addressUpdate'
             })
           } else {
-            this.$router.go(-1)
+            window.history.back()
           }
         })
       },
