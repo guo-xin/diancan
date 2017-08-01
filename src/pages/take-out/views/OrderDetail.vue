@@ -54,11 +54,11 @@
     <section class="shop-info item">
       <div>
         <figure>
-          <img src="http://near.m1img.com/op_upload/155/149432051742.png" alt="店铺图片">
+          <img :src="(order.merchant_info.head_img ? order.merchant_info.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         </figure>
         <div>
           <h2>{{order.orderinfo.shop_name}}</h2>
-          <p v-show="order.orderinfo.address"><i class="icon-marker"></i>{{order.orderinfo.address}}</p>
+          <p v-show="order.merchant_info.address"><i class="icon-marker"></i>{{order.merchant_info.address}}</p>
           <!-- <p><i class="icon-marker"></i>{{order.merchant_info.address}}</p> -->
         </div>
       </div>

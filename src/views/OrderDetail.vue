@@ -263,5 +263,6 @@
   .order-info {
     font-size: 26px;
     color: #8A8C92;
+    background-color: transparent;
   }
 </style>

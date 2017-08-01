@@ -12,19 +12,20 @@ const routes = [
   {
     name: 'merchant', // 首页点餐
     path: '/merchant/:mchnt_id',
-    component: Merchant,
-    children: [{
-      path: '/:address',
-      component: Merchant,
-      children: [{
-        path: '/:expire_time',
-        component: Merchant
-      }]
-    }]
+    component: Merchant
+  },
+  {
+    name: 'merchantAddress', // 首页点餐带桌号
+    path: '/merchant/:mchnt_id/:address',
+    component: Merchant
   },
   {
     path: '/!/merchant/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
     redirect: { name: 'merchant' }
+  },
+  {
+    path: '/!/merchant/:mchnt_id/:address', // 兼容老链接 #!会自动去掉! 变成#
+    redirect: { name: 'merchantAddress' }
   },
   {
     path: '/create_order/:mchnt_id/:address', // 创建订单
@@ -35,6 +36,10 @@ const routes = [
     path: '/order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
     name: 'orderDetail',
     component: OrderDetail
+  },
+  {
+    path: '/!/order_detail/:order_id/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+    redirect: { name: 'orderDetail' }
   },
   {
     path: '/about', // 关于
