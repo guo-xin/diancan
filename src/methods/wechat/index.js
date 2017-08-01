@@ -78,6 +78,11 @@ const hideOptionMenu = () => {
   wx.hideOptionMenu()
 }
 
+// 显示右上角菜单接口
+const showMenuItems = (menuList) => {
+  wx.showMenuItems(menuList)
+}
+
 // 获取经纬度接口
 const getCoords = () => {
   return new Promise((resolve, reject) => {
@@ -94,44 +99,11 @@ const getCoords = () => {
 
 // 分享给朋友
 const menuShareAppMessage = (args) => {
-  let defaultParams = {
-    title: '好近点餐', // 分享标题
-    desc: '好近点餐好近点餐好近点餐', // 分享描述
-    link: '', // 分享链接
-    imgUrl: '', // 分享图标
-    // type: '', // 分享类型,music、video或link，不填默认为link
-    // dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-    success () {
-    },
-    cancel () {
-    }
-  }
-  let params = {...defaultParams, ...args}
-  const menuList = {
-    menuList: ['menuItem:share:appMessage']
-  }
-  wx.showMenuItems(menuList)
-  wx.onMenuShareAppMessage(params)
+  wx.onMenuShareAppMessage(args)
 }
 // 分享到朋友圈
 const menuShareTimeline = (args) => {
-  let defaultParams = {
-    title: '好近点餐', // 分享标题
-    link: '', // 分享链接
-    imgUrl: '', // 分享图标
-    // type: '', // 分享类型,music、video或link，不填默认为link
-    // dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-    success () {
-    },
-    cancel () {
-    }
-  }
-  let params = {...defaultParams, ...args}
-  const menuList = {
-    menuList: ['menuItem:share:timeline']
-  }
-  wx.showMenuItems(menuList)
-  wx.onMenuShareTimeline(params)
+  wx.onMenuShareTimeline(args)
 }
 // 唤起二维码
 const scanQRcode = () => {
@@ -149,6 +121,7 @@ export default {
   init,
   ready,
   hideOptionMenu,
+  showMenuItems,
   getCoords,
   menuShareAppMessage,
   menuShareTimeline,

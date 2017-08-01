@@ -164,12 +164,9 @@
           this.$refs.scroller.reset()
         })
         const shopname = data.data.shopname
-        let shareLink = Config.rootHost + '?/#!/merchant/' + args.mchnt_id
-        let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-        // this.$dispatch('on-onMenuShareAppMessage', {title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`, desc: '不骗你，这里味道超赞还不用排队！', imgUrl: imgUrl, link: shareLink})
-        // this.$dispatch('on-onMenuShareTimeline', {title: shopname + '太赞了，快到店来和我一起坐享美味！', imgUrl: imgUrl, link: shareLink})
-        //
+        const logourl = data.data.logo_url
         Util.setTitle(shopname)
+        this.shareStore(shopname, logourl)
       })
     },
     methods: {
@@ -349,6 +346,21 @@
       },
       selectSpecBtn (goods, specIndex) {
         this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
+      },
+      shareStore (shopname, logourl) {
+        let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
+        let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+        this.$wechat.menuShareAppMessage({
+          title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`,
+          desc: '不骗你，这里味道超赞还不用排队！',
+          imgUrl: imgUrl,
+          link: shareLink
+        })
+        this.$wechat.menuShareTimeline({
+          title: `${shopname}太赞了，快到店来和我一起坐享美味！`,
+          imgUrl: imgUrl,
+          link: shareLink
+        })
       }
     }
   }

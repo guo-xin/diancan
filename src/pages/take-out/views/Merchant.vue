@@ -180,6 +180,7 @@
         })
         const shopname = data.data.shopname
         const logourl = data.data.logo_url
+        Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
     },
@@ -360,7 +361,6 @@
           imgUrl: imgUrl,
           link: shareLink
         })
-        Util.setTitle(shopname)
       },
       selectSpecBtn (goods, specIndex) {
         this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex

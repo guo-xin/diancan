@@ -38,6 +38,8 @@ let jsApiList = [
   'showAllNonBaseMenuItem',
   'hideMenuItems',
   'showMenuItems',
+  'onMenuShareAppMessage',
+  'onMenuShareTimeline',
   'scanQRCode'
 ]
 
@@ -45,7 +47,13 @@ if (Util.isWX || process.env.NODE_ENV === 'production') {
   verify().then(initVue)
   Wechat.init(jsApiList)
   Wechat.ready()
-  .then(Wechat.hideOptionMenu)
+  .then(() => {
+    Wechat.hideOptionMenu()
+    const menuList = {
+      menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+    }
+    Wechat.showMenuItems(menuList)
+  })
 } else {
   initVue()
 }
