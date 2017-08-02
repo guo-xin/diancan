@@ -12,35 +12,32 @@
     </section>
     <section class="show_detail" :class="{'activate': hasDetail}" @click="hasDetail=!hasDetail">查看订单详情<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAQBAMAAADzFNLhAAAAJ1BMVEUAAACLjZOLjJOLjZOLjZSNjZWLoqKKjpSLkJSLjZONjZSMj5OKjJIHsrhbAAAADHRSTlMA5dCuWR0LhTeETEldKZHPAAAAb0lEQVQI12NAB9yCDnA2i+AGBsYzx+H8mjMCQP4ZMyg3+QyQz3XmzKEAMJdV58yZBQwMjWfOSAB5EAZU2AFkGEghVNtJIDUHblANkAUUhVgEVRkK1QUzSRBqKswmqGFwl8ANgxoJMwxmpJIDA1YAADiDMgJvsIRuAAAAAElFTkSuQmCC"></section>
     <div v-show="hasDetail">
-    <ul class="goods-list">
-      <li v-for="group in order.goods_list">
-        <!--<h2>{{group.cate}}</h2>-->
-        <div class="l-r goods" v-for="goods in group.goods">
-          <div class="l_auto">
-            <div class="name">{{goods.name}}</div>
-            <div class="specname">{{goods.spec_name}}</div>
-          </div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.count}}</span>
-          </div>
+      <section class="order-content">
+        <ul class="goods-list">
+          <li v-for="group in order.goods_list">
+            <div v-for="goods in group.goods">
+              <div class="goods-name" >
+                <strong>{{goods.name}}</strong>
+                <em>{{goods.spec_name}}</em>
+              </div>
+              <span><sub>￥</sub>{{goods.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
+            </div>
+          </li>
+        </ul>
+        <div class="total">
+          <strong>总计</strong>
+          <span><sub>￥</sub>{{order.orderinfo.txamt | formatCurrency}}</span>
         </div>
-      </li>
-      <li class="b-top">
-        <div class="l-r">
-          <div class="l_auto name">总价</div>
-          <div class="allPrice"><em class="dollar">¥</em>&nbsp;{{order.orderinfo.txamt|formatCurrency}}</div>
+        <div v-if="order.orderinfo.note" class="note-item">
+          <p><em>备注：</em>{{order.orderinfo.note}}</p>
         </div>
-      </li>
-    </ul>
-    <section class="remarks b-top" v-if="order.orderinfo.note">
-      <h2>备注</h2>
-      <div>{{order.orderinfo.note}}</div>
-    </section>
-    <section class="order-info">
-      <ul>
-        <li>订单编号：{{order.orderinfo.order_id}}</li>
-        <li>购买时间：{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</li>
-      </ul>
-    </section>
+      </section>
+      <section class="order-info">
+        <ul>
+          <li>订单编号：{{order.orderinfo.order_id}}</li>
+          <li>购买时间：{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</li>
+        </ul>
+      </section>
     </div>
     <loading :visible="isLoading"></loading>
   </div>
@@ -98,6 +95,9 @@
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+  @import "../styles/base/_layout";
+  @import "../styles/base/_var";
+
   .c-loading-container {
     position: fixed;
     top: 0;
@@ -121,6 +121,7 @@
 
   .order-detail-view {
     background-color: #F7F7F7;
+    font-size: 30px;
   }
 
   .shop {
@@ -204,61 +205,61 @@
   }
 
   .goods-list {
-    padding: 0 0 0 30px;
-    h2 {
-      margin-top: 26px;
-      font-size: 30px;
-      color: #8A8C92;
-    }
-    li > div {
-      padding: 20px;
-      align-items: center;
-      padding-left: 0;
-      /*border-bottom: 2px solid #e5e5e5; !*px*!*/
-    }
-    .name {
-      margin-right: 5px;
-      font-size: 30px;
-      line-height: 30px;
-      color: #2F323A;
-    }
-    .specname {
-      margin-top: 15px;
-      font-size: 26px;
-      color: #8A8C92;
-    }
-    .price {
-      width: 210px;
-      text-align: right;
-      font-size: 34px;
-      color: #8A8C92;
-      line-height: 34px;
-      span {
-        font-size: 75%;
+    li {
+      > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
       }
     }
-    .allPrice {
-      font-size: 40px;
-      color: #FE9B20;
-      text-align: right;
+    .goods-name {
+      strong {
+        display: block;
+        font-weight: normal;
+      }
+      em {
+        font-size: 26px;
+        color: $aluminium;
+      }
+    }
+    span {
+      font-size: 34px;
+      color: $aluminium;
+      em {
+        font-size: 26px;
+      }
     }
   }
-
-  /*备注*/
-  .remarks {
-    padding-bottom: 0;
-    h2 {
-      margin-bottom: 24px;
-      font-size: 30px;
-      color: #8A8C92;
+  .total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid #E5E5E5;
+    padding-top: 10px;
+    strong, span {
+      display: block;
     }
-    div {
-      padding: 30px;
-      border-radius: 6px;
-      font-size: 30px;
-      line-height: 1.5;
-      background: #EFEFEF;
-      color: #8a8c92;
+    strong {
+      font-weight: normal;
+    }
+    span {
+      font-size: 40px;
+      color: #FE9B20;
+      sub {
+        color: $aluminium;
+      }
+    }
+    text-align: right;
+  }
+  .note-item {
+    margin-top: 36px;
+    background-color: #F7F7F7;
+    padding: 24px 20px;
+    border-radius: 6px;
+    color: $aluminium;
+    em {
+      color: $lightBlack;
     }
   }
 
