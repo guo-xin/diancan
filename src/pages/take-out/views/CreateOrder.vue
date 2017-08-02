@@ -392,6 +392,7 @@
   .create-order-view {
     font-size: 30px;
     color: $black;
+    padding-bottom: 88px;
   }
   .item {
     padding: 24px 30px;

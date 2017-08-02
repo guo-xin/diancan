@@ -55,7 +55,6 @@
       let params = this.$route.params
       this.hasAddress = params.address !== ':address'
       this.mchnt_id = params.mchnt_id
-      console.log(params.address)
       this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
     },
     computed: {
@@ -233,6 +232,7 @@
   .create-order-view {
     font-size: 28px;
     color: $black;
+    padding-bottom: 88px;
   }
   .item {
     padding: 24px 30px;
