@@ -184,6 +184,10 @@
         this.shareStore(shopname, logourl)
       })
     },
+    beforeRouteLeave (to, from, next) {
+      this.$wechat.hideOptionMenu()
+      next()
+    },
     methods: {
       goDetail () {
         this.$router.push({

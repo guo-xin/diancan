@@ -73,6 +73,7 @@
          * order_id     // 订单id
          * mchnt_id     // 商户id
          */
+        this.isLoading = true
         let args = this.$route.params
         args.format = 'jsonp'
         this.$http({
@@ -80,6 +81,7 @@
           method: 'JSONP',
           params: args
         }).then(function (response) {
+          this.isLoading = false
           let data = response.data
           if (data.respcd === config.code.OK) {
             this.hasDetail = data.data.goods_list

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="c-loading-container" v-if="isLoading">
-      <loading :visible="isLoading"></loading>
-    </div>
     <div class="order-info" v-show="isEmptyInfo">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
         <a @click="goDetail">查看取餐号</a>
@@ -72,11 +69,14 @@
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
+
+    <!--加载中-->
+    <loading :visible="isLoading"></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  /* eslint-disable */
+  /* global _hmt */
   import Util from 'methods/Util'
   import Scroller from 'vux-components/scroller'
 
@@ -87,7 +87,6 @@
   import GoodsDetail from 'components/GoodsDetail'
   import ScanQrcode from 'components/ScanQrcode.vue'
   import Config from 'methods/Config'
-  import Vue from 'vue'
 
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
@@ -145,7 +144,6 @@
         this.setStorage(data.data)
         this.$emit('getCart', args.mchnt_id)
         let goods = this.mergeGoods(data.data && data.data.goods)
-        this.address = args.address || null,
         this.groupList = goods
         this.isClose = data.data.merchant_setting.sale_state === 0
         this.goodsList = (function () {
@@ -168,6 +166,10 @@
         Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
+    },
+    beforeRouteLeave (to, from, next) {
+      this.$wechat.hideOptionMenu()
+      next()
     },
     methods: {
       goDetail () {
@@ -452,15 +454,8 @@
   /*右侧选菜列表*/
   .shopmenu-list-container {
     overflow: hidden;
-    /*padding-bottom: 104px;*/
-    height: 100%;
+    // height: 100%;
     background-color: #fff;
-
-    & > div:first-child {
-      /*background: #f2f2f2;*/
-      /*background: url() center 10px no-repeat;*/
-      /*background-size: 90px;*/
-    }
   }
 
   .shopmenu-list {

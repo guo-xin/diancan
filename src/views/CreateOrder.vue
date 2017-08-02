@@ -36,7 +36,6 @@
 
 <script type="text/ecmascript-6">
   /* global _hmt */
-  /* eslint-disable */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
   export default {
@@ -86,7 +85,7 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        this.btnText = '支付中'
+        this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
         let goodsItem = cart.map((goods) => {
@@ -165,7 +164,7 @@
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
                 _this.$messagebox('无法唤起微信支付', '请关闭页面，重新下单即可正常使用。')
-                _this.btnText = '支付失败';
+                _this.btnText = '支付失败'
               } else {
                 _this.orderPayFail()
               }
@@ -361,5 +360,8 @@
     position: fixed;
     bottom: 0;
     left: 0;
+    &:disabled{
+      background-color: #8A8C92;
+    }
   }
 </style>
