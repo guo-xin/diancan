@@ -59,7 +59,6 @@
         <div>
           <h2>{{order.orderinfo.shop_name}}</h2>
           <p v-show="order.merchant_info.address"><i class="icon-marker"></i>{{order.merchant_info.address}}</p>
-          <!-- <p><i class="icon-marker"></i>{{order.merchant_info.address}}</p> -->
         </div>
       </div>
       <a :href="'tel:' + order.orderinfo.merchant_info.mobile"><i class="icon-phone"></i></a>
@@ -97,6 +96,10 @@
             },
             customer_info: {
             }
+          },
+          merchant_info: {
+            head_img: '',
+            address: ''
           }
         },
         type: 'android',
@@ -114,7 +117,6 @@
       }
     },
     created () {
-      console.log('created')
       this.isLoading = true
       let args = this.$route.params
       /**
