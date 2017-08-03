@@ -123,6 +123,7 @@
       let args = {
         mchnt_id: this.$route.params.mchnt_id,
         format: 'cors',
+        expire_time: this.$route.params.expire_time,
         open_id: window.localStorage.getItem('dc_openid') || ''
       }
       this.$http({
