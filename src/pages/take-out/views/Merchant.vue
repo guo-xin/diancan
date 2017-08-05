@@ -144,14 +144,13 @@
           return
         }
         let mSet = data.data.merchant_setting
-        sessionStorage.setItem('isDadaDeliver', 1)
+        sessionStorage.setItem('isDadaDeliver', mSet.distribution)
         // 配送费
         let deliver = this.$parent.deliver
-        // 之后接达达，需要取消注释
-        // if (mSet.distribution === 0) {
-        deliver.shipping_fee = mSet.shipping_fee
-        deliver.min_shipping_fee = mSet.min_shipping_fee
-        // }
+        if (mSet.distribution === 0) {
+          deliver.shipping_fee = mSet.shipping_fee
+          deliver.min_shipping_fee = mSet.min_shipping_fee
+        }
         deliver.start_delivery_fee = mSet.start_delivery_fee
         this.$emit('updateDeliver', deliver)
         // 商品购物车

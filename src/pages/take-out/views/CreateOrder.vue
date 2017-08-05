@@ -29,7 +29,6 @@
         <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span>
       </div>
       <div class="total">
-        <!-- <del>原价¥63</del> -->
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>
@@ -58,6 +57,7 @@
         checkout: {},
         btnText: '确认下单',
         isDadaDeliver: false,
+        dadaDeliveryFee: 0,
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
         deliveryStatus: '',    // 达达配送费状态
@@ -71,7 +71,7 @@
     created () {
       let params = this.$route.params
       this.mchnt_id = params.mchnt_id
-      // this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
+      this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
         url: Config.dcHost + 'diancan/c/get_addr',
         method: 'JSONP',
@@ -112,7 +112,9 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
-        if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
+        if (this.isDadaDeliver) {   // 达达配送费
+          payAmt += this.dadaDeliveryFee
+        } else if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
            payAmt += this.deliver.shipping_fee
          } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
            payAmt += this.deliver.shipping_fee
@@ -134,7 +136,7 @@
           method: 'POST',
           params: {
             mchnt_id: this.mchnt_id,
-            city_code: '010', // current_addr.city_code
+            city_code: current_addr.city_code,
             third_order_id: this.third_order_id,
             cargo_price: this.cartData.price,
             is_prepay: 1,
@@ -148,8 +150,8 @@
         }).then(function (res) {
           let data = res.data
           if (data.respcd === '0000') {
-            let dadaDeliveryFee = (data.data.fee / 100).toFixed(2)
-            this.deliveryStatus = `￥${dadaDeliveryFee}`
+            let dadaDeliveryFee = data.data.fee
+            this.deliveryStatus = `￥${(dadaDeliveryFee / 100).toFixed(2)}`
             this.delivery_no = data.data.deliveryNo
             if (this.dadaDeliveryFee === dadaDeliveryFee) {
               this.createOrder()
@@ -330,7 +332,6 @@
         }
       },
       orderPaySuccess () {  // 订单支付成功
-        // this.$dispatch('on-cleanCart', this.mchnt_id)
         this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
         this.queryOrder()
       },
