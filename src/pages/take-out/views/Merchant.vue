@@ -22,7 +22,7 @@
       </div>
       <div class="l_auto shopmenu-list-container">
         <div class="shopmenu-list" ref="menu">
-          <ul>
+          <ul v-show="goodsList.length">
             <li v-for="goods in goodsList" class="list-item">
               <div class="l-r wrap">
                 <div class="list-img" @click.stop="showDetailHandler(goods)">
@@ -65,7 +65,7 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar v-if="cart.length"
+    <cart-bar v-show="cart.length"
       :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
       :overtime="merchantSetting.overtime"
       :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
@@ -134,16 +134,15 @@
         method: 'JSONP',
         params: args
       }).then(function (response) {
+        this.isLoading = false
         let data = response.data
-        // 验证链接时间是否过期
-        if (data.respcd === '4000') {
+        if (data.respcd === '4000') {   // 验证链接时间是否过期
           this.isExpire = true
           return
         } else if (data.respcd !== Config.code.OK) {
           this.$toast(data.respmsg)
           return
         }
-        this.isLoading = false
         let mSet = data.data.merchant_setting
         sessionStorage.setItem('isDadaDeliver', 1)
         // 配送费
@@ -268,8 +267,8 @@
         this.selectIndex = index
         this.goodsList = item.goods_list
         this.$nextTick(function () {
+          this.typeScroller.refresh()
           this.menuScroller.refresh()
-          this.menuScroller.scrollTo(0, 0)
         })
       },
       plusHandler (goods, specIndex) {
@@ -436,11 +435,6 @@
         background-color: #fff;
         color: #FE9B20;
       }
-      // 购物车遮挡
-      &:last-child {
-        border-bottom: none;
-        height: 104px;
-      }
       /*&:before {*/
       .count {
         position: absolute;
@@ -471,6 +465,14 @@
 
   .shopmenu-list {
     overflow: hidden;
+  }
+
+  // 购物车遮挡
+  .list-group ul{
+    padding-bottom: 104px;
+  }
+  .shopmenu-list ul {
+    padding-bottom: 180px;
   }
 
   li.list-item {

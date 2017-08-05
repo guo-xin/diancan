@@ -20,7 +20,6 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.common.js',
-      'vux-components': 'vux/src/components/',
       'src': resolve('src'),
       'methods': resolve('src/methods'),
       'components': resolve('src/components'),

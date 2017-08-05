@@ -35,7 +35,6 @@
         this.cart = []
         this.saveCartEv(mchntId, [])
       })
-      // this.$toast('Test Toast!')
     },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
