@@ -7,46 +7,45 @@
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <scroller class="scroller-left" lock-x ref="scrollerleft" height="100%">
-          <div class="list-group">
-            <ul class="">
-              <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}"
-                  @click="classSelect(index, group)">
-                <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </scroller>
+        <div class="list-group" ref="group">
+          <ul>
+            <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}"
+                @click="groupSelect(index, group)">
+              <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="l_auto shopmenu-list-container">
-        <scroller class="scroller-right" lock-x ref="scroller" height="100%">
-          <div class="shopmenu-list">
-            <ul class="listgroup">
-              <li v-for="goods in goodsList" class="list-item">
-                <div class="l-r wrap">
-                  <div class="list-img" @click.stop="showDetailHandler(goods)">
-                    <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
-                  </div>
-                  <div class="l_auto list-content">
-                    <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
-                    <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
-                    <p v-else class="old-price"></p>
-                    <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
-                  </div>
+        <div class="shopmenu-list" ref="menu">
+          <ul>
+            <li v-for="goods in goodsList" class="list-item">
+              <div class="l-r wrap">
+                <div class="list-img" @click.stop="showDetailHandler(goods)">
+                  <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
                 </div>
-                <goods-select v-if="goods.spec_list && goods.spec_list.length===1" class="goods-select-container"
-                              :goods="goods"
-                              :plus="plusHandler"
-                              :minus="minusHandler"
-                              :diy="diyHandler">
-                </goods-select>
-                <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}"><button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button></div>
-              </li>
-            </ul>
-          </div>
-        </scroller>
+                <div class="l_auto list-content">
+                  <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
+                  <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
+                  <p v-else class="old-price"></p>
+                  <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
+                </div>
+              </div>
+              <!--商品选择-->
+              <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
+                            :goods="goods"
+                            :plus="plusHandler"
+                            :minus="minusHandler"
+                            :diy="diyHandler">
+              </goods-select>
+              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}">
+                <button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -78,7 +77,7 @@
 <script type="text/ecmascript-6">
   /* global _hmt */
   import Util from 'methods/Util'
-  import Scroller from 'vux-components/scroller'
+  import BScroll from 'better-scroll'
 
   import Loading from 'components/loading/Loading'
   import GoodsSelect from 'components/GoodsSelect'
@@ -93,7 +92,7 @@
   export default {
     props: ['cart'],
     components: {
-      Loading, Scroller, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
     },
     data () {
       return {
@@ -110,7 +109,9 @@
         order_info: {}, // 是否已存在订单
         isClose: false,
         isExpire: false,
-        merchantSetting: {}
+        merchantSetting: {},
+        typeScroller: null,
+        menuScroller: null
       }
     },
     computed: {
@@ -157,10 +158,18 @@
         this.order_info = data.data.order_info
         this.merchantSetting = data.data.merchant_setting
         this.$nextTick(() => {
-          document.getElementsByClassName('list-group-box')[0].style.height = window.innerHeight + 'px'
-          document.getElementsByClassName('shopmenu-list-container')[0].style.height = window.innerHeight + 'px'
-          this.$refs.scrollerleft.reset()
-          this.$refs.scroller.reset()
+          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight + 'px'
+          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight + 'px'
+          this.typeScroller = new BScroll(this.$refs.group, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+          this.menuScroller = new BScroll(this.$refs.menu, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
         })
         const shopname = data.data.shopname
         const logourl = data.data.logo_url
@@ -241,13 +250,12 @@
         this.$emit('saveCartEv', this.mchnt_id, cart)
         return goods
       },
-      classSelect (index, item) {
+      groupSelect (index, item) {
         this.selectIndex = index
         this.goodsList = item.goods_list
         this.$nextTick(function () {
-          let scroller = this.$refs.scroller
-          scroller.reset()
-          scroller._xscroll.scrollTop()
+          this.menuScroller.refresh()
+          this.menuScroller.scrollTo(0, 0)
         })
       },
       plusHandler (goods, specIndex) {
@@ -408,15 +416,12 @@
 
   /*左侧分类列表*/
   .list-group-box {
-    /*padding-bottom: 104px;*/
-    /*height: 100%;*/
     width: 156px;
     background-color: #F7F7F7;
   }
 
   .list-group {
-    /*padding-bottom: 70px;*/
-    padding-bottom: 104px;
+    overflow: hidden;
     li {
       position: relative;
       text-align: center;
@@ -429,6 +434,11 @@
         background-color: #fff;
         color: #FE9B20;
       }
+      // 购物车遮挡
+      &:last-child {
+        border-bottom: none;
+        height: 104px;
+      }
 
       /*&:before {*/
       .count {
@@ -436,9 +446,6 @@
         display: block;
         top: 4px;
         right: 4px;
-        /*padding: 0 10px;*/
-
-        /*padding: 2px 10px;*/
         min-width: 32px;
         height: 32px;
         line-height: 32px;
@@ -454,14 +461,17 @@
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
-    overflow: hidden;
-    // height: 100%;
+    height: 100%;
     background-color: #fff;
   }
 
   .shopmenu-list {
-    padding-bottom: 104px;
-    background-color: #fff;
+    overflow: hidden;
+    // 购物车遮挡
+    // li:last-child {
+    //   border-bottom: none;
+    //   height: 104px;
+    // }
   }
 
   li.list-item {
@@ -469,7 +479,6 @@
     padding-left: 24px;
     .wrap {
       position: relative;
-      align-items: center;
       padding: 24px 0;
       border-bottom: 2px solid #E5E5E5; /*px*/
     }
@@ -497,6 +506,7 @@
         font-weight: normal;
         color: #4d4d4d;
         font-size: 32px;
+        padding-right: 24px;
         color: #2f323a;
       }
 

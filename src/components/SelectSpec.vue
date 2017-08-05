@@ -1,7 +1,7 @@
 <template>
   <div class="container" v-show="visible" @click="closeSpec">
     <transition name="zoomInOut">
-      <div class="spec" v-if="visible" @click.stop.prevent="nullFunction">
+      <div class="spec" v-if="visible">
         <div class="close" @click="closeSpec"><i class="icon-closed"></i></div>
         <div class="head line">{{goods.name}}</div>
         <section class="body">
@@ -36,12 +36,13 @@
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
-    props: ['visible', 'goods', 'plus', 'minus', 'diy'],
+    props: ['goods', 'plus', 'minus', 'diy'],
     data () {
       return {
+        visible: false,
+        showMark: false,
+        timer: null
       }
-    },
-    created () {
     },
     computed: {
       lastSpec () {
@@ -59,8 +60,6 @@
       },
       closeSpec () {
         this.$emit('hideSpecHandler')
-      },
-      nullFunction () {
       }
     }
   }
@@ -79,6 +78,15 @@
     align-items: center;
     background-color: rgba(0, 0, 0, .7);
     z-index: 112;
+  }
+
+  .mark {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
   }
 
   .spec {

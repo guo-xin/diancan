@@ -30,9 +30,7 @@
             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAABFZJREFUaAXtWs1rE0EUnzdJmxb8QMUv1Ap6ETwI3vRSPYjWi6jQqyBKKW0DTZPcBEVPTZpAkraoRfSif4DgJ2q96E30IHjx4jdKBVFp2jT7fLO6Mpmtqbuzy2ZhA2HfzLz3e+83v2FmYQeYh79S6VZirvb6AjI8wZCt1YIG9gWQX020bzuTTB6e08KSguOSrW0S2RuIeFQbSADQhCEzMnPzr7dT67gnmAQCXgHliuV9WMdHXuHJOBCD/ZnhoWm5z63N3QaqcWjgWbXPq7aX2J4ovJi6EON7M8ODT92QzhUre7BuPJFjvVLZE4VVBQDgrluygqSIBWD3ZMJqDnnMia1NOF8sHaMNprshKYdzDW03Dc7PNoRRDjNXQ6fzhuslnZucXMdma+L4OY/IElZqU92RoUNWW+eZGyvfoV3/oIVBqs/RNnuGdbZdy/T3f7b6nTxNwoXC5KY6LoxSYDcl2OQEQPalgmYBYXc6PfRK7ndr5/PlHQj4jCa00y0GCfCeYh/HIJ5NpfrfQ6l0eXN1vvqcDr41bkFFHAEjZ3BqZGTwig6OGjs2VjlpMJwiIVyvxt/1sa+Jts5dvFqrkrJ6ZInuNwb8iNdkRaEmJmGbOdTZcNCmVbJacOXAcJ+DOMkVZmgJPyFpMyuXt2/NpAZuSoOemgJb5ADOsmZOBjNuEgiuMJovoRycTSe1lo6M1Qq2yk/7WGoFUk5qiAg7ma0w+kJurPSBdrCNYSzeac204X3kDOGx08Cw+iODaZ5o78gQ869hJfH/dcNMR1tHlieTp9+JNxB6U7pOh/uH/wcIh6d4tRTc4jy+S3C1nbnqubXUuZwvlnuMOl4y6fPY6Wxq4E6zqfDbf6n6tY8lNNhFIrhZ/AGN38SbMPbbv0lqc0ifMOIWKwm94P+1rT71KfvItupntWUf2bbGnT61CTtNGLR/RDhoBfzOHyns9wwHjR8pHLQCfuePFPZ7hoPGjxQOWgG/80cK+z3DQeNHCgetgN/5I4X9nuGg8SOFg1bA7/yRwn7PcND4kcJBK+B3fm2F6TPGW6tI2bb61KfsI9uqn9WWfWTbGnf61CfMWR8lfSf+dAdD2E1/f3x882+anAa1rw+nh4duE86SXxysQvz2t/L866mt8L+AW7U/ItyqynhVl01h2gl/yODF4sXQ3P9Qa1W5CF42wgzxjUx4AWuNV4PlwRazbbUqXES5dsLKxWyagNGJiYlVLcbNVo5ZI9UqDyCH+3Jb2LZjKQZ8agGNJI2ZkyE+Qv+crb/IFSpZTMB0dmDgkwoSZHt0fHxDrGp0U4055YO5AbH4lFqb7Y6HcKCL2WUKHlSdw9SmW7Pj6ZGkjYN9SROrFcvaU3Tz/EGYCMq1AoOHXVs2pOQ+y16UcF9fX23lskQP7XIV+tct5xA8DaHs1q71Pb29vfOL1bvokpYdC4XKzjoap+gW2wHawLpobLk83gL2dyLxllbkPbH/pFKDL5vV9AvkBnZAJrqyNgAAAABJRU5ErkJggg==">
           <span>清空购物车</span>
         </div>
-        <div class="cart-list_box">
-          <!--8.6rem-->
-          <scroller lock-x ref="cartscroller" height="100%">
+        <div class="cart-list_box" ref="cart">
           <ul v-show="cart.length">
             <li v-for="goods in cart">
               <div>
@@ -50,7 +48,6 @@
                             :diy="diy"></goods-select>
             </li>
           </ul>
-          </scroller>
         </div>
       </div>
     </transition>
@@ -59,18 +56,31 @@
 
 <script type="text/ecmascript-6">
   /* global _hmt */
-  import Scroller from 'vux-components/scroller'
+  import BScroll from 'better-scroll'
   import GoodsSelect from '../../../components/GoodsSelect'
   export default {
     components: {
-      Scroller, GoodsSelect
+      GoodsSelect
     },
     props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery'],
     data () {
       return {
-        mchnt_id: this.$route.params.mchnt_id,
-        visibleList: false
+        visibleList: false,
+        scroller: null
       }
+    },
+    created () {
+      this.$watch('$root.cart', function (val) {
+        this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
+        this.refresh()
+      })
+      this.$nextTick(() => {
+        this.scroller = new BScroll(this.$refs.cart, {
+          startX: 0,
+          startY: 0,
+          click: true
+        })
+      })
     },
     computed: {
       cartData () {
@@ -110,7 +120,8 @@
       },
       refresh () {
         this.$nextTick(() => {
-          this.$refs.cartscroller.reset()
+          this.scroller.refresh()
+          this.scroller.scrollTo(0, 0)
         })
       },
       goNextView () {
@@ -267,16 +278,16 @@
       padding-left: 30px;
       padding-bottom: 20px;
       height: 655px;  // (127*5 + 20)
-      /*overflow: hidden;*/
+      overflow: hidden;
       /*overflow-y: scroll;*/
-    }
-    ul {
     }
     li {
       position: relative;
-      /*height: 112px;*/
       padding: 20px 0;
       border-bottom: 2px solid #e5e5e5; /*px*/
+      &:last-child {
+        border-bottom: none;
+      }
     }
     .name {
       font-size: 30px;

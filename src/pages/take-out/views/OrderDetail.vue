@@ -103,8 +103,7 @@
           }
         },
         type: 'android',
-        deliveryImg: '',
-        cartPrice: 0
+        deliveryImg: ''
       }
     },
     computed: {
@@ -160,8 +159,6 @@
         }
         const shopname = data.data.orderinfo.shop_name
         Util.setTitle(shopname)
-      }, function (response) {
-
       })
     }
   }
@@ -368,6 +365,23 @@
     img {
       width: 180px;
       height: 180px;
+    }
+    .cancel-order {
+      &.cancel-style {
+        display: none;
+      }
+      width: 180px;
+      height: 64px;
+      position: absolute;
+      right: 30px;
+      top: 40px;
+      background-color: transparent;
+      border: 2px solid #FE9B20;
+      border-radius: 6px;
+      color: #FE9B20;
+      font-size: 30px;
+      float: right;
+      padding: 0;
     }
   }
 </style>
