@@ -60,9 +60,6 @@
       }
     },
     created () {
-      this.$watch('$root.cart', function (val) {
-        this.refresh()
-      })
       this.$nextTick(() => {
         this.scroller = new BScroll(this.$refs.cart, {
           startX: 0,
@@ -95,6 +92,7 @@
       cleanCartHandler () {
         this.$root.eventHub.$emit('cleanCart', this.$parent.mchnt_id)
         this.$emit('cleanGoods')
+        this.visibleList = false
         this.refresh()
         _hmt.push(['_trackEvent', 'view-merchant', 'click-cleanCart'])
       },
