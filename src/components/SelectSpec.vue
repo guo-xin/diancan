@@ -1,8 +1,8 @@
 <template>
-  <div class="container" v-show="visible" @click="closeSpec">
+  <div class="spec-container" v-if="visible" @click.stop="closeSpec()">
     <transition name="zoomInOut">
       <div class="spec" v-if="visible">
-        <div class="close" @click="closeSpec"><i class="icon-closed"></i></div>
+        <div class="close" @click.stop="closeSpec()"><i class="icon-closed"></i></div>
         <div class="head line">{{goods.name}}</div>
         <section class="body">
           <ul class="spec-list line">
@@ -36,12 +36,9 @@
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
-    props: ['goods', 'plus', 'minus', 'diy'],
+    props: ['goods', 'plus', 'minus', 'diy', 'visible'],
     data () {
       return {
-        visible: false,
-        showMark: false,
-        timer: null
       }
     },
     computed: {
@@ -67,7 +64,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../styles/base/animate";
-  .container {
+  .spec-container {
     position: fixed;
     top: 0;
     bottom: 0;

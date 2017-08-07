@@ -41,7 +41,7 @@
                             :diy="diyHandler">
               </goods-select>
               <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}">
-                <button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button>
+                <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
               </div>
             </li>
           </ul>
@@ -556,7 +556,8 @@
 
     width: 196px;
     height: 100px;
-    button {
+    span {
+      display: inline-block;
       padding: 0 28px;
       height: 60px;
       border: none;
