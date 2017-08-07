@@ -1,37 +1,35 @@
 <template>
-  <get-Location></get-Location>
-  <div class="">
-    <div class="c-loading-container" v-if="$loadingRouteData">
-      <loading :visible="$loadingRouteData"></loading>
+  <div>
+    <get-Location></get-Location>
+    <div class="c-loading-container" v-if="isLoading">
+      <loading :visible="isLoading"></loading>
     </div>
-    <div class="order-info" v-show="isEmptyInfo">
-      <p>你在 {{order_info.order_time | formatTime 'hh:mm'}} 提交了一个订单
-        <a @click="goDetail">查看订单</a>
-      </p>
+    <div class="order-info" v-if="isEmptyOrder">
+      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单</p>
+      <button class="default-button" type="button" @click="goDetail">查看订单</button>
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <div class="list-group" v-el:type>
-          <ul>
-            <li v-for="group in groupList" :class="{'active': selectIndex===$index}"
-                @click="select($index, group)">
-              <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
+        <div class="list-group" ref="group">
+          <ul class="">
+            <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}" @click="groupSelect(index, group)">
+              <div>
+                {{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
               </div>
             </li>
-            <li></li>
           </ul>
         </div>
       </div>
       <div class="l_auto shopmenu-list-container">
-        <div class="shopmenu-list" v-el:menu>
-          <ul class="listgroup">
+        <div class="shopmenu-list" ref="menu">
+          <ul v-show="goodsList.length">
             <li v-for="goods in goodsList" class="list-item">
               <div class="l-r wrap">
                 <div class="list-img" @click.stop="showDetailHandler(goods)">
                   <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
                 </div>
                 <div class="l_auto list-content">
-                  <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
+                  <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
                   <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
                   <p v-else class="old-price"></p>
                   <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
@@ -44,31 +42,35 @@
                             :minus="minusHandler"
                             :diy="diyHandler">
               </goods-select>
-              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}">
-                <button @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</button>
+              <div v-else class="l-c-c goods-select-container spec-btn">
+                <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
               </div>
             </li>
-            <li></li>
           </ul>
         </div>
       </div>
     </div>
-
     <!--选择规格-->
-    <select-spec v-ref:spec
-                 :goods.sync="selectSpecGoods"
+    <select-spec :visible.sync="showSpec"
+                 :goods="selectSpecGoods"
                  :plus="plusHandler"
                  :minus="minusHandler"
-                 :diy="diyHandler">
+                 :diy="diyHandler"
+                 @hideSpecHandler="hideSpecHandler"
+                 @selectSpecBtn="selectSpecBtn">
     </select-spec>
 
-    <goods-detail :visible.sync="showDetail"
+    <goods-detail :visible="showDetail"
+                  @hideDetailHandler="hideDetailHandler"
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
-      :overtime="merchantSetting.overtime" :nodelivery="merchantSetting.delivery_open_state === 0"
-      v-if="cart.length"></cart-bar>
+    <cart-bar v-show="cart.length"
+      :cart="cart" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler"
+      :overtime="merchantSetting.overtime"
+      :deliver="deliver" :nodelivery="merchantSetting.delivery_open_state === 0"
+      @cleanGoods="cleanGoods">
+    </cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -91,11 +93,13 @@
   const STORAGEKEY = 'LIST-VIEW-goods_list'
 
   export default {
+    props: ['cart', 'deliver'],
     components: {
       Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
     },
     data () {
       return {
+        isLoading: true,
         mchnt_id: '',   // 商户id
         selectIndex: 0, // 激活分类
         groupList: [],  // 分类列表
@@ -112,106 +116,91 @@
       }
     },
     computed: {
-      cart () {
-        return this.$root.cart
-      },
-      isEmptyInfo () {
+      isEmptyOrder () {
         return !Util.isEmptyObject(this.order_info)
       }
     },
-    route: {
-      data (transition) {
-        /**
-         * mchnt_id     // 商户id
-         */
-        let args = this.$route.params
-//        if (!args.mchnt_id) {
-//          window.alert('商户ID不存在')
-//          return
-//        }
-        args.format = 'jsonp'
-        args.open_id = this.$root.user.open_id
-        args.sale_type = 3
-        this.$http({
-          url: Config.apiHost + 'diancan/c/goods_list',
-          // url: '/static/api/goods_list.json',
-          method: 'JSONP',
-          data: args
-        }).then(function (response) {
-          let data = response.data
-          // 验证链接时间是否过期
-          if (data.respcd === '4000') {
-            this.isExpire = true
-            return
-          } else if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
-            return
-          }
-          this.mchnt_id = args.mchnt_id
-          this.$root.mchnt_id = args.mchnt_id
-          let mSet = data.data.merchant_setting
-          if (mSet.shipping_fee !== undefined) {
-            let deliver = this.$root.deliver
-            deliver.originFee = mSet.shipping_fee
-            deliver.freeDeliverFee = mSet.min_shipping_fee
-            deliver.startDeliveryFee = mSet.start_delivery_fee
-          }
-          this.setStorage(data.data)
-          this.$dispatch('on-getCart', this.mchnt_id)
-          let goods = this.mergeGoods(data.data.goods)
-          transition.next({
-            mchnt_id: args.mchnt_id,
-            groupList: goods,
-//            goodsList: goods[0].goods_list,
-            goodsList: (function () {
-              if (goods.length !== 0) {
-                return goods[0].goods_list
-              } else {
-                return ''
-              }
-            })(),
-            order_info: data.data.order_info,
-            merchantSetting: mSet
-//            order_info: {
-//              order_id: '6149736680771744597',
-//              order_time: 1469006994
-//            }
-          })
-          this.$nextTick(() => {
-            let topbarHeight = document.getElementsByTagName('header')[0].offsetHeight
-            document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - topbarHeight + 'px'
-            document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - topbarHeight + 'px'
-            this.typeScroller = new BScroll(this.$els.type, {
-              startX: 0,
-              startY: 0,
-              click: true
-            })
-            this.menuScroller = new BScroll(this.$els.menu, {
-              startX: 0,
-              startY: 0,
-              click: true
-            })
-          })
-          const shopname = data.data.shopname
-          let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + args.mchnt_id
-          let imgUrl = data.data.logo_url || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-          this.$dispatch('on-onMenuShareAppMessage', {title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`, desc: '菜单在眼前，吃啥不纠结！', imgUrl: imgUrl, link: shareLink})
-          this.$dispatch('on-onMenuShareTimeline', {title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`, imgUrl: imgUrl, link: shareLink})
-
-          Util.setTitle(shopname)
-        }, function (response) {
-          // error callback
-        })
-      },
-      canDeactivate (transition) {
-        this.$dispatch('on-hideOptionMenu')
-        transition.next()
+    created () {
+      this.isLoading = true
+      this.mchnt_id = this.$route.params.mchnt_id || window.sessionStorage.getItem('mchntId')
+      let args = {
+        mchnt_id: this.mchnt_id,
+        format: 'jsonp',
+        open_id: window.localStorage.getItem('dc_openid') || '',
+        sale_type: 3
       }
+      this.$http({
+        url: Config.apiHost + 'diancan/c/goods_list',
+        method: 'JSONP',
+        params: args
+      }).then(function (response) {
+        this.isLoading = false
+        let data = response.data
+        if (data.respcd === '4000') {   // 验证链接时间是否过期
+          this.isExpire = true
+          return
+        } else if (data.respcd !== Config.code.OK) {
+          this.$toast(data.respmsg)
+          return
+        }
+        let mSet = data.data.merchant_setting
+        sessionStorage.setItem('isDadaDeliver', mSet.distribution)
+        // 配送费
+        let deliver = this.$parent.deliver
+        if (mSet.distribution === 0) {
+          deliver.shipping_fee = mSet.shipping_fee
+          deliver.min_shipping_fee = mSet.min_shipping_fee
+        }
+        deliver.start_delivery_fee = mSet.start_delivery_fee
+        this.$emit('updateDeliver', deliver)
+        // 商品购物车
+        this.merchantSetting = mSet
+        this.setStorage(data.data)
+        this.$emit('getCart', this.mchnt_id)
+        let goods = this.mergeGoods(data.data.goods)
+        this.groupList = goods
+        this.goodsList = (function () {
+          if (goods.length !== 0) {
+            return goods[0].goods_list
+          } else {
+            return ''
+          }
+        })()
+        this.order_info = data.data.order_info
+        this.$nextTick(() => {
+          let topbarHeight = document.getElementsByTagName('header')[0].offsetHeight
+          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - topbarHeight + 'px'
+          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - topbarHeight + 'px'
+          this.typeScroller = new BScroll(this.$refs.group, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+          this.menuScroller = new BScroll(this.$refs.menu, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+        })
+        const shopname = data.data.shopname
+        const logourl = data.data.logo_url
+        Util.setTitle(shopname)
+        this.shareStore(shopname, logourl)
+      })
+    },
+    beforeRouteLeave (to, from, next) {
+      this.$wechat.hideOptionMenu()
+      next()
     },
     methods: {
       goDetail () {
-        this.$router.go({name: 'orderDetail', params: {mchnt_id: this.mchnt_id, order_id: this.order_info.order_id}})
+        this.$router.push({
+          name: 'orderDetail',
+          params: {
+            mchnt_id: this.mchnt_id,
+            order_id: this.order_info.order_id
+          }
+        })
       },
       getKey () {
         return STORAGEKEY + '_' + this.mchnt_id
@@ -266,30 +255,30 @@
             delCart.push(index)
           }
         })
-        delArr.length && this.$dispatch('on-toast', delArr.join(' ') + '已下架')
+        delArr.length && this.$emit('toast', delArr.join(' ') + '已下架')
         delCart.reverse().forEach(item => {
           cart.splice(item, 1)
         })
-        this.$dispatch('on-saveCart', this.mchnt_id, cart)
+        this.$emit('saveCartEv', this.mchnt_id, cart)
         return goods
       },
-      select (index, item) {
+      groupSelect (index, item) {
         this.selectIndex = index
-        this.$set('goodsList', item.goods_list)
+        this.goodsList = item.goods_list
         this.$nextTick(function () {
+          this.typeScroller.refresh()
           this.menuScroller.refresh()
-          this.menuScroller.scrollTo(0, 0)
         })
       },
-      plusHandler (events, goods, specIndex) {
+      plusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, true)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
       },
-      minusHandler (events, goods, specIndex) {
+      minusHandler (goods, specIndex) {
         this.addCartHandler(goods, specIndex, false)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
       },
-      diyHandler (events, goods, specIndex, number) {
+      diyHandler (goods, specIndex, number) {
         this.addCartHandler(goods, specIndex, number)
         _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
       },
@@ -331,16 +320,16 @@
           return
         }
         let spec = Object.assign({}, oldGoods.spec_list[specIndex], {_count: newCount})
-        this.groupList[index].goods_list[i].spec_list.$set(specIndex, spec)
+        this.$set(this.groupList[index].goods_list[i].spec_list, specIndex, spec)
         let newGoods = Object.assign({}, oldGoods)
-        this.groupList[index].goods_list.$set(i, newGoods)
+        this.$set(this.groupList[index].goods_list, i, newGoods)
 
-        this.$dispatch('on-changeCart', newGoods, specIndex, this.mchnt_id)
+        this.$emit('changeCart', newGoods, specIndex, this.mchnt_id)
 
         let oldGroup = this.groupList[index]
         oldGroup._count = oldGroup._count || 0
         let newGroup = Object.assign({}, oldGroup, {_count: isDIY ? type : oldGroup._count + type})
-        this.groupList.$set(index, newGroup)
+        this.$set(this.groupList, index, newGroup)
       },
       hasSelect (goods) {
         return !!goods.spec_list.find(spec => spec._count)
@@ -353,18 +342,37 @@
       },
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
-        this.$refs.spec.showSpec()
+        this.showSpec = true
+      },
+      hideSpecHandler () {
+        this.showSpec = false
       },
       showDetailHandler (goods) {
         this.selectDetail = goods
         this.showDetail = true
-      }
-    },
-    events: {
-      'on-selectSpec' (goods, specIndex) {
+      },
+      hideDetailHandler () {
+        this.showDetail = false
+      },
+      shareStore (shopname, logourl) {
+        let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + this.mchnt_id
+        let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
+        this.$wechat.menuShareAppMessage({
+          title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,
+          desc: '菜单在眼前，吃啥不纠结！',
+          imgUrl: imgUrl,
+          link: shareLink
+        })
+        this.$wechat.menuShareTimeline({
+          title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`,
+          imgUrl: imgUrl,
+          link: shareLink
+        })
+      },
+      selectSpecBtn (goods, specIndex) {
         this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
       },
-      'on-cleanCart' (mchntId) {
+      cleanGoods (mchntId) {
         let data = this.getStorage() || {}
         let goods = data.goods || []
         goods.map(group => {
@@ -374,16 +382,15 @@
           })
         })
 
-        this.$set('groupList', goods)
-        this.$set('goodsList', goods[this.selectIndex].goods_list)
-        return true
+        this.groupList = goods
+        this.goodsList = goods[this.selectIndex].goods_list
       }
     }
   }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-
+  @import "../../../styles/main.scss";
   .c-loading-container {
     position: fixed;
     top: 0;
@@ -395,25 +402,16 @@
   }
   .order-info {
     background-color: #FFEAD1;
-    line-height: 60px;
     padding: 20px;
-    transition: all .5s linear;
-    height: 100px;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
     p {
       font-size: 30px;
       color: #2F323A;
-      a {
-        display: block;
-        float: right;
-        padding: 16px 24px;
-        color: #fff;
-        text-align: center;
-        font-size: 30px;
-        border-radius: 6px;
-        background-color: #FE9B20;
-        line-height: 1;
-      }
+      flex: 1;
+    }
+    button {
+      display: block;
     }
   }
 
@@ -435,11 +433,6 @@
       &.active {
         background-color: #fff;
         color: #FE9B20;
-      }
-      // 购物车遮挡
-      &:last-child {
-        border-bottom: none;
-        height: 104px;
       }
       /*&:before {*/
       .count {
@@ -471,11 +464,14 @@
 
   .shopmenu-list {
     overflow: hidden;
-    // 购物车遮挡
-    li:last-child {
-      border-bottom: none;
-      height: 104px;
-    }
+  }
+
+  // 购物车遮挡
+  .list-group ul{
+    padding-bottom: 104px;
+  }
+  .shopmenu-list ul {
+    padding-bottom: 180px;
   }
 
   li.list-item {
@@ -507,6 +503,7 @@
       overflow: hidden;
       padding-left: 24px;
       .title {
+        font-weight: normal;
         color: #4d4d4d;
         font-size: 32px;
         padding-right: 24px;
@@ -541,14 +538,6 @@
     bottom: 0;
   }
 
-  .select {
-    button {
-      border: 0 !important;
-      background-color: #FE9B20 !important;
-      color: #fff !important;
-    }
-  }
-
   .totop1-transition {
     transition: all .3s ease;
   }
@@ -559,21 +548,17 @@
   }
 
   .spec-btn {
-    /*position: absolute;*/
-    /*right: 0;*/
-    /*bottom: 0;*/
-
     width: 196px;
     height: 100px;
-    button {
-      padding: 0 20px;
-      /*width: 156px;*/
+    span {
+      display: inline-block;
+      padding: 0 28px;
+      background-color: #FF8100;
       height: 60px;
-      border: 2px solid #C2C2C2;  /*px*/
+      line-height: 60px;
       border-radius: 30px;
-      background-color: #fff;
-      font-size: 30px;
-      color: #FE9B20;
+      font-size: 24px;
+      color: #fff;
     }
   }
 </style>

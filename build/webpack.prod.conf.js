@@ -1,114 +1,127 @@
-var config = require('../config')
+var path = require('path')
 var utils = require('./utils')
 var webpack = require('webpack')
+var config = require('../config')
 var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-var prod = '"' + (process.argv[2] || 'production') + '"';
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
+var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+
+var env = process.env.NODE_ENV === 'testing'
+  ? require('../config/test.env')
+  : config.build.env
+
 var prodWebpackConfig = {
   module: {
-    // loaders: utils.styleLoaders({ sourceMap: config.build.productionSourceMap, extract: true })
-    loaders: utils.styleLoaders({ sourceMap: config.productionSourceMap, extract: true })
-  },
-  // devtool: config.build.productionSourceMap ? '#source-map' : false,
-  devtool: config.productionSourceMap ? '#source-map' : false,
-  output: {
-    // filename: utils.assetsPath('js/[name].[chunkhash].js'),
-    filename: utils.assetsPath('[name].[chunkhash].js'),
-    // chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
-    chunkFilename: utils.assetsPath('[id].[chunkhash].js')
-  },
-  vue: {
-    loaders: utils.cssLoaders({
-      // sourceMap: config.build.productionSourceMap,
-      sourceMap: config.productionSourceMap,
+    rules: utils.styleLoaders({
+      sourceMap: config.build.productionSourceMap,
       extract: true
     })
   },
+  devtool: config.build.productionSourceMap ? '#source-map' : false,
+  output: {
+    path: config.build.assetsRoot,
+    filename: utils.assetsPath('js/[name].[chunkhash].js'),
+    chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+  },
   plugins: [
-    // http://vuejs.github.io/vue-loader/workflow/production.html
+    // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: prod
-      },
-      // RUN_ENV: JSON.stringify('production')
-      RUN_ENV: JSON.stringify(utils.env)
+      'process.env': env
     }),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
+      },
+      sourceMap: true
+    }),
+    // extract css into its own file
+    new ExtractTextPlugin({
+      filename: utils.assetsPath('css/[name].[contenthash].css')
+    }),
+    // Compress extracted CSS. We are using this plugin so that possible
+    // duplicated CSS from different components can be deduped.
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: {
+        safe: true
       }
     }),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    // extract css into its own file
-    // new ExtractTextPlugin(utils.assetsPath('css/[name].[contenthash].css')),
-    new ExtractTextPlugin(utils.assetsPath('[name].[contenthash].css')),
-    // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+    // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
-      name: "vue_vue-resource",
-      // filename: utils.assetsPath('js/lib/commons.[chunkhash].js'),
-      filename: utils.assetsPath('commons.[chunkhash].js'),
-      // minChunks: 3,
+      name: 'vendor',
+      minChunks: function (module, count) {
+        // any required modules inside node_modules are extracted to vendor
+        return (
+          module.resource &&
+          /\.js$/.test(module.resource) &&
+          module.resource.indexOf(
+            path.join(__dirname, '../node_modules')
+          ) === 0
+        )
+      }
     }),
-    new webpack.ProvidePlugin({
-      FastClick: 'fastclick',
-      Vue: 'vue'
+    // extract webpack runtime and module manifest to its own file in order to
+    // prevent vendor hash from being updated whenever app bundle is updated
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      chunks: ['vendor']
     }),
-
-    // generate dist index.html with correct asset hash for caching.
-    // you can customize output by editing /index.html
-    // see https://github.com/ampedandwired/html-webpack-plugin
-    // new HtmlWebpackPlugin({
-    //   filename: process.env.NODE_ENV === 'testing'
-    //     ? 'index.html'
-    //     : config.build.index,
-    //   template: 'index.html',
-    //   inject: true,
-    //   minify: {
-    //     removeComments: true,
-    //     collapseWhitespace: true,
-    //     removeAttributeQuotes: true
-    //     // more options:
-    //     // https://github.com/kangax/html-minifier#options-quick-reference
-    //   }
-    // })
+    // copy custom static assets
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(__dirname, '../static'),
+        to: config.build.assetsSubDirectory,
+        ignore: ['.*']
+      }
+    ])
   ]
 }
 
 var appConfig = require('../appConfig')
 
-var chunks = {};
 appConfig.pages.forEach(function(page) {
-
-  if (page.chunks) {
-    chunks[page.chunks] = chunks[page.chunks] || []
-    chunks[page.chunks].push(page.filename)
-  }
-
   var conf = {
     template: page.template || 'src/templates/vue.ejs',  // html模板路径
     title: page.title || '钱方商户',
     // filename: 'templates/' + page.filename + '.html', // 生成的html存放路径,文件名，相对于path
     filename: '' + page.filename + '.html', // 生成的html存放路径,文件名，相对于path
-    chunks: [page.chunks, page.filename],
-    inject: 'body',                         // //js插入的位置
-    hash: false,
+    inject: true,
+    chunks: ['manifest', 'vendor', page.filename],                        // //js插入的位置
     minify: {   // 压缩HTML文件
       removeComments: true,       // 移除HTML中的注释
       collapseWhitespace: false,   // 删除空白符与换行符
       removeAttributeQuotes: true
-      // more options:
-      // https://github.com/kangax/html-minifier#options-quick-reference
     },
     RUN_ENV: utils.env
   }
-  // https://github.com/ampedandwired/html-webpack-plugin
-  if (page.isBuild) {
-    prodWebpackConfig.plugins.push(new HtmlWebpackPlugin(conf))
-  }
+  prodWebpackConfig.plugins.push(new HtmlWebpackPlugin(conf))
 });
 
-// console.log('chunks:', chunks)
 
-module.exports = merge(baseWebpackConfig, prodWebpackConfig)
+var webpackConfig = merge(baseWebpackConfig, prodWebpackConfig)
+if (config.build.productionGzip) {
+  var CompressionWebpackPlugin = require('compression-webpack-plugin')
+
+  webpackConfig.plugins.push(
+    new CompressionWebpackPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: new RegExp(
+        '\\.(' +
+        config.build.productionGzipExtensions.join('|') +
+        ')$'
+      ),
+      threshold: 10240,
+      minRatio: 0.8
+    })
+  )
+}
+
+if (config.build.bundleAnalyzerReport) {
+  var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+  webpackConfig.plugins.push(new BundleAnalyzerPlugin())
+}
+
+module.exports = webpackConfig

@@ -1,33 +1,34 @@
 <template>
-  <div class="container" v-if="visible">
-    <div class="spec" transition="zoomInOut">
-      <div class="close" @click="hideSpec"><i class="iconfont">&#xe604;</i></div>
-      <div class="head line">{{goods.name}}</div>
-      <section class="body">
-        <ul class="spec-list line">
-          <li v-for="_spec in goods.spec_list"
-              :class="{'activate': $index===goods._lastSpec}"
-              @click.stop.prevent="selectSpec($index)">{{_spec.name}}
-          </li>
-        </ul>
-        <div class="price">
-          单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
-          <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
-        </div>
-      </section>
+  <div class="spec-container" v-if="visible" @click.stop="closeSpec()">
+    <transition name="zoomInOut">
+      <div class="spec" v-if="visible">
+        <div class="close" @click.stop="closeSpec()"><i class="icon-closed"></i></div>
+        <div class="head line">{{goods.name}}</div>
+        <section class="body">
+          <ul class="spec-list line">
+            <li v-for="(_spec, index) in goods.spec_list"
+                :class="{'activate': index === goods._lastSpec}"
+                @click.stop.prevent="selectSpec(index)">{{_spec.name}}
+            </li>
+          </ul>
+          <div class="price">
+            单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
+            <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
+          </div>
+        </section>
 
-      <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus($event, goods, lastSpec)">
-        加入购物车
-      </button>
-      <!--商品选择-->
-      <goods-select v-show="spec._count" class="goods-select-container"
-                    :goods.sync="goods"
-                    :activate="lastSpec"
-                    :plus="plus"
-                    :minus="minus"
-                    :diy="diy"></goods-select>
-    </div>
-    <div class="mark" @click="hideSpec" v-show="showMark"></div>
+        <button v-show="!spec._count" class="btn add-cart" @click.stop.prevent="plus(goods, lastSpec)">
+          加入购物车
+        </button>
+        <!--商品选择-->
+        <goods-select v-show="spec._count" class="goods-select-container"
+                      :goods="goods"
+                      :activate="lastSpec"
+                      :plus="plus"
+                      :minus="minus"
+                      :diy="diy"></goods-select>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -35,12 +36,9 @@
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
-    props: ['goods', 'plus', 'minus', 'diy'],
+    props: ['goods', 'plus', 'minus', 'diy', 'visible'],
     data () {
       return {
-        visible: false,
-        showMark: false,
-        timer: null
       }
     },
     computed: {
@@ -52,21 +50,13 @@
       }
     },
     methods: {
-      selectSpec ($index) {
-        this.goods._lastSpec = $index
-        this.$dispatch('on-selectSpec', this.goods, $index)
+      selectSpec (index) {
+        let goods = this.goods
+        goods._lastSpec = index
+        this.$emit('selectSpecBtn', goods, index)
       },
-      showSpec () {
-        this.visible = true
-        let _this = this
-        this.timer = setTimeout(function () {
-          _this.showMark = true
-        }, 200)
-      },
-      hideSpec () {
-        this.visible = false
-        this.showMark = false
-        clearTimeout(this.timer)
+      closeSpec () {
+        this.$emit('hideSpecHandler')
       }
     }
   }
@@ -74,7 +64,7 @@
 
 <style scoped lang="scss" rel="stylesheet/scss">
   @import "../styles/base/animate";
-  .container {
+  .spec-container {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -97,11 +87,10 @@
   }
 
   .spec {
+    box-sizing: border-box;
     position: relative;
-    margin: 0 30px;
     padding: 0 30px;
-    /*height: 410px;*/
-    width: 100%;
+    width: 92%;
     background-color: #fff;
     border-radius: 6px;
   }
@@ -112,7 +101,7 @@
     top: 20px;
     text-align: right;
     i {
-      font-size: 50px;
+      font-size: 40px;
       font-weight: normal;
       color: #D8D8D8;
     }
@@ -123,6 +112,9 @@
     line-height: 86px;
     font-size: 34px;
     color: #2F323A;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .line {
@@ -144,11 +136,11 @@
     border-radius: 32px;
     font-size: 30px;
 
-    color: #FE9B20;
-    border: 2px solid #C2C2C2;  /*px*/
+    color: #FF8100;
+    border: 2px solid #FF8100;  /*px*/
 
     &.activate {
-      background-color: #FE9B20;
+      background-color: #FF8100;
       color: #fff;
       border: none;
     }
@@ -182,12 +174,11 @@
     bottom: 40px;
     width: 222px;
     height: 60px;
-    line-height: 60px;
     border-radius: 30px;
     font-size: 30px;
     border: 0;
     color: #fff;
-    background-color: #FE9B20;
+    background-color: #FF8100;
   }
 
 </style>

@@ -1,103 +1,69 @@
 var path = require('path')
-var config = require('../config')
 var utils = require('./utils')
-var projectRoot = path.resolve(__dirname, '../')
+var config = require('../config')
+var vueLoaderConfig = require('./vue-loader.conf')
+
+function resolve (dir) {
+  return path.join(__dirname, '..', dir)
+}
 
 module.exports = {
-  // entry: {
-  //   app: './src/main.js'
-  // },
-  // entry: { index: './src/pages/index', list: './src/pages/list' },
   entry: utils.entry,
   output: {
-    // path: config.build.assetsRoot,
-    // publicPath: config.build.assetsPublicPath,
-    path: config.assetsRoot,
-    publicPath: config.publicPath || config.assetsPublicPath,
-    filename: '[name].js'
+    path: config.build.assetsRoot,
+    filename: '[name].js',
+    publicPath: process.env.NODE_ENV === 'development'
+      ? config.dev.assetsPublicPath
+      : config.build.assetsPublicPath
   },
   resolve: {
-    extensions: ['', '.js', '.vue'],
-    fallback: [path.join(__dirname, '../node_modules')],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
-      'src': path.resolve(__dirname, '../src'),
-      'assets': path.resolve(__dirname, '../src/assets'),
-      'components': path.resolve(__dirname, '../src/components'),
-      'vux-components': 'vux/src/components/'
+      'vue$': 'vue/dist/vue.common.js',
+      'src': resolve('src'),
+      'methods': resolve('src/methods'),
+      'components': resolve('src/components'),
+      'views': resolve('src/views'),
+      'filters': resolve('src/filters')
     }
   },
-  resolveLoader: {
-    fallback: [path.join(__dirname, '../node_modules')]
-  },
   module: {
-    preLoaders: [
+    rules: [
+      {
+        test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: [resolve('src'), resolve('test')],
+        options: {
+          formatter: require('eslint-friendly-formatter')
+        }
+      },
       {
         test: /\.vue$/,
-        loader: 'eslint',
-        include: projectRoot,
-        exclude: /node_modules/
+        loader: 'vue-loader',
+        options: vueLoaderConfig
       },
       {
         test: /\.js$/,
-        loader: 'eslint',
-        include: projectRoot,
-        exclude: /node_modules/
-      }
-    ],
-    loaders: [
-      {
-        test: /\.vue$/,
-        loader: 'vue'
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel',
-        include: projectRoot,
-        exclude: /node_modules/
-      },
-      {
-        test: /\.json$/,
-        loader: 'json'
-      },
-      {
-        test: /\.html$/,
-        loader: 'vue-html'
-        // loader: 'html'
+        loader: 'babel-loader',
+        include: [resolve('src'), resolve('test')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url',
-        query: {
+        loader: 'url-loader',
+        options: {
           limit: 10000,
-          // name: utils.assetsPath('img/[name].[hash:7].[ext]')
-          name: utils.assetsPath('[name].[hash:7].[ext]')
+          name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url',
-        query: {
+        loader: 'url-loader',
+        options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
     ]
-  },
-  eslint: {
-    formatter: require('eslint-friendly-formatter')
-  },
-  vue: {
-    loaders: utils.cssLoaders(),
-    postcss: [require('postcss-px2rem')({
-      baseDpr: 2,             // base device pixel ratio (default: 2)
-      threeVersion: false,    // whether to generate @1x, @2x and @3x version (default: false)
-      remVersion: true,       // whether to generate rem version (default: true)
-      remUnit: 75,            // rem unit value (default: 75)
-      remPrecision: 6         // rem precision (default: 6)
-    })],
-    autoprefixer: {
-      browsers: ["Android >= 2.3", "iOS >= 4"],
-      cascade: false  // 不美化输出 css
-    }
   }
 }

@@ -3,7 +3,6 @@
     <div class="head">
       <p>对不起，我们还不清楚你坐在哪个位置</p>
       <p>请扫一扫桌上的二维码，开始点餐</p>
-      <img src="../assets/bear.svg" alt="小熊">
     </div>
     <a @click.prevent="scan" class="scan">扫描二维码</a>
   </div>
@@ -20,11 +19,10 @@
     .head {
       margin: 200px auto 60px;
       width: 630px;
-      height: 320px;
       border: 4px solid #CBCCCB;
       border-radius: 16px;
       background-color: #fff;
-      padding-top: 50px;
+      padding: 90px 0;
       position: relative;
       p {
         text-align: center;
@@ -59,7 +57,7 @@
     props: ['display'],
     methods: {
       scan () {
-        this.$dispatch('on-qr')
+        this.$wechat.scanQRcode()
       }
     }
   }

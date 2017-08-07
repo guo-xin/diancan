@@ -2,64 +2,71 @@ import 'lib-flexible'
 import FastClick from 'fastclick'
 window.FastClick = FastClick
 
-import 'core-js/fn/array/find'
-import 'core-js/fn/array/find-index'
-import 'core-js/fn/array/map'
-import 'core-js/fn/object/assign'
-
 import Vue from 'vue'
-import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+import router from './router'
+import { verify } from 'methods/verify'
+import { Toast, MessageBox } from 'qfpay-ui'
 
-import '../../filters/index'
-import App from './App.vue'
-
-Vue.use(VueResource)
-Vue.use(VueRouter)
-let router = new VueRouter()
-
+// 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
-Vue.http.options.xhr = {
-  withCredentials: true
-}
+// 在使用cors跨域时带上cookie
+Vue.http.options.credentials = true
+
+// 将请求的数据url化
 Vue.http.options.emulateJSON = true
-import Wechat from '../../methods/Wechat'
-Wechat.verify().then(initRouter)
-// initRouter()
-Wechat.init()
-Wechat.hideOptionMenu()
-Wechat.noResize()
-function initRouter () {
-  router.map({
-    '/merchant/:mchnt_id': {
-      name: 'merchant',
-      component: require('../../views/Merchant'),
-      subRoutes: {
-        '/:address': {
-          component: require('../../views/Merchant'),
-          subRoutes: {
-            '/:expire_time': {
-              component: require('../../views/Merchant')
-            }
-          }
-        }
-      }
-    },
-    'create_order/:mchnt_id/:address': { // 创建订单
-      name: 'createOrder',
-      component: require('../../views/CreateOrder')
-    },
-    'order_detail/:order_id/:mchnt_id': { // 订单详情: 订单id|商户id
-      name: 'orderDetail',
-      component: require('../../views/OrderDetail')
-    },
-    '/about': { // 关于
-      name: 'about',
-      component: require('../../views/About.vue')
+
+import App from './App'
+import 'filters/index'
+import { WechatPlugin, Wechat } from 'methods/Wechat'
+import Util from 'methods/Util'
+
+Vue.use(VueResource)
+Vue.use(WechatPlugin)
+
+Vue.component(Toast.name, Toast)
+Vue.prototype.$toast = Toast
+Vue.component(MessageBox.name, MessageBox)
+Vue.prototype.$messagebox = MessageBox
+
+// 此处声明你需要用到的JS-SDK权限
+let jsApiList = [
+  'checkJsApi',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'hideMenuItems',
+  'showMenuItems',
+  'onMenuShareAppMessage',
+  'onMenuShareTimeline',
+  'scanQRCode'
+]
+
+if (Util.isWX || process.env.NODE_ENV === 'production') {
+  verify().then(initVue)
+  Wechat.init(jsApiList)
+  Wechat.ready()
+  .then(() => {
+    Wechat.hideOptionMenu()
+    const menuList = {
+      menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+    }
+    Wechat.showMenuItems(menuList)
+  })
+} else {
+  initVue()
+}
+
+function initVue () {
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#app',
+    router,
+    template: '<App/>',
+    components: { App },
+    data: {
+      eventHub: new Vue()
     }
   })
-  router.start(App, '#app')
 }
-/* eslint-disable no-new */

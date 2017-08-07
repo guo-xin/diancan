@@ -1,35 +1,133 @@
 <template>
-  <get-Location></get-Location>
-  <ul v-if="!noData">
-    <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
-      <figure>
-        <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
-        <time>{{item.start_time}} - {{item.end_time}}营业</time>
-        <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
-      </figure>
-      <div>
-        <h3>{{item.shopname}}</h3>
-        <p class="address">{{item.address}}</p>
-        <p v-if="item.distance" class="distance"><strong><i></i>{{item.distance}}</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
-        <footer>
-          <p>
-            <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
-            <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
-            <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
-          </p>
-          <a href="tel:{{item.telephone}}"></a>
-        </footer>
-      </div>
-      <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
-    </li>
-  </ul>
-  <div v-if="noData" class="no-data">
-    <img src="assets/no_data.png" alt="">
-    <p>暂无数据</p>
+  <div>
+    <get-Location></get-Location>
+    <ul class="store-list" v-if="!noData">
+      <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
+        <figure>
+          <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
+          <time>{{item.start_time}} - {{item.end_time}}营业</time>
+          <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
+        </figure>
+        <div>
+          <h3>{{item.shopname}}</h3>
+          <p class="address">{{item.address}}</p>
+          <p v-if="item.distance" class="distance"><strong><i></i>{{item.distance}}</strong><span v-if="item.overdist"><i></i>超出配送范围</span></p>
+          <footer>
+            <p>
+              <span v-if="item.start_delivery_fee">起送价{{item.start_delivery_fee | formatCurrency}}元</span>
+              <span v-if="item.shipping_fee">配送费{{item.shipping_fee | formatCurrency}}元</span><span v-else>免配送费</span><br/>
+              <span v-if="item.min_shipping_fee">满{{item.min_shipping_fee | formatCurrency}}元免配送费</span>
+            </p>
+            <a :href="'tel:' + item.telephone"></a>
+          </footer>
+        </div>
+        <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
+      </li>
+    </ul>
+    <div v-if="noData" class="no-data">
+      <img src="assets/no_data.png" alt="">
+      <p>暂无数据</p>
+    </div>
+    <loading :visible="loading"></loading>
   </div>
-  <loading :visible="loading"></loading>
-  <Toast :msg.sync="errMsg"></Toast>
 </template>
+<script type="text/ecmascript-6">
+  /* eslint-disable no-unused-vars */
+  import Wechat from '../../methods/Wechat'
+  import Config from '../../methods/Config'
+  import Util from '../../methods/Util'
+  import loading from '../../components/loading/juhua.vue'
+  import GetLocation from '../../components/GetLocation.vue'
+  export default {
+    data () {
+      return {
+        mId: Util.getUrlRouteParams('merchant') || '',
+        openId: window.localStorage.getItem('dc_openid') || '',
+        firstRequest: true,
+        loading: false,
+        loaded: false,
+        responseData: {
+          list: []
+        },
+        noData: false
+      }
+    },
+    computed: {
+      requestData () {
+        return {
+          format: 'jsonp',
+          userid: this.mId,
+          longitude: window.localStorage.getItem('longitude'),
+          latitude: window.localStorage.getItem('latitude'),
+          pagesize: 10,
+          page: 1
+        }
+      }
+    },
+    components: {
+      loading, GetLocation
+    },
+    created () {
+      let _this = this
+      let longitude = 0
+      let _t = setInterval(function () {
+        longitude = window.localStorage.getItem('longitude')
+        if (longitude) {
+          _this.getData()
+          clearInterval(_t)
+        }
+      }, 1000)
+    },
+    mounted () {
+      let _this = this
+      window.onscroll = () => {
+        var scrollTop = document.body.scrollTop
+        var windowHeight = document.body.offsetHeight
+        var scrollHeight = document.body.scrollHeight
+        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          _this.getData()
+        }
+      }
+    },
+    methods: {
+      getData () {
+        let _this = this
+        if (!this.loaded) {
+          this.loading = true
+          if (!this.firstRequest) {
+            this.requestData.page += 1
+          }
+          this.$http({
+            url: Config.apiHost + 'diancan/c/mchnt_list',
+            params: _this.requestData,
+            method: 'JSONP'
+          }).then(function (response) {
+            let res = response.data
+            _this.init = false
+            _this.firstRequest = false
+            _this.loading = false
+            if (res.respcd === '0000') {
+              _this.responseData.list = _this.responseData.list.concat(res.data.mchnts)
+              if (res.data.mchnts.length === 0) {
+                _this.noData = true
+              }
+              if (res.data.mchnts.length < 10) {
+                _this.loaded = true
+              }
+            } else {
+              _this.$toast(res.resperr)
+            }
+          })
+        }
+      },
+      jumpUrl (mchntId, e) {
+        if (e.target.nodeName !== 'A') {
+          window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+        }
+      }
+    }
+  }
+</script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
   html {
@@ -77,9 +175,10 @@
     background-image:url("./assets/warn-icon.png");
     @extend .icon;
   }
-  ul {
+  .store-list {
     list-style: none;
     padding-left: 0;
+    background-color: #fff;
     li {
       display: flex;
       position: relative;
@@ -155,7 +254,6 @@
       }
       .ribbon {
         display: none;
-        min-width: 150px;
         padding: 0 30px;
         height: 32px;
         line-height: 32px;
@@ -198,102 +296,3 @@
     }
   }
 </style>
-<script type="text/ecmascript-6">
-  /*eslint-disable no-unused-vars*/
-  import Wechat from '../../methods/Wechat'
-  import Config from '../../methods/Config'
-  import loading from '../../components/loading/juhua.vue'
-  import Toast from '../../components/tips/Toast.vue'
-  import GetLocation from '../../components/GetLocation.vue'
-  export default {
-    data () {
-      return {
-        mId: window.localStorage.getItem('mchtId') || '',
-        openId: window.localStorage.getItem('dc_openid') || '',
-        firstRequest: true,
-        loading: false,
-        loaded: false,
-        errMsg: '',
-        responseData: {
-          list: []
-        },
-        noData: false
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'jsonp',
-          userid: this.mId,
-          longitude: window.localStorage.getItem('longitude'),
-          latitude: window.localStorage.getItem('latitude'),
-          pagesize: 10,
-          page: 1
-        }
-      }
-    },
-    components: {
-      loading, Toast, GetLocation
-    },
-    created () {
-      let _this = this
-      let longitude = 0
-      let _t = setInterval(function () {
-        longitude = window.localStorage.getItem('longitude')
-        if (longitude) {
-          _this.getData()
-          clearInterval(_t)
-        }
-      }, 1000)
-    },
-    ready () {
-      let _this = this
-      window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
-        var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          _this.getData()
-        }
-      }
-    },
-    methods: {
-      getData () {
-        let _this = this
-        if (!this.loaded) {
-          this.loading = true
-          if (!this.firstRequest) {
-            this.requestData.page += 1
-          }
-          this.$http({
-            url: Config.apiHost + 'diancan/c/mchnt_list',
-            // url: 'http://172.100.111.45:8300/diancan/c/mchnt_list',
-            data: _this.requestData,
-            method: 'JSONP'
-          }).then(function (response) {
-            let res = response.data
-            _this.init = false
-            _this.firstRequest = false
-            _this.loading = false
-            if (res.respcd === '0000') {
-              _this.responseData.list = _this.responseData.list.concat(res.data.mchnts)
-              if (res.data.mchnts.length === 0) {
-                _this.noData = true
-              }
-              if (res.data.mchnts.length < 10) {
-                _this.loaded = true
-              }
-            } else {
-              _this.errMsg = res.resperr
-            }
-          })
-        }
-      },
-      jumpUrl (mchntId, e) {
-        if (e.target.nodeName !== 'A') {
-          window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
-        }
-      }
-    }
-  }
-</script>

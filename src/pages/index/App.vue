@@ -1,20 +1,24 @@
 <template>
-  <div id="app-container">
-    <router-view class="view-container"></router-view>
-    <toast :msg.sync="msg"></toast>
+  <div id="app">
+    <router-view
+      @toast="toast"
+      :cart="cart"
+      @changeCart="changeCart"
+      @saveCartEv="saveCartEv"
+      @getCart="getCart"
+      @hideOptionMenu="hideOptionMenu"
+      @menuShareAppMessage="menuShareTimeline"
+      @menuShareTimeline="menuShareTimeline"
+      @qr="qr">
+    </router-view>
   </div>
 </template>
 
-<script>
-  import Wechat from '../../methods/Wechat'
-  import {Store} from '../../methods/Store'
-  import {STORE_CART} from '../../methods/Config'
-  import Toast from '../../components/tips/Toast'
+<script type="text/ecmascript-6">
+  import Store from 'methods/Store'
+  import { STORE_CART } from 'methods/Config'
 
   export default {
-    components: {
-      Toast
-    },
     data () {
       return {
         user: {
@@ -25,9 +29,16 @@
         msg: ''
       }
     },
-    ready () {
-      if (window.location.hash === '#!/') {
-        let url = window.location.origin + window.location.pathname + window.location.search + window.localStorage.getItem('redirect_uri')
+    created () {
+      // 清空购物车
+      this.$root.eventHub.$on('cleanCart', (mchntId) => {
+        this.cart = []
+        this.saveCartEv(mchntId, [])
+      })
+    },
+    mounted () {
+      if (window.location.hash === '#!/' || window.location.hash === '#/') {
+        let url = window.location.origin + window.location.pathname + window.location.search + window.sessionStorage.getItem('redirect_uri')
         window.location.replace(url)
       }
       this.setOpenId()
@@ -42,13 +53,11 @@
       },
       saveCart (mchntId) {
         Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      }
-    },
-    events: {
-      'on-toast' (msg) {
+      },
+      toast (msg) {
         this.msg = msg
       },
-      'on-changeCart' (goods, specIndex, mchntId) {
+      changeCart (goods, specIndex, mchntId) {
         let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
         let index = -1
         let spec = goods.spec_list[specIndex]
@@ -64,35 +73,31 @@
           this.cart.push(divGoods)
         } else {
           if (spec._count) { // 修改数量
-            this.cart.$set(index, divGoods)
+            this.$set(this.cart, index, divGoods)
           } else {  // 移除
             this.cart.splice(index, 1)
           }
         }
         this.saveCart(mchntId)
       },
-      'on-saveCart' (mchntId, cart) {
-        this.$set('cart', cart || [])
+      saveCartEv (mchntId, cart) {
+        this.cart = cart || []
         this.saveCart(mchntId)
       },
-      'on-getCart' (mchntId) {
-        this.$set('cart', Store.get(this.getKey(mchntId)) || [])
+      getCart (mchntId) {
+        this.cart = Store.get(this.getKey(mchntId)) || []
       },
-      'on-cleanCart' (mchntId) {  // 清空购物车
-        this.$set('cart', [])
-        this.saveCart(mchntId)
+      hideOptionMenu () {  // 隐藏右上角菜单
+        this.$wechat.hideOptionMenu()
       },
-      'on-hideOptionMenu' () {  // 隐藏右上角菜单
-        Wechat.hideOptionMenu()
+      menuShareAppMessage (args = {}) {  // 分享给朋友
+        this.$wechat.onMenuShareAppMessage(args)
       },
-      'on-onMenuShareAppMessage' (args = {}) {  // 分享给朋友
-        Wechat.onMenuShareAppMessage(args)
+      menuShareTimeline (args = {}) {
+        this.$wechat.onMenuShareTimeline(args)
       },
-      'on-onMenuShareTimeline' (args = {}) {
-        Wechat.onMenuShareTimeline(args)
-      },
-      'on-qr' () {
-        Wechat.onScanQRcode()
+      qr () {
+        this.$wechat.onScanQRcode()
       }
     }
   }
@@ -101,38 +106,6 @@
 <style lang="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
   @import "../../styles/iconfont/iconfont.css";
-  /*@import '~vux/dist/vux.css';*/
-
-  html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
-    padding: 0;
-    margin: 0;
-    border: 0;
-    outline: 0;
-    font-weight: inherit;
-    font-style: inherit;
-    font-size: 100%;
-    vertical-align: baseline;
-  }
-
-  ol, ul, li {
-    list-style: none;
-  }
-
-  // fix Font Boosting
-  p, div {
-    max-height: 999999px;
-  }
-
-  a {
-    text-decoration: none;
-    &:link, &:visited, &:hover, &:active {
-      text-decoration: none;
-    }
-  }
-
-  em {
-    font-style: normal;
-  }
 
   // 文字中划线
   .text-line-through {

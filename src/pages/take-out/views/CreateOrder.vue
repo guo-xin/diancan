@@ -1,142 +1,105 @@
 <template>
   <div class="create-order-view">
-    <section class="pay">
-      <h2>支付方式</h2>
-      <div class="text">
-        <img
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGgAAABgCAMAAADGkcf+AAAAnFBMVEUAAAB/1CF+1CF+0yF/1CF+1CF+1CGI9jZ/1CGB1iKB1iSC2CR+1CGA1COB1yON4DN/1CJ/1SF/1SKB1SOC2iaF3CmW/2p+1CF+1CF/1CKD5zF/1CKA1SF/1SKB1iR/1CF+1CF/1CF+1CGA1CJ/1CKA1SOC1yWB2SaA1CJ/1CJ/1SKA1SN/1CGA1CKA1CF/1CJ/1CJ/1CKA1SN+0yHQOtO8AAAAM3RSTlMA+Oj789fDBHo1LxzuRiUI66psPBYQAtC7iwrLoVwp5ODctpxXUCINl3FhTa+lkYWAZkHLcJMGAAADr0lEQVRo3qzV6W6yQACF4QPjMGxSUXAX99Yu6tee+7+3L5rGVpkBrPP8IhBCDiEvaCwPNv56OJHzWDid5cBbTf1toWBVP/ycLqkjZNpNYMd4u49ZabHb5niQ2nw4bECkbTwg+ueysaWf4W/CVPAuIk1wv+c97yfWEe6T7QT/xBnluMOswz+LN2gqWvEhadZwTosPct9RTx1owU6hRubRiuELKhVzWjKIUCF0aY0bwCiIaVErgEHQolVuYoiOS8sWETRySetkjhI1pH0fBUpGtM1ZFyjr0bL4mEHjZUGrFq+GMkxp02CmoBfQomEbRh5tEfsQ17bpr2Nr1TlEuJasyMvCvqQVrp/j2vjokPTw7Z02yM8n3NgseHKZZKMJ3ha3iuHlIs4SC6np4dbLSPAiwcmBj3F2CUo2c/7i42RuPzWhxyvyfPKh1HTHmp4dBG+EAHxqdRzWmmz6KJu5LDkCmFAnHucjVlt9Adq3puEBT9SSANoujcQ0hEa+MySjb+qpowBkK1NqRhF0Pjs0KPBGvR5Oug7L5n4OnWBCo5nxFz7CWVG6Wb4p6GRrVjhgRT1X4Uz5V6O8d2j1u3F1OzAxj/2W/HxHaQC93oDVPEgaTHDR/uiQQh6eoZdNWWcAlyYBfhsrGKjXFmvN4dBkj0a+JBtoVTxIRKgXpWxEwKXREXWU32IzHUgauU+o1pZsavm/N3vdbRQGogB8YGlKUsAstISQa3MhJTRbkvP+77aqWhV2m9iY4H5/EULC4zkjWzppHSCTv7K9MdbSp9eJyqKGVD4Mx7hmt6KWDSJK/MZlQUpNEWLWlBVeDzi6zsikL03w3XxJfU/AmBJeJo1qjeoGNpQ5SaJawx8APmXu0JCcPHbjA7gPKXNWh46aI6D8dzON9qnYJmfKWAHeZZXF7ny8S1bygomB/C2kknqhI8o5Dm8T4YNY0ihnj08FjXLrlm/ToKXAlxMNOqAhpTHTBA25Q0OsEWom66HAv5IBjUjxv8dnGmBfiOiFw5rRo++Svdvhoog9K4Af+ZKLqw7sUQSJ7a8eO4+U77EXXgmFhyl7MM6hJF54s2OGNlzeJpyjnaL/a1gD9wfPJVobszM7ukdricWOPDeDhgW7mR4EtGzZgTMbQlfFhlW529hUCDelgL5X1l72ADCs1iGvCNdunKCTOtPvYnzJt2/Hgc0Ge3Cs5gE6y/jJqr6XqngIRrHvx6PgUeBGQ35IFzCnDj97DtMmJK3JHsYVtGY5fkAyeoIBfwE2fBJDhMQqyAAAAABJRU5ErkJggg==">
-        <span>微信支付</span>
-        <i class="iconfont pay-type_select">&#xe603;</i>
+    <section v-if="!hasAddress" class="address add" @click="goAddAddress">
+      <img src="../assets/btn_add.svg"><span>新增送餐地址</span>
+    </section>
+    <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
+      <p>{{current_addr.contact_name}}　{{current_addr.mobile}}</p>
+      <p>{{current_addr.location}} {{current_addr.detail_addr}}</p>
+      <p v-if="!current_addr.longitude" class="update-tip">需要升级地址</p>
+      <p v-if="current_addr.longitude && current_addr.overdist" class="warn-tip"><i></i>超出配送范围</p>
+    </section>
+    <section class="note item">
+      <label for="note">备注：</label>
+      <textarea v-model="note" id="note" maxlength="70" placeholder="可填写口味要求或忌口等信息"></textarea>
+    </section>
+    <section class="goods item">
+      <ul class="goods-list">
+        <li v-for="goods in cart">
+          <div>
+            <strong>{{goods.name}}</strong>
+            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+          </div>
+          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+        </li>
+      </ul>
+      <div class="deliver-fee">
+        <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <span v-if="deliveryStatus">{{deliveryStatus}}</span>
+        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span>
+      </div>
+      <div class="total">
+        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>
-    <section class="info">
-      <div class="address">
-        <div v-if="!hasAddress" class="address-title" @click.prevent="goAddAddress">
-          <img src="../assets/btn_add.svg" alt="" class="address-add">新增配送地址
-        </div>
-        <div v-else class="address-content">
-          <a @click.prevent="goList">
-            <ul id="{{current_addr.addr_id}}">
-              <li>{{current_addr.contact_name}} {{current_addr.mobile}}</li>
-              <li>{{current_addr.location}} {{current_addr.detail_addr}}</li>
-              <li>
-                <em v-if="!current_addr.longitude" class="warn-tip"><i></i>配送地址需要升级</em>
-                <em v-if="current_addr.longitude && current_addr.overdist" class="warn-tip"><i></i>超出配送范围</em>
-              </li>
-            </ul>
-            <img src="../assets/btn_arrow_orange.svg" alt="">
-          </a>
-        </div>
-      </div>
-      <div class="l-r row info-remark">
-        <span class="text">备注</span>
-        <input class="l_auto remarks" type="text" v-model="note" maxlength="30" placeholder="可填写您的其他要求"/>
-      </div>
+    <section class="payment item">
+      <em>支付方式</em>
+      <span><i></i>微信支付</span>
     </section>
-    <ul class="goods-list">
-      <li v-for="goods in cart">
-        <div class="l-r">
-          <div class="l_auto">
-            <div class="name">{{goods.name}}</div>
-            <div class="specname">{{goods.spec_list[goods._specIndex].name}}</div>
-          </div>
-          <div class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<span>&nbsp;×&nbsp;{{goods.spec_list[goods._specIndex]._count}}</span>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <div class="extra-info">
-      <h4>补充信息</h4>
-      <p>
-        配送费 <em v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}元免配送费）</em>
-        <span :class="{'free': deliver.freeDeliverFee && cartData.price >= deliver.freeDeliverFee }">￥<i>{{deliver.originFee | formatCurrency}}</i></span>
-      </p>
-    </div>
-    <div class="l-r-lr order-bar">
-      <div class="price"><span>总价</span>&nbsp;<em class="dollar">¥</em>&nbsp;{{payAmt | formatCurrency}}</div>
-      <button class="btn" @click.stop="overdist" :disabled="btnText!=='确认下单'">{{btnText}}</button>
-    </div>
-    <alert alert-title="温馨提示" :alert-tip="alertTip" :alert-visible.sync="alertVisible"></alert>
-    <confirm :visible.sync="visibleConfirm" :content="confirmText" confirm-event="on-selectedAddr"></confirm>
+    <button class="done-btn" @click.stop="reviewOrder" :disabled="btnText!=='确认下单'">
+      <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
+    </button>
   </div>
 </template>
-
-<script>
+<script type="text/ecmascript-6">
   /* global _hmt */
   /* eslint-disable  */
-  import Config from '../../../methods/Config'
-  import Util from '../../../methods/Util'
-  import alert from '../../../components/alert/alert.vue'
-  import confirm from '../../../components/confirm/confirm'
+  import Config from 'methods/Config'
+  import Util from 'methods/Util'
   export default {
-    components: {
-      alert, confirm
-    },
+    props: ['cart', 'deliver'],
     data () {
       return {
-        alertVisible: false,
-        confirmText: '',
-        visibleConfirm: false,
-        alertTip: '',
         mchnt_id: '',       // 商户ID
         hasAddress: false,
         note: '',           // 备注
         orderId: '',        // 订单ID
         checkout: {},
-        btnText: '确认下单'
+        btnText: '确认下单',
+        isDadaDeliver: false,
+        dadaDeliveryFee: 0,
+        third_order_id: '',   // 达达特需
+        delivery_no: '',   // 达达特需
+        deliveryStatus: '',    // 达达配送费状态
+        getDeliverFeeTimestamp: 0
       }
     },
-    route: {
-      activate (transition) {
-        // let params = transition.from.params || {}
-        let params = this.$route.params
-        this.mchnt_id = params.mchnt_id
-        this.$watch('$root.cart', function (val) {
-          this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
-        })
-        if (this.cart.length) {
-          this.$http({
-            url: Config.dcHost + 'diancan/c/get_addr',
-            method: 'JSONP',
-            data: {
-              format: 'jsonp',
-              userid: this.mchnt_id
-            }
-          }).then(function (res) {
-            if (res.data.respcd === '0000') {
-              let _data = res.data.data.addr
-              if (Util.isEmptyObject(_data)) {
-                this.$root.current_addr = {}
-                return
-              }
-              this.hasAddress = true
-              this.$root.current_addr = _data
-            }
-          })
-          transition.next()
-          return
+    beforeRouteLeave (to, from, next) {
+      this.$messagebox && this.$messagebox.close()
+      next()
+    },
+    created () {
+      let params = this.$route.params
+      this.mchnt_id = params.mchnt_id
+      this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
+      this.$http({
+        url: Config.dcHost + 'diancan/c/get_addr',
+        method: 'JSONP',
+        params: {
+          format: 'jsonp',
+          userid: this.mchnt_id
         }
-        if (this.mchnt_id) {
-          this.$router.replace({
-            name: 'merchant',
-            params: {
-              'mchnt_id': this.mchnt_id
-            }
-          })
-          return
+      }).then(function (res) {
+        let data = res.data
+        if (data.respcd === '0000') {
+          let _data = data.data.addr
+          if (Util.isEmptyObject(_data)) {
+            this.$parent.current_addr = {}
+            return
+          }
+          this.hasAddress = true
+          this.$parent.current_addr = _data
+          if (this.isDadaDeliver) {
+            this.getDeliverFee()
+          }
         }
-        transition.abort()
-      }
+      })
     },
     computed: {
-      cart () {
-        this.$dispatch('on-getCart', this.mchnt_id)
-        return this.$root.cart || []
-      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.$root.cart
+        let cart = this.cart
         cart.forEach((goods, index) => {
           let spec = goods.spec_list[goods._specIndex]
           count += spec._count
@@ -149,28 +112,104 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
-        if (this.deliver.originFee && payAmt < this.deliver.freeDeliverFee) {
-          payAmt += this.deliver.originFee
-        } else if (this.deliver.originFee && this.deliver.freeDeliverFee === 0) {
-          payAmt += this.deliver.originFee
-        }
+        if (this.isDadaDeliver) {   // 达达配送费
+          payAmt += this.dadaDeliveryFee
+        } else if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
+           payAmt += this.deliver.shipping_fee
+         } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
+           payAmt += this.deliver.shipping_fee
+         }
         return payAmt
       },
-      deliver () {
-        return this.$root.deliver
-      },
       current_addr () {
-        return this.$root.current_addr
+        return this.$parent.current_addr
       }
     },
     methods: {
-      overdist () {
-        if (!this.current_addr.longitude) {
-          this.confirmText = '为了让商家更好的为您提供配送服务，请升级您的配送地址。'
-          this.visibleConfirm = true
+      getDeliverFee () { // 获取达达等第三方配送费
+        this.deliveryStatus = '正在获取...'
+        this.getDeliverFeeTimestamp = new Date().getTime()
+        let current_addr = this.current_addr
+        this.third_order_id = `${this.mchnt_id}${current_addr.mobile}${this.getDeliverFeeTimestamp}`
+        this.$http({
+          url: Config.dcHost + 'diancan/dada/query_deliver_fee',
+          method: 'POST',
+          params: {
+            mchnt_id: this.mchnt_id,
+            city_code: current_addr.city_code,
+            third_order_id: this.third_order_id,
+            cargo_price: this.cartData.price,
+            is_prepay: 1,
+            receiver_name: current_addr.contact_name,
+            receiver_addr: `${current_addr.location} ${current_addr.detail_addr}`,
+            receiver_phone: current_addr.mobile,
+            receiver_lat: current_addr.latitude,
+            receiver_lng: current_addr.longitude,
+            format: 'cors'
+          }
+        }).then(function (res) {
+          let data = res.data
+          if (data.respcd === '0000') {
+            let dadaDeliveryFee = data.data.fee
+            this.deliveryStatus = `￥${(dadaDeliveryFee / 100).toFixed(2)}`
+            this.delivery_no = data.data.deliveryNo
+            if (this.dadaDeliveryFee === dadaDeliveryFee) {
+              this.createOrder()
+            }
+            if (this.dadaDeliveryFee) {
+              this.$messagebox({
+                title: '',
+                message: '配送费发生了变化，请重新下单',
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: '好的'
+              })
+            }
+            this.dadaDeliveryFee = dadaDeliveryFee
+          } else {
+            this.deliveryStatus = '获取失败'
+          }
+        })
+      },
+      reviewOrder () {
+        let now = new Date().getTime()
+        if (!this.hasAddress) {
+          this.$messagebox({
+            title: '',
+            message: '您还没有填配送地址哦～',
+            showCancelButton: true,
+            confirmButtonText: '填地址',
+          })
+          .then(action => {
+            if (action === 'confirm') {
+              this.goAddAddress()
+            }
+          })
+          .catch(err => {
+          })
+        } else if (!this.current_addr.longitude) {
+          this.$messagebox({
+            title: '',
+            message: '为了让商家能够精确的知道您在哪，请升级您的配送地址',
+            showCancelButton: false,
+            confirmButtonText: '升级地址',
+          })
+          .then(action => {
+            if (action === 'confirm') {
+              this.goUpdateAddress()
+            }
+          })
         } else if (this.current_addr.overdist) {
-          this.confirmText = '这个地址太远啦，超过了商家的配送范围，可能会被商户拒单哦～'
-          this.visibleConfirm = true
+          this.$messagebox({
+            title: '',
+            message: '您的配送地址超出了商家配送范围，商家无法送餐',
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: '好的'
+          })
+        } else if (this.isDadaDeliver && (now - this.getDeliverFeeTimestamp) >= 160 * 1000) {
+          // 查询配送费后超时下单，需重新查询
+          this.getDeliverFee()
         } else {
           this.createOrder()
         }
@@ -185,11 +224,14 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        if (!this.$root.current_addr.addr_id) {
-          this.$dispatch('on-toast', '请添加配送地址!')
-          return
+        // 达达配送需要多传参数
+
+        let dada_args = {}
+        if (this.isDadaDeliver) {
+          dada_args.delivery_no = this.delivery_no
+          dada_args.third_order_id = this.third_order_id
         }
-        this.btnText = '下单中'
+        this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
         let cart = this.cart || []
         let goodsItem = cart.map((goods) => {
@@ -201,7 +243,7 @@
           }
         })
         let args = {
-          open_id: this.$root.user.open_id,
+          open_id: this.$parent.user.open_id || window.localStorage.getItem('dc_openid'),
           appid: window.localStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           note: this.note,
@@ -210,28 +252,24 @@
           goods_info: JSON.stringify(goodsItem),
           format: 'cors',
           sale_type: 3,
-          addr_id: this.$root.current_addr.addr_id
+          addr_id: this.$parent.current_addr.addr_id
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
           method: 'POST',
-          data: args
+          params: Object.assign(args, dada_args)
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.respmsg)
-            // transition.abort()
+            this.$toast(data.respmsg)
             this.btnText = '确认下单'
             return
           }
           let orderId = data.data.out_trade_no
           this.orderId = orderId
-//          this.$dispatch('on-toast', '订单创建成功：' + orderId)
           this.getPayArgs(data.data)
-          this.btnText = '下单成功'
         }, (response) => {
-          // error callback
+          this.$toast(response.data.data.respmsg)
         })
         _hmt.push(['_trackEvent', 'view-create_order', 'click-createOrderBtn'])
       },
@@ -244,26 +282,23 @@
         this.$http({
           url: Config.payHost + 'trade/v1/checkout',
           method: 'POST',
-          data: args
+          params: args
         }).then((response) => {
-          // success callback
           let data = response.data
           if (data.respcd !== Config.code.OK) {
-            this.$dispatch('on-toast', data.resperr)
-            // transition.abort()
+            this.$toast(data.resperr)
             this.btnText = '确认下单'
             return
           }
           this.pay(data.pay_params)
           this.checkout = data
         }, (response) => {
-          // error callback
+          this.$toast(response.data.data.respmsg)
         })
       },
       pay (payParams) {
-        this.btnText = '支付中'
         if (!Util.isWX) {  // 不是微信中打开
-          this.$dispatch('on-toast', '支付失败，请在微信中打开')
+          this.$toast('支付失败，请在微信中打开')
           this.btnText = '确认下单'
           return
         }
@@ -272,15 +307,12 @@
           window.WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payParams,
             function (res) {
-              // window.alert(JSON.stringify(res))
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
               } else if (res.err_msg === 'getBrandWCPayRequest:fail_no permission to execute') {
-                _this.alertTip = '无法唤起微信支付!请关闭页面，重新下单即可正常使用。';
-                _this.alertVisible = true;
+                _this.$messagebox('无法唤起微信支付', '请关闭页面，重新下单即可正常使用。')
                 _this.btnText = '支付失败';
               } else {
-                // window.alert(res.err_msg)
                 _this.orderPayFail()
               }
               return
@@ -300,7 +332,7 @@
         }
       },
       orderPaySuccess () {  // 订单支付成功
-        this.$dispatch('on-cleanCart', this.mchnt_id)
+        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
         this.queryOrder()
       },
       orderPayFail () { // 支付失败
@@ -316,7 +348,7 @@
         this.$http({
           url: Config.apiHost + 'diancan/c/check_pay',
           method: 'GET',
-          data: args
+          params: args
         }).then((response) => {
           let data = response.data
           if (data.respcd === Config.code.OK) {
@@ -328,248 +360,172 @@
               }
             })
           } else {
-            this.$dispatch('on-toast', data.respcd.respmsg)
+            this.$toast(data.respmsg)
             this.btnText = '确定下单'
           }
         })
       },
       goAddAddress () {
-        this.$router.go({
+        this.$router.push({
           path: '/address/add'
         })
       },
+      goUpdateAddress () {
+        this.$parent.tempAddr = this.$parent.current_addr
+        this.$router.push({
+          name: 'addressMarker'
+        })
+      },
       goList () {
-        this.$router.go({
+        this.$router.push({
           path: '/address/list',
           query: {
             'mchnt_id': this.mchnt_id
           }
         })
       }
-    },
-    events: {
-      'on-selectedAddr' () {
-        this.createOrder()
-      }
     }
   }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-  @import "../../../styles/base/_base";
+  @import "../../../styles/base/_var";
   .create-order-view {
-    background-color: #f7f7f7;
-    padding-bottom: 104px;
+    font-size: 30px;
+    color: $black;
+    padding-bottom: 88px;
   }
-  .edit {
-    color: #2F323A !important;
-    border-color: #FE9B20 !important;
+  .item {
+    padding: 24px 30px;
+    margin-top: 18px;
+    background-color: #fff;
+    border-top: 2px solid #E5E5E5;
+    border-bottom: 2px solid #E5E5E5;
   }
-
-  .text {
-    font-size: 34px;
-    color: #2f323a;
-    line-height: 34px;
-  }
-
-  section {
-    padding: 30px;
-    h2 {
-      font-size: 30px;
-      color: #8a8c92;
-    }
-  }
-
-  section.pay {
-    /*position: relative;*/
-    background: #F7F7F7;
-    /*height: 160px;*/
-    .text {
-      position: relative;
+  .address {
+    border-bottom: 2px dashed $orange;
+    padding: 24px 30px;
+    background:#fff url('../assets/arrow.svg') right 30px center no-repeat;
+    &.add {
+      min-height: 70px;
       display: flex;
       align-items: center;
-      margin-top: 28px;
       img {
-        width: 52px;
-        height: 48px;
-        margin-right: 20px;
+        margin-right: 16px;
+      }
+      img, span {
+        vertical-align: middle;
       }
     }
-    .pay-type_select {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-
-      font-size: 50px;
-      color: #8DDE34;
+    &.content {
+      line-height: 1.4;
     }
   }
-
+  .note {
+    display: flex;
+    label {
+      line-height: 1.5;
+    }
+    textarea {
+      display: block;
+      flex: 1;
+      padding: 0;
+      border: none;
+      line-height: 1.5;
+      resize: none;
+    }
+  }
+  .goods {
+    padding: 0;
+  }
   .goods-list {
-    padding-left: 30px;
+    font-size: 30px;
+    padding: 24px 30px 0;
     li {
-      padding: 30px;
-      padding-left: 0;
-      border-bottom: 2px solid #e5e5e5; /*px*/
-      >div{
-        align-items: center;
+      display: flex;
+      align-items: center;
+      padding-bottom: 24px;
+    }
+    div {
+      flex: 1;
+      strong {
+        display: block;
+        font-weight: normal;
+        line-height: 1.2;
+      }
+      em {
+        font-size: 26px;
+        color: $aluminium;
       }
     }
-    .name {
-      margin-right: 5px;
-      font-size: 30px;
-      line-height: 30px;
-      color: #2f323a;
-    }
-    .specname {
-      margin-top: 15px;
-      font-size: 26px;
-      color: #8A8C92;
-    }
-    .price {
-      width: 210px;
-      text-align: right;
+    span {
       font-size: 34px;
-      color: #fe9b20;
-      line-height: 34px;
-      span {
-        /*font-size: 34px;*/
-        font-size: 75%;
-        color: #8A8C92;
+      em {
+        font-size: 26px;
+        color: $aluminium;
       }
     }
   }
-
-  .row {
-    margin-top: 30px;
-    align-items: center;
-    > *:first-child {
-      width: 128px;
+  .deliver-fee {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 30px 30px;
+    > span {
+      display: block;
+      font-size: 32px;
+      &.except {
+        text-decoration: line-through;
+      }
     }
   }
-
-  /*编号*/
-  .num {
-    padding: 0 10px;
-    /*width: 124px;*/
-    /*width: 350px;*/
-    /*width: 590px;*/
-    height: 68px;
-    border: 2px solid #E5E5E5; /*px*/
-    /*border: 2px solid #fe9b20; !*px*!*/
-    border-radius: 6px;
-    /*text-align: center;*/
-    font-size: 30px;
-    /*color: #8A8C92;*/
+  .total {
+    border-top: 2px solid #E5E5E5;
+    line-height: 90px;
+    padding: 0 30px;
+    del {
+      color: $aluminium;
+      margin-right: 30px;
+    }
+    em {
+      font-size: 40px;
+      line-height: 1;
+    }
+    text-align: right;
   }
-
-  /*备注*/
-  .remarks {
-    padding: 0 10px;
-    border: 2px solid #E5E5E5; /*px*/
-    border-radius: 6px;
-    /*width: 590px;*/
-    height: 68px;
-    font-size: 30px;
+  .payment {
+    display: flex;
+    span {
+      display: block;
+      flex: 1;
+      text-align: right;
+      i {
+        width: 42px;
+        height: 40px;
+        margin-right: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        background: url('../assets/wechat.svg') no-repeat;
+        background-size: 100% auto;
+      }
+    }
   }
-
-  .order-bar {
+  .done-btn {
+    width: 100%;
+    height: 88px;
+    border: none;
+    background-color: #FF8100;
+    color: #fff;
+    font-size: 32px;
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;
-    padding-left: 30px;
-    padding-right: 12px;
-
-    background: #fff;
-    height: 104px;
-    align-items: center;
-
-    span {
-      font-size: 26px;
-      color: #2f323a;
-    }
-    .price {
-      font-size: 40px;
-      color: #2f323a;
-      line-height: 40px;
-    }
-    button {
-      background: #fe9b20;
-      border-radius: 6px;
-      width: 260px;
-      height: 80px;
-      font-size: 40px;
-      color: #fff;
+    &:disabled{
+      background-color: #8A8C92;
     }
   }
-
-  .address-title {
-    height: 92px;
-    line-height: 92px;
-    background: #fff url("../assets/btn_arrow.svg") right 30px center no-repeat;
-    background-size: 18px 34px;
-    border-top: 2px solid $lightGray;
-    border-bottom: 2px solid $lightGray;
-    padding-left: 24px;
-    margin-bottom: 18px;
-    font-size: 30px;
-    color: $black;
-    img {
-      margin-right: 20px;
-      width: 40px;
-      height: 40px;
-    }
-    img, span {
-      vertical-align: middle;
-    }
-  }
-
-  .info {
-    background-color: #ffffff;
-    padding: 0;
-    .address-content {
-      padding: 0 34px;
-      border-bottom: 2px dashed #FE9B20;
-      a {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        ul {
-          flex: 1;
-          li {
-            line-height: 1.4;
-            &:nth-of-type(1) {
-              color: #606470;
-              font-size: 28px;
-              margin: 16px auto 6px;
-            }
-            &:nth-of-type(2) {
-              color: #2F323A;
-              font-size: 30px;
-            }
-            &:nth-of-type(3) {
-              color: #2F323A;
-              font-size: 30px;
-              margin-bottom: 20px;
-            }
-          }
-        }
-        img {
-          display: block;
-          width: 16px;
-          height: 32px;
-        }
-      }
-    }
-  }
-  .info-remark {
-    padding: 0 30px 20px;
-    .text {
-      width: auto;
-      margin-right: 30px;
-    }
+  .update-tip {
+    color: #06B390;
+    font-size: 24px;
   }
   .warn-tip {
     color: #E73B48;
@@ -582,39 +538,6 @@
       vertical-align: text-bottom;
       background: url("../assets/triangle.svg") center center no-repeat;
       background-size: contain;
-    }
-  }
-  .extra-info {
-    padding-left: 30px;
-    h4 {
-      font-size: 30px;
-      color: #8A8C92;
-      margin-top: 44px;
-    }
-    p {
-      padding: 28px 30px 28px 0;
-      font-size: 30px;
-      color: #2F323A;
-      border-bottom: 2px solid #e5e5e5;
-      em {
-        font-style: normal;
-      }
-      span {
-        float: right;
-        font-size: 26px;
-        color: #FE9B20;
-        &.free {
-          color: #8A8C92;
-          i {
-            text-decoration: line-through;
-          }
-        }
-        i {
-          font-size: 34px;
-          font-style: normal;
-          text-decoration: none;
-        }
-      }
     }
   }
 </style>

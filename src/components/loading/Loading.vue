@@ -23,8 +23,9 @@
   .c-loading {
     width: 100%;
     height: 100%;
-    min-height: 80px;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
   }
 
   .loading-center-absolute {

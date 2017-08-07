@@ -1,8 +1,8 @@
 <template>
   <div>
     <ul v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item.url)'>
-        <div v-if="item.order_type==3" class="{{this.theme(item.delivery_state)}}">
+      <li v-for="item in responseData.list" @click='jumpUrl(item)'>
+        <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
             <p>外送单号 <em>{{item.order_sn}}</em>
@@ -15,7 +15,7 @@
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span>
               </p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}}
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
                 <span v-if="item.order_state == 3">已退款</span>
                 <span v-if="item.order_state == 2" class="success">支付成功</span>
               </p>
@@ -28,32 +28,118 @@
             <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime 'yyyy-M-d hh:mm'}} <span></span></p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}} <span></span></p>
             </div>
           </div>
         </div>
       </li>
     </ul>
+    <div v-if="noData" class="no-data">
+      <img src="assets/no_data.png" alt="">
+      <p>暂无数据</p>
+    </div>
+    <loading :visible="loading"></loading>
   </div>
-
-  <div v-if="noData" class="no-data">
-    <img src="assets/no_data.png" alt="">
-    <p>暂无数据</p>
-  </div>
-  <loading :visible="loading"></loading>
-  <Toast :msg.sync="errMsg"></Toast>
 </template>
+<script type="text/ecmascript-6">
+  /* eslint-disable no-unused-vars */
+  import Config from '../../methods/Config'
+  import Util from '../../methods/Util'
+  import loading from '../../components/loading/juhua.vue'
+
+  export default {
+    data () {
+      return {
+        init: true,
+        mId: Util.getRequestParams().mchnt_id || '',
+        openId: window.localStorage.getItem('dc_openid') || '',
+        firstRequest: true,
+        loading: false,
+        loaded: false,
+        responseData: {
+          list: []
+        },
+        noData: false
+      }
+    },
+    computed: {
+      requestData () {
+        return {
+          format: 'jsonp',
+          mchnt_id: this.mId,
+          openid: this.openId,
+          page_size: 10,
+          page: 1
+        }
+      }
+    },
+    components: {
+      loading: loading
+    },
+    created () {
+      this.getData()
+    },
+    mounted () {
+      let _this = this
+      window.onscroll = () => {
+        var scrollTop = document.body.scrollTop
+        var windowHeight = document.body.offsetHeight
+        var scrollHeight = document.body.scrollHeight
+        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          _this.getData()
+        }
+      }
+    },
+    methods: {
+      getData () {
+        let _this = this
+        if (!this.loaded) {
+          this.loading = true
+          if (!this.firstRequest) {
+            this.requestData.page += 1
+          }
+          this.$http({
+            method: 'JSONP',
+            url: Config.apiHost + 'diancan/c/order_list',
+            params: _this.requestData
+          }).then(function (response) {
+            let res = response.data
+            _this.init = false
+            _this.firstRequest = false
+            _this.loading = false
+            if (res.respcd === '0000') {
+              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
+              if (res.data.order_list.length === 0) {
+                _this.noData = true
+              }
+              if (res.data.order_list.length < 10) {
+                _this.loaded = true
+              }
+            } else {
+              _this.$toast(res.respmsg)
+            }
+          })
+        }
+      },
+      jumpUrl (item) {
+        let path = Config.env === 'development' ? '' : 'dc/'
+        let type = item.order_type === 3 ? 'take-out' : 'index'
+        window.location.href = `${window.location.origin}/${path}${type}.html#/order_detail/${item.order_id}/${item.mchnt_id}`
+      },
+      theme (id) {
+        switch (id) {
+        // 0 橘色 1 红色 2 蓝色 3 绿色
+          case 0: return 'border0'
+          case 1: return 'border1'
+          case 2: return 'border2'
+          case 3: return 'border3'
+        }
+      }
+    }
+  }
+</script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../styles/main.scss";
-
-  html {
-    height: 100%;
-  }
-
-  body{
-    background: #F7F7F7;
-    height: 100%;
-  }
   .no-data{
     position: relative;
     padding: 1px;
@@ -189,111 +275,3 @@
     }
   }
 </style>
-<script type="text/ecmascript-6">
-  /*eslint-disable no-unused-vars*/
-  import Config from '../../methods/Config'
-  import Util from '../../methods/Util'
-  import loading from '../../components/loading/juhua.vue'
-  import Toast from '../../components/tips/Toast.vue'
-
-  export default {
-    data () {
-      return {
-        init: true,
-        mId: Util.getRequestParams().mchnt_id || '',
-        openId: window.localStorage.getItem('dc_openid') || '',
-        firstRequest: true,
-        loading: false,
-        loaded: false,
-        errMsg: '',
-        responseData: {
-          list: []
-        },
-        noData: false
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'jsonp',
-          mchnt_id: this.mId,
-          openid: this.openId,
-          page_size: 10,
-          page: 1
-        }
-      }
-    },
-    components: {
-      loading: loading,
-      Toast: Toast
-    },
-    created () {
-      this.getData()
-    },
-    ready () {
-      let _this = this
-      window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
-        var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          _this.getData()
-        }
-      }
-    },
-    methods: {
-      getData () {
-        let _this = this
-        if (!this.loaded) {
-          this.loading = true
-          if (!this.firstRequest) {
-            this.requestData.page += 1
-          }
-          this.$http({
-            url: Config.apiHost + 'diancan/c/order_list',
-//            url: 'http://172.100.111.215:9300/diancan/c/order_list',
-            data: _this.requestData,
-            method: 'JSONP'
-          }).then(function (response) {
-            let res = response.data
-            _this.init = false
-            _this.firstRequest = false
-            _this.loading = false
-            if (res.respcd === '0000') {
-              res.data.order_list.map(function (item) {
-                if (item.order_type === 3) {
-                  item.url = `${Config.apiHost}dc/take-out.html#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                } else {
-                  item.url = `${Config.apiHost}dc/?/#!/order_detail/${item.order_id}/${item.mchnt_id}`
-                }
-              })
-              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
-              if (res.data.order_list.length === 0) {
-                _this.noData = true
-              }
-              if (res.data.order_list.length < 10) {
-                _this.loaded = true
-              }
-            } else {
-              _this.errMsg = res.resperr
-              console.log(_this.errMsg)
-            }
-          })
-        }
-      },
-      jumpUrl (url) {
-        console.log(url)
-        window.location.href = url
-      },
-      theme (id) {
-        switch (id) {
-        // 0 橘色 1 红色 2 蓝色 3 绿色
-          case 0: return 'border0'
-          case 1: return 'border1'
-          case 2: return 'border2'
-          case 3: return 'border3'
-        }
-      }
-    }
-  }
-</script>

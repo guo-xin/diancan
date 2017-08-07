@@ -4,8 +4,9 @@
  * production: 生产环境（默认）
  */
 
-const test = process.env.NODE_ENV === 'buildtest'
+const test = process.env.NODE_ENV === 'testing'
 const dev = process.env.NODE_ENV === 'development'
+
 // 生产环境,线上配置
 // let host = 'http://wx.qfpay.com/'
 // let o2Host = 'https://o2.qfpay.com/'
@@ -32,13 +33,12 @@ if (test) {
 
 // 开发配置
 if (dev) {
-  rootHost = 'https://o.qa.qfpay.net/dc/'
+  rootHost = 'https://o.qa.qfpay.net/'
   payHost = 'https://openapi.qa.qfpay.net/'
   apiHost = 'https://o.qa.qfpay.net/'
   dcHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'
-  // appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
 module.exports = {
@@ -48,6 +48,7 @@ module.exports = {
   o2Host,
   wxmpHost,
   dcHost,
+  env: process.env.NODE_ENV,
   // appid,
   code: {
     OK: '0000', // 成功

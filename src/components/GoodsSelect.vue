@@ -1,14 +1,12 @@
 <template>
   <div class="l-r item-add show-all">
-    <div class="btn-touch" v-show="count" @click.stop="minus($events, goods, activate)">
-      <span class="l-c-c btn-minus">
-      <i class="iconfont">&#xe601;</i>
+    <div class="btn-touch" v-show="count" @click.stop="minus(goods, activate)">
+      <i class="icon-reduce"></i>
     </span>
     </div>
-    <input class="item-count" v-show="count" :value="count" v-model="countValue" @focus="focusHandler(count)" @blur="blurHandler">
-    <div class="btn-touch" @click.stop="plus($events, goods, activate)">
-      <span class="l-c-c btn-plus">
-      <i class="iconfont">&#xe600;</i>
+    <input class="item-count" type="tel" v-show="count" v-model="count" @focus="focusHandler(count)" @blur="blurHandler">
+    <div class="btn-touch" @click.stop="plus(goods, activate)">
+      <i class="icon-add"></i>
     </span>
     </div>
   </div>
@@ -54,13 +52,14 @@
         } else {
           val = e.target.value
         }
-        this.diy(this.$event, this.goods, this.activate, parseInt(val))
+        this.diy(this.goods, this.activate, parseInt(val))
       }
     }
   }
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
+  @import "../styles/iconfont/iconfont.css";
   /*加入购物车*/
   .item-add {
     &.show-all {
@@ -73,28 +72,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
-      /*background-color: #f8f8f8;*/
-      /*border: 2px solid #c0c0c0;*/
-    }
-    .btn-minus, .btn-plus {
-
-      box-sizing: border-box;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      border: 2px solid #C2C2C2;  /*px*/
-      background: #fff;
-
       i {
-        font-size: 30px;
-        color: #FE9B20;
-        font-weight: 700;
+        font-size: 52px;
+        color: #FF8100;
       }
     }
     .item-count {
       display: block;
-      width: 100px;
+      box-sizing: border-box;
+      width: 2em;
       height: 80px;
       line-height: 1;
       margin: 0;

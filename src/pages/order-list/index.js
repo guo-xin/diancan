@@ -2,37 +2,56 @@ import 'lib-flexible'
 import FastClick from 'fastclick'
 window.FastClick = FastClick
 
-import 'core-js/fn/array/find'
-import 'core-js/fn/array/find-index'
-import 'core-js/fn/array/map'
-import 'core-js/fn/object/assign'
-
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import { verify } from 'methods/verify'
+import { isWX } from 'methods/Util'
+import { Toast } from 'qfpay-ui'
 
-import '../../filters/index'
-import App from './App.vue'
-
-Vue.use(VueResource)
-
+// 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
 }
-Vue.http.options.xhr = {
-  withCredentials: true
-}
+// 在使用cors跨域时带上cookie
+Vue.http.options.credentials = true
+// 将请求的数据url化
 Vue.http.options.emulateJSON = true
-import Wechat from '../../methods/Wechat'
-Wechat.verify().then(initVue)
-// initVue()
-Wechat.init()
-Wechat.hideOptionMenu()
+
+import App from './App'
+import 'filters/index'
+import { WechatPlugin, Wechat } from 'methods/Wechat'
+
+Vue.use(VueResource)
+Vue.use(WechatPlugin)
+
+Vue.component(Toast.name, Toast)
+Vue.prototype.$toast = Toast
+
+// 此处声明你需要用到的JS-SDK权限
+let jsApiList = [
+  'checkJsApi',
+  'hideAllNonBaseMenuItem',
+  'showAllNonBaseMenuItem',
+  'hideMenuItems',
+  'showMenuItems',
+  'getLocation',
+  'scanQRCode'
+]
+
+if (process.env.NODE_ENV === 'production' || isWX) {
+  verify().then(initVue)
+  Wechat.init(jsApiList)
+  Wechat.ready()
+  .then(Wechat.hideOptionMenu)
+} else {
+  initVue()
+}
 
 function initVue () {
   /* eslint-disable no-new */
   new Vue({
-    el: 'body',
+    el: '#app',
+    template: '<App/>',
     components: { App }
   })
 }
-/* eslint-disable no-new */

@@ -9,7 +9,7 @@
  * @param exp int 有效时间
  */
 
-exports.Store = {
+const Store = {
   set (key, val, exp) {
     window.localStorage.setItem(key, JSON.stringify({val: val, exp: exp, time: new Date().getTime()}))
   },
@@ -23,6 +23,7 @@ exports.Store = {
   }
 }
 
+export default Store
 // exports.sessionStorage = {
 //   set (key, val, exp) {
 //     window.sessionStorage.setItem(key, {val: val, exp: exp, time: new Date().getTime()})

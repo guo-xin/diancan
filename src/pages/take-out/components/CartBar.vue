@@ -8,50 +8,49 @@
           <span class="count" v-show="cartData.count">{{cartData.count}}</span>
         </div>
         <div class="cart-price">
-          <div>
-            <span>总价&nbsp;¥&nbsp;</span>{{cartData.price | formatCurrency}}
-          </div>
-          <div>
-            <i :class="{'free': cartData.price >= deliver.freeDeliverFee && deliver.freeDeliverFee}">配送费 <em>¥ {{deliver.originFee | formatCurrency}}</em>
-            <span v-if="deliver.freeDeliverFee">（满{{deliver.freeDeliverFee | formatCurrency | noZeroCurrency}}元免配送费）</span></i>
-          </div>
+          <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
+          <p v-show="deliver.shipping_fee">
+            配送费 <em :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}">¥ {{deliver.shipping_fee | formatCurrency}}</em>
+            <span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+          </p>
         </div>
       </div>
-      <!--<a class="row-status" v-link="{name: 'createOrder', params: {mchnt_id: $parent.mchnt_id, address: $parent.address}}">选好了</a>-->
       <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
       <span v-else>
-        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.startDeliveryFee <= cartData.price">选好了</a>
-        <a class="row-status gray-status" v-else>{{deliver.startDeliveryFee | formatCurrency | noZeroCurrency}}元起送</a>
+        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.start_delivery_fee <= cartData.price">选好了</a>
+        <a class="row-status gray-status" v-else>{{deliver.start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
       </span>
     </div>
     <!--列表-->
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
-    <div class="cart-list" v-show="visibleList" transition="totop">
-      <div class="title" @click="cleanCart">
-        清空购物车
-        <img
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAABFZJREFUaAXtWs1rE0EUnzdJmxb8QMUv1Ap6ETwI3vRSPYjWi6jQqyBKKW0DTZPcBEVPTZpAkraoRfSif4DgJ2q96E30IHjx4jdKBVFp2jT7fLO6Mpmtqbuzy2ZhA2HfzLz3e+83v2FmYQeYh79S6VZirvb6AjI8wZCt1YIG9gWQX020bzuTTB6e08KSguOSrW0S2RuIeFQbSADQhCEzMnPzr7dT67gnmAQCXgHliuV9WMdHXuHJOBCD/ZnhoWm5z63N3QaqcWjgWbXPq7aX2J4ovJi6EON7M8ODT92QzhUre7BuPJFjvVLZE4VVBQDgrluygqSIBWD3ZMJqDnnMia1NOF8sHaMNprshKYdzDW03Dc7PNoRRDjNXQ6fzhuslnZucXMdma+L4OY/IElZqU92RoUNWW+eZGyvfoV3/oIVBqs/RNnuGdbZdy/T3f7b6nTxNwoXC5KY6LoxSYDcl2OQEQPalgmYBYXc6PfRK7ndr5/PlHQj4jCa00y0GCfCeYh/HIJ5NpfrfQ6l0eXN1vvqcDr41bkFFHAEjZ3BqZGTwig6OGjs2VjlpMJwiIVyvxt/1sa+Jts5dvFqrkrJ6ZInuNwb8iNdkRaEmJmGbOdTZcNCmVbJacOXAcJ+DOMkVZmgJPyFpMyuXt2/NpAZuSoOemgJb5ADOsmZOBjNuEgiuMJovoRycTSe1lo6M1Qq2yk/7WGoFUk5qiAg7ma0w+kJurPSBdrCNYSzeac204X3kDOGx08Cw+iODaZ5o78gQ869hJfH/dcNMR1tHlieTp9+JNxB6U7pOh/uH/wcIh6d4tRTc4jy+S3C1nbnqubXUuZwvlnuMOl4y6fPY6Wxq4E6zqfDbf6n6tY8lNNhFIrhZ/AGN38SbMPbbv0lqc0ifMOIWKwm94P+1rT71KfvItupntWUf2bbGnT61CTtNGLR/RDhoBfzOHyns9wwHjR8pHLQCfuePFPZ7hoPGjxQOWgG/80cK+z3DQeNHCgetgN/5I4X9nuGg8SOFg1bA7/yRwn7PcND4kcJBK+B3fm2F6TPGW6tI2bb61KfsI9uqn9WWfWTbGnf61CfMWR8lfSf+dAdD2E1/f3x882+anAa1rw+nh4duE86SXxysQvz2t/L866mt8L+AW7U/ItyqynhVl01h2gl/yODF4sXQ3P9Qa1W5CF42wgzxjUx4AWuNV4PlwRazbbUqXES5dsLKxWyagNGJiYlVLcbNVo5ZI9UqDyCH+3Jb2LZjKQZ8agGNJI2ZkyE+Qv+crb/IFSpZTMB0dmDgkwoSZHt0fHxDrGp0U4055YO5AbH4lFqb7Y6HcKCL2WUKHlSdw9SmW7Pj6ZGkjYN9SROrFcvaU3Tz/EGYCMq1AoOHXVs2pOQ+y16UcF9fX23lskQP7XIV+tct5xA8DaHs1q71Pb29vfOL1bvokpYdC4XKzjoap+gW2wHawLpobLk83gL2dyLxllbkPbH/pFKDL5vV9AvkBnZAJrqyNgAAAABJRU5ErkJggg==">
-      </div>
-      <div class="cart-list_box" v-el:cart>
-        <ul v-show="cart.length">
-          <li v-for="goods in cart">
-            <div>
-              <div class="name one_text">{{goods.name}}</div>
-              <div class="goods-info">
-                <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}</span><span class="spec">{{goods.spec_list[goods._specIndex].name}}</span>
+    <transition name="totop">
+      <div class="cart-list" v-show="visibleList">
+        <div class="title" @click="cleanCartHandle">
+          <img
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAABFZJREFUaAXtWs1rE0EUnzdJmxb8QMUv1Ap6ETwI3vRSPYjWi6jQqyBKKW0DTZPcBEVPTZpAkraoRfSif4DgJ2q96E30IHjx4jdKBVFp2jT7fLO6Mpmtqbuzy2ZhA2HfzLz3e+83v2FmYQeYh79S6VZirvb6AjI8wZCt1YIG9gWQX020bzuTTB6e08KSguOSrW0S2RuIeFQbSADQhCEzMnPzr7dT67gnmAQCXgHliuV9WMdHXuHJOBCD/ZnhoWm5z63N3QaqcWjgWbXPq7aX2J4ovJi6EON7M8ODT92QzhUre7BuPJFjvVLZE4VVBQDgrluygqSIBWD3ZMJqDnnMia1NOF8sHaMNprshKYdzDW03Dc7PNoRRDjNXQ6fzhuslnZucXMdma+L4OY/IElZqU92RoUNWW+eZGyvfoV3/oIVBqs/RNnuGdbZdy/T3f7b6nTxNwoXC5KY6LoxSYDcl2OQEQPalgmYBYXc6PfRK7ndr5/PlHQj4jCa00y0GCfCeYh/HIJ5NpfrfQ6l0eXN1vvqcDr41bkFFHAEjZ3BqZGTwig6OGjs2VjlpMJwiIVyvxt/1sa+Jts5dvFqrkrJ6ZInuNwb8iNdkRaEmJmGbOdTZcNCmVbJacOXAcJ+DOMkVZmgJPyFpMyuXt2/NpAZuSoOemgJb5ADOsmZOBjNuEgiuMJovoRycTSe1lo6M1Qq2yk/7WGoFUk5qiAg7ma0w+kJurPSBdrCNYSzeac204X3kDOGx08Cw+iODaZ5o78gQ869hJfH/dcNMR1tHlieTp9+JNxB6U7pOh/uH/wcIh6d4tRTc4jy+S3C1nbnqubXUuZwvlnuMOl4y6fPY6Wxq4E6zqfDbf6n6tY8lNNhFIrhZ/AGN38SbMPbbv0lqc0ifMOIWKwm94P+1rT71KfvItupntWUf2bbGnT61CTtNGLR/RDhoBfzOHyns9wwHjR8pHLQCfuePFPZ7hoPGjxQOWgG/80cK+z3DQeNHCgetgN/5I4X9nuGg8SOFg1bA7/yRwn7PcND4kcJBK+B3fm2F6TPGW6tI2bb61KfsI9uqn9WWfWTbGnf61CfMWR8lfSf+dAdD2E1/f3x882+anAa1rw+nh4duE86SXxysQvz2t/L866mt8L+AW7U/ItyqynhVl01h2gl/yODF4sXQ3P9Qa1W5CF42wgzxjUx4AWuNV4PlwRazbbUqXES5dsLKxWyagNGJiYlVLcbNVo5ZI9UqDyCH+3Jb2LZjKQZ8agGNJI2ZkyE+Qv+crb/IFSpZTMB0dmDgkwoSZHt0fHxDrGp0U4055YO5AbH4lFqb7Y6HcKCL2WUKHlSdw9SmW7Pj6ZGkjYN9SROrFcvaU3Tz/EGYCMq1AoOHXVs2pOQ+y16UcF9fX23lskQP7XIV+tct5xA8DaHs1q71Pb29vfOL1bvokpYdC4XKzjoap+gW2wHawLpobLk83gL2dyLxllbkPbH/pFKDL5vV9AvkBnZAJrqyNgAAAABJRU5ErkJggg==">
+          <span>清空购物车</span>
+        </div>
+        <div class="cart-list_box" ref="cart">
+          <ul v-show="cart.length">
+            <li v-for="goods in cart">
+              <div>
+                <div class="name one_text">{{goods.name}}</div>
+                <div class="goods-info">
+                  <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}</span><span class="spec">{{goods.spec_list[goods._specIndex].name}}</span>
+                </div>
               </div>
-            </div>
-            <!--商品选择-->
-            <goods-select class="goods-select-container"
-                          :goods="goods"
-                          :activate="goods._specIndex"
-                          :plus="plus"
-                          :minus="minus"
-                          :diy="diy"></goods-select>
-          </li>
-        </ul>
+              <!--商品选择-->
+              <goods-select class="goods-select-container"
+                            :goods="goods"
+                            :activate="goods._specIndex"
+                            :plus="plus"
+                            :minus="minus"
+                            :diy="diy"></goods-select>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -63,7 +62,7 @@
     components: {
       GoodsSelect
     },
-    props: ['plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery'],
+    props: ['cart', 'plus', 'minus', 'deliver', 'diy', 'overtime', 'nodelivery'],
     data () {
       return {
         visibleList: false,
@@ -71,27 +70,19 @@
       }
     },
     created () {
-      this.$watch('$root.cart', function (val) {
-        this.deliver.needFee = this.cartData.price < this.deliver.freeDeliverFee
-        this.refresh()
-      })
       this.$nextTick(() => {
-        this.scroller = new BScroll(this.$els.cart, {
+        this.scroller = new BScroll(this.$refs.cart, {
           startX: 0,
           startY: 0,
-          click: true,
-          bounce: false
+          click: true
         })
       })
     },
     computed: {
-      cart () {
-        return this.$root.cart
-      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.$root.cart
+        let cart = this.cart
         cart.forEach((goods, index) => {
           let spec = goods.spec_list[goods._specIndex]
           count += spec._count
@@ -101,9 +92,6 @@
           count,
           price
         }
-      },
-      deliver () {
-        return this.$root.deliver
       },
       calcBtnText () {
         let btnText = ''
@@ -120,8 +108,11 @@
         this.visibleList = !this.visibleList
         this.refresh()
       },
-      cleanCart () {
-        this.$dispatch('on-cleanCart', this.$parent.mchnt_id)
+      cleanCartHandle () {
+        this.$root.eventHub.$emit('cleanCart', this.$parent.mchnt_id)
+        this.$emit('cleanGoods')
+        this.visibleList = false
+        this.refresh()
         _hmt.push(['_trackEvent', 'view-merchant', 'click-cleanCart'])
       },
       refresh () {
@@ -131,7 +122,12 @@
         })
       },
       goNextView () {
-        this.$router.go({name: 'createOrder', params: {mchnt_id: this.$parent.mchnt_id}})
+        this.$router.push({
+          name: 'createOrder',
+          params: {
+            mchnt_id: this.$route.params.mchnt_id
+          }
+        })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])
       }
     }
@@ -181,15 +177,13 @@
       display: block;
       top: -16px;
       right: -16px;
+      box-sizing: border-box;
       padding: 0 10px;
-
-      /*padding: 2px 10px;*/
       min-width: 36px;
       height: 36px;
       line-height: 36px;
       border-radius: 18px;
       text-align: center;
-      /*font-size: 32px;*/
       font-size: 26px;
       background-color: #FD5359;
     }
@@ -197,43 +191,36 @@
 
   .cart-price {
     padding-left: 40px;
-    font-size: 40px;
+    font-size: 26px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    div {
-      flex: none;
-      line-height: 1;
+    line-height: 1;
+    span {
+      em {
+        font-size: 40px;
+      }
+    }
+    p {
+      margin-top: 6px;
+      color: #8A8C92;
       span {
         font-size: 26px;
       }
-      i {
-        &.free {
-          color: #8A8C92;
-          em {
-            text-decoration: line-through;
-          }
-        }
-        font-size: 26px;
-        color: #FFFFFF;
-        font-style: normal;
-        em {
-          font-style: normal;
-        }
+      .except {
+        text-decoration: line-through;
       }
     }
   }
 
   .row-status {
-    margin-right: 12px;
     display: block;
-    width: 192px;
-    height: 80px;
-    line-height: 80px;
+    width: 200px;
+    height: 104px;
+    line-height: 104px;
     text-align: center;
-    background-color: #FE9B20;
-    border-radius: 6px; /*px*/
-    font-size: 40px;
+    background-color: #FF8100;
+    font-size: 36px;
     color: #fff;
   }
   .gray-status {
@@ -269,21 +256,19 @@
       border-top: 30px solid #fff;
     }
     .title {
-      display: flex;
-      align-items: center;
-      flex-flow: row-reverse;
-
+      text-align: right;
       padding-right: 32px;
       height: 88px;
       line-height: 88px;
       font-size: 30px;
-      /*border-bottom: 2px solid #c0c0c0; !*px*!*/
-      background: #f7f7f7;
+      background-color: #f7f7f7;
       color: #2F323A;
+      span, img {
+        vertical-align: middle;
+      }
       img {
         width: 30px;
         height: 30px;
-        margin-right: 16px;
       }
     }
     .cart-list_box {
@@ -324,22 +309,12 @@
     }
   }
 
-  .totop-transition {
+  .totop-enter-active, .totop-leave-active {
     transition: all .3s ease;
-    /*overflow: hidden;*/
     transform: translateY(0);
   }
-
-  .totop-enter, .totop-leave {
-    /*height: 0;*/
-    /*padding: 0 10px;*/
-
-    transform: translateY(110%);
-
+  .totop-enter, .totop-leave-active {
     opacity: 0;
-  }
-
-  .no-data {
-    height: 120px !important;
+    transform: translateY(110%);
   }
 </style>
