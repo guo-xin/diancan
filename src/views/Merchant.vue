@@ -40,7 +40,7 @@
                             :minus="minusHandler"
                             :diy="diyHandler">
               </goods-select>
-              <div v-else class="l-c-c goods-select-container spec-btn" :class="{'select': hasSelect(goods)}">
+              <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
               </div>
             </li>
@@ -530,14 +530,6 @@
     position: absolute;
     right: 0;
     bottom: 0;
-  }
-
-  .select {
-    button {
-      border: 0 !important;
-      background-color: #FE9B20 !important;
-      color: #fff !important;
-    }
   }
 
   .totop1-transition {
