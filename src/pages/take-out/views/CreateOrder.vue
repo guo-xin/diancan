@@ -243,8 +243,8 @@
           }
         })
         let args = {
-          open_id: this.$parent.user.open_id || window.localStorage.getItem('dc_openid'),
-          appid: window.localStorage.getItem('dc_appid'),
+          open_id: this.$parent.user.open_id || sessionStorage.getItem('dc_openid'),
+          appid: sessionStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           note: this.note,
           pay_way: 'weixin',

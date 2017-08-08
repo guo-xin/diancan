@@ -15,6 +15,17 @@ Vue.http.options.headers = {
 Vue.http.options.credentials = true
 // 将请求的数据url化
 Vue.http.options.emulateJSON = true
+// 接口返回未登录时，重新获取 csid
+Vue.http.interceptors.push(function (request, next) {
+  next(function (response) {
+    let data = response.body
+    if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
+      let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
+      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      window.location.replace(url)
+    }
+  })
+})
 
 import App from './App'
 import 'filters/index'

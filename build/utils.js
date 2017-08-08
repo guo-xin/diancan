@@ -104,7 +104,6 @@ exports.entry = (function () {
  * development: 开发
  * testing: 测试环境
  * production: 生产环境（默认）
- * online: 线上环境
  */
 exports.env = (function () {
   var env = process.argv[2] || 'production';
