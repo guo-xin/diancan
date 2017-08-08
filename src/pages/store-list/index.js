@@ -6,6 +6,7 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import { verify } from 'methods/verify'
 import { Toast } from 'qfpay-ui'
+import config from 'methods/Config'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
