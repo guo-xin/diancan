@@ -35,8 +35,8 @@
       </li>
     </ul>
     <div v-if="noData" class="no-data">
-      <img src="assets/no_data.png" alt="">
-      <p>暂无数据</p>
+      <img src="./assets/no_data.png" alt="">
+      <p>暂无订单</p>
     </div>
     <loading :visible="loading"></loading>
   </div>
@@ -51,7 +51,7 @@
     data () {
       return {
         init: true,
-        mId: Util.getRequestParams().mchnt_id || '',
+        mId: Util.getRequestParams().mchnt_id || sessionStorage.getItem('mchntId') || '',
         openId: window.localStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
@@ -142,7 +142,6 @@
   @import "../../styles/main.scss";
   .no-data{
     position: relative;
-    padding: 1px;
     width: 100%;
     height: 100%;
     img{
@@ -154,6 +153,7 @@
     p{
       text-align: center;
       font-size: 30px;
+      line-height: 3;
     }
   }
   ul {
