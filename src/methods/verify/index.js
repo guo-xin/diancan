@@ -19,6 +19,7 @@ const getTakeAuthInfo = (mchtId) => {
     .then((res) => {
       let data = res.data
       if (data.respcd === Config.code.OK) {
+        sessionStorage.setItem('dc_appid', data.data.appid)
         resolve(data.data)
       } else {
         window.alert(data.resperr)
@@ -42,8 +43,7 @@ const getWeixinCallBack = (data) => {
     })
     .then((res) => {
       if (res.data.respcd === Config.code.OK) {
-        window.localStorage.setItem('dc_appid', res.data.data.appid)
-        window.localStorage.setItem('dc_openid', res.data.data.openid)
+        sessionStorage.setItem('dc_openid', res.data.data.openid)
         resolve()
       } else {
         // reject(data)
@@ -92,7 +92,7 @@ const getMchntId = () => {
 
 const isLogin = () => {
   let hasCsid = Util.getCookie('csid')
-  let hasOpenid = localStorage.getItem('dc_openid')
+  let hasOpenid = sessionStorage.getItem('dc_openid')
   return hasCsid && hasOpenid
 }
 

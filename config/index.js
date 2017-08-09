@@ -1,7 +1,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path')
 
-const isOnline = process.argv[2] === 'online'
+const isOnline = process.argv[2] === 'production'
 const isTesting = process.argv[2] === 'testing'
 
 // 在这定义七牛云的地址

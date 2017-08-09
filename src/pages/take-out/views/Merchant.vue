@@ -126,7 +126,7 @@
       let args = {
         mchnt_id: this.mchnt_id,
         format: 'jsonp',
-        open_id: window.localStorage.getItem('dc_openid') || '',
+        open_id: sessionStorage.getItem('dc_openid') || '',
         sale_type: 3
       }
       this.$http({

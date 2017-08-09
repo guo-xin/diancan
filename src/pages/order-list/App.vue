@@ -52,7 +52,7 @@
       return {
         init: true,
         mId: Util.getRequestParams().mchnt_id || sessionStorage.getItem('mchntId') || '',
-        openId: window.localStorage.getItem('dc_openid') || '',
+        openId: sessionStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
