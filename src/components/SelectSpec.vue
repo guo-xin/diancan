@@ -1,5 +1,5 @@
 <template>
-  <div class="spec-container" v-if="visible" @click.stop="closeSpec()">
+  <div class="spec-container" v-if="visible">
     <transition name="zoomInOut">
       <div class="spec" v-if="visible">
         <div class="close" @click.stop="closeSpec()"><i class="icon-closed"></i></div>
@@ -29,6 +29,7 @@
                       :diy="diy"></goods-select>
       </div>
     </transition>
+    <div class="mark" @click.stop="closeSpec()" @touchmove.prevent></div>
   </div>
 </template>
 
@@ -73,11 +74,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, .7);
     z-index: 112;
   }
 
   .mark {
+    background-color: rgba(0, 0, 0, .7);
     position: absolute;
     z-index: -1;
     width: 100%;
@@ -122,32 +123,30 @@
   }
 
   .spec-list {
-    display: flex;
-    flex-wrap: wrap;
+    max-height: 400px;
+    overflow-y: scroll;
     padding-top: 38px;
-  }
+    li {
+      display: inline-block;
+      margin-right: 30px;
+      margin-bottom: 36px;
+      padding: 10px 20px;
+      line-height: 1.4;
+      border-radius: 32px;
+      font-size: 30px;
 
-  li {
-    margin-right: 30px;
-    margin-bottom: 38px;
-    padding: 0 20px;
-    height: 64px;
-    line-height: 64px;
-    border-radius: 32px;
-    font-size: 30px;
+      color: #FF8100;
+      border: 2px solid #FF8100;
 
-    color: #FF8100;
-    border: 2px solid #FF8100;  /*px*/
-
-    &.activate {
-      background-color: #FF8100;
-      color: #fff;
-      border: none;
+      &.activate {
+        background-color: #FF8100;
+        color: #fff;
+        border: none;
+      }
     }
   }
 
   .price {
-    /*padding-top: 48px;*/
     height: 134px;
     line-height: 134px;
     font-size: 34px;
