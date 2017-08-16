@@ -332,8 +332,11 @@
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
         this.showSpec = true
+        // 移动端滚动穿透问题
+        document.querySelector('body').classList.add('popup-open')
       },
       hideSpecHandler () {
+        document.querySelector('body').classList.remove('popup-open')
         this.showSpec = false
       },
       showDetailHandler (goods) {

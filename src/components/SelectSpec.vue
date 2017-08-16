@@ -1,16 +1,18 @@
 <template>
-  <div class="spec-container" v-if="visible" @click.stop="closeSpec()">
+  <div class="spec-container" v-if="visible">
     <transition name="zoomInOut">
       <div class="spec" v-if="visible">
         <div class="close" @click.stop="closeSpec()"><i class="icon-closed"></i></div>
-        <div class="head line">{{goods.name}}</div>
-        <section class="body">
-          <ul class="spec-list line">
-            <li v-for="(_spec, index) in goods.spec_list"
-                :class="{'activate': index === goods._lastSpec}"
-                @click.stop.prevent="selectSpec(index)">{{_spec.name}}
-            </li>
-          </ul>
+        <div class="head">{{goods.name}}</div>
+        <section>
+          <div class="spec-list-container" ref="spec">
+            <ul class="spec-list">
+              <li v-for="(_spec, index) in goods.spec_list" v-show="_spec.name"
+                  :class="{'activate': index === goods._lastSpec}"
+                  @click.stop.prevent="selectSpec(index)">{{_spec.name}}
+              </li>
+            </ul>
+          </div>
           <div class="price">
             单价：<span><em class="dollar">¥&nbsp;</em>{{spec.txamt|formatCurrency}}</span>
             <span class="orgtxamt text-line-through" v-if="spec.orgtxamt && spec.orgtxamt !== spec.txamt"><em>¥&nbsp;</em>{{spec.orgtxamt|formatCurrency}}</span>
@@ -29,16 +31,32 @@
                       :diy="diy"></goods-select>
       </div>
     </transition>
+    <div class="mark" @click.stop="closeSpec()" @touchmove.stop.prevent></div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll'
   import GoodsSelect from '../components/GoodsSelect'
   export default {
     components: {GoodsSelect},
     props: ['goods', 'plus', 'minus', 'diy', 'visible'],
     data () {
       return {
+        scroller: null
+      }
+    },
+    watch: {
+      'visible': function (val, oldVal) {
+        if (val) {
+          this.$nextTick(() => {
+            this.scroller = new BScroll(this.$refs.spec, {
+              startX: 0,
+              startY: 0,
+              click: true
+            })
+          })
+        }
       }
     },
     computed: {
@@ -57,6 +75,12 @@
       },
       closeSpec () {
         this.$emit('hideSpecHandler')
+      },
+      refresh () {
+        this.$nextTick(() => {
+          this.scroller.refresh()
+          this.scroller.scrollTo(0, 0)
+        })
       }
     }
   }
@@ -73,11 +97,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, .7);
     z-index: 112;
   }
 
   .mark {
+    background-color: rgba(0, 0, 0, .7);
     position: absolute;
     z-index: -1;
     width: 100%;
@@ -110,6 +134,7 @@
   .head {
     height: 86px;
     line-height: 86px;
+    border-bottom: 2px solid #E5E5E5;
     font-size: 34px;
     color: #2F323A;
     overflow: hidden;
@@ -117,41 +142,39 @@
     text-overflow: ellipsis;
   }
 
-  .line {
-    border-bottom: 2px solid #E5E5E5; /*px*/
+  .spec-list-container {
+    max-height: 400px;
+    overflow: hidden;
   }
 
   .spec-list {
-    display: flex;
-    flex-wrap: wrap;
     padding-top: 38px;
-  }
+    li {
+      display: inline-block;
+      margin-right: 30px;
+      margin-bottom: 36px;
+      padding: 10px 20px;
+      line-height: 1.4;
+      border-radius: 32px;
+      font-size: 30px;
 
-  li {
-    margin-right: 30px;
-    margin-bottom: 38px;
-    padding: 0 20px;
-    height: 64px;
-    line-height: 64px;
-    border-radius: 32px;
-    font-size: 30px;
+      color: #FF8100;
+      border: 2px solid #FF8100;
 
-    color: #FF8100;
-    border: 2px solid #FF8100;  /*px*/
-
-    &.activate {
-      background-color: #FF8100;
-      color: #fff;
-      border: none;
+      &.activate {
+        background-color: #FF8100;
+        color: #fff;
+        border: none;
+      }
     }
   }
 
   .price {
-    /*padding-top: 48px;*/
     height: 134px;
     line-height: 134px;
     font-size: 34px;
     color: #2F323A;
+    border-top: 2px solid #E5E5E5;
     span {
       color: #FE9B20;
     }

@@ -29,7 +29,7 @@
                   <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
                 </div>
                 <div class="l_auto list-content">
-                  <h4 class="title one_text" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
+                  <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
                   <p class="old-price text-line-through" v-if="goods.spec_list[0].orgtxamt && goods.spec_list[0].orgtxamt !== goods.spec_list[0].txamt">¥&nbsp;{{goods.spec_list[0].orgtxamt | formatCurrency}}</p>
                   <p v-else class="old-price"></p>
                   <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
@@ -342,9 +342,12 @@
       },
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
+        // 移动端滚动穿透问题
+        document.querySelector('body').classList.add('popup-open')
         this.showSpec = true
       },
       hideSpecHandler () {
+        document.querySelector('body').classList.remove('popup-open')
         this.showSpec = false
       },
       showDetailHandler (goods) {
