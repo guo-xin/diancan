@@ -29,7 +29,7 @@
                       :diy="diy"></goods-select>
       </div>
     </transition>
-    <div class="mark" @click.stop="closeSpec()" @touchmove.prevent></div>
+    <div class="mark" @click.stop="closeSpec()"></div>
   </div>
 </template>
 

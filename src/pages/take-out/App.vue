@@ -100,6 +100,12 @@
   @import "../../styles/main.scss";
   @import "../../styles/iconfont/iconfont.css";
 
+  // 移动端滚动穿透问题
+  body.popup-open {
+    position: fixed;
+    width: 100%;
+  }
+
   #app-container {
     height: 100%;
     min-height: 100%;
