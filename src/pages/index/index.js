@@ -77,7 +77,7 @@ function initVue () {
     template: '<App/>',
     components: { App },
     data: {
-      eventHub: new Vue()
+      // eventHub: new Vue()
     }
   })
 }

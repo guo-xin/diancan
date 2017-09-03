@@ -15,12 +15,12 @@
     </section>
     <section class="goods item">
       <ul class="goods-list">
-        <li v-for="goods in cart">
+        <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+            <em>{{goods.spec.name}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
       <div class="deliver-fee">
@@ -47,7 +47,7 @@
   import Config from 'methods/Config'
   import Util from 'methods/Util'
   export default {
-    props: ['cart', 'deliver'],
+    props: ['deliver'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -96,14 +96,17 @@
       })
     },
     computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.cart
-        cart.forEach((goods, index) => {
-          let spec = goods.spec_list[goods._specIndex]
-          count += spec._count
-          price += spec._count * spec.txamt
+        let carts = this.carts || []
+        carts.forEach((goods, index) => {
+          let spec = goods.spec
+          count += goods.count
+          price += goods.count * spec.txamt
         })
         return {
           count,
@@ -233,15 +236,14 @@
         }
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        let cart = this.cart || []
-        let goodsItem = cart.map((goods) => {
-          let spec = goods.spec_list[goods._specIndex]
-          return {
-            id: spec.id,
-            count: spec._count
-            // cate_id: goods.cate_id
-          }
-        })
+        // let goodsItem = this.carts.map((goods) => {
+        //   let spec = goods.spec
+        //   return {
+        //     id: spec.id,
+        //     count: goods.count
+        //     // cate_id: goods.cate_id
+        //   }
+        // })
         let args = {
           open_id: this.$parent.user.open_id || sessionStorage.getItem('dc_openid'),
           appid: sessionStorage.getItem('dc_appid'),
@@ -249,7 +251,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.payAmt,
-          goods_info: JSON.stringify(goodsItem),
+          goods_info: this.carts,
           format: 'cors',
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id

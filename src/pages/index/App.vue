@@ -2,10 +2,7 @@
   <div id="app">
     <router-view
       @toast="toast"
-      :cart="cart"
       @changeCart="changeCart"
-      @saveCartEv="saveCartEv"
-      @getCart="getCart"
       @hideOptionMenu="hideOptionMenu"
       @menuShareAppMessage="menuShareTimeline"
       @menuShareTimeline="menuShareTimeline"
@@ -15,26 +12,21 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Store from 'methods/Store'
   import { STORE_CART } from 'methods/Config'
+  import store from '../../vuex/store'
 
   export default {
+    store,
     data () {
       return {
         user: {
           open_id: ''
         },
         appId: '',
-        cart: [],
         msg: ''
       }
     },
     created () {
-      // 清空购物车
-      this.$root.eventHub.$on('cleanCart', (mchntId) => {
-        this.cart = []
-        this.saveCartEv(mchntId, [])
-      })
     },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
@@ -52,40 +44,43 @@
         return STORE_CART + '_' + mchntId
       },
       saveCart (mchntId) {
-        Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
+        // Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
       },
       toast (msg) {
         this.msg = msg
       },
-      changeCart (goods, specIndex, mchntId) {
-        let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
-        let index = -1
-        let spec = goods.spec_list[specIndex]
-        this.cart.find((g, _index) => {
-          let isfind = g.spec_list[g._specIndex].id === spec.id
-          if (isfind) {
-            index = _index
-          }
-          return isfind
+      changeCart (goods, mchntId) {
+        let spec = goods.spec ? goods.spec : goods.spec_list[goods._lastSpec]
+        let attrValues = []
+        let attrValuesString = ''
+        goods.attr_list.map((attr) => {
+          let attrValue = attr.attr_value_list[attr._lastAttr]
+          attrValues.push(attrValue)
+          attrValuesString += `，${attrValue.value_name}`
         })
-        if (index < 0) {  // 新增
-          spec._count = 1
-          this.cart.push(divGoods)
-        } else {
-          if (spec._count) { // 修改数量
-            this.$set(this.cart, index, divGoods)
-          } else {  // 移除
-            this.cart.splice(index, 1)
+
+        let cartIndex = this.cart.findIndex((goods, index) => {
+          return goods.spec.id === spec.id && goods.attrValuesString === attrValuesString
+        })
+
+        if (cartIndex > 0) {    // +1
+          this.cart[cartIndex].count += 1
+        } else if (cartIndex === 0) {   // 移除
+          this.cart.splice(cartIndex, 1)
+        } else {  // 新增
+          let cartGoods = {
+            name: goods.name,
+            cate_id: goods.cate_id,
+            unionid: goods.unionid,
+            spec: spec,
+            count: 1,
+            attrValues: attrValues,
+            attrValuesString: attrValuesString
           }
+          store.commit('ADDCARTS', cartGoods)
+          this.cart.push(cartGoods)
         }
-        this.saveCart(mchntId)
-      },
-      saveCartEv (mchntId, cart) {
-        this.cart = cart || []
-        this.saveCart(mchntId)
-      },
-      getCart (mchntId) {
-        this.cart = Store.get(this.getKey(mchntId)) || []
+        // this.saveCart(mchntId)  存localStorage
       },
       hideOptionMenu () {  // 隐藏右上角菜单
         this.$wechat.hideOptionMenu()

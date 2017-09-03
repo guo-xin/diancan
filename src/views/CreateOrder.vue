@@ -13,12 +13,12 @@
     </section>
     <section class="order item">
       <ul class="goods-list">
-        <li v-for="goods in cart">
+        <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+            <em>{{goods.spec.name}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
       <div class="total">
@@ -39,7 +39,6 @@
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
   export default {
-    props: ['cart'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -58,13 +57,16 @@
       this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
     },
     computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      },
       cartData () {
         let count = 0
         let price = 0
-        this.cart.forEach((goods, index) => {
-          let spec = goods.spec_list[goods._specIndex]
-          count += spec._count
-          price += spec._count * spec.txamt
+        this.carts.forEach((goods, index) => {
+          let spec = goods.spec
+          count += goods.count
+          price += goods.count * spec.txamt
         })
         return {
           count,
@@ -86,15 +88,17 @@
          */
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        let cart = this.cart || []
-        let goodsItem = cart.map((goods) => {
-          let spec = goods.spec_list[goods._specIndex]
-          return {
-            id: spec.id,
-            count: spec._count
-            // cate_id: goods.cate_id
-          }
-        })
+        // let cart = this.cart || []
+        // let goodsItem = cart.map((goods) => {
+        //   let spec = goods.spec_list[goods._specIndex]
+        //   return {
+        //     id: spec.id,
+        //     count: spec._count
+        //     // cate_id: goods.cate_id
+        //   }
+        // })
+        console.log('this.carts')
+        console.log(this.carts)
         let args = {
           open_id: this.$parent.user.open_id,
           appid: sessionStorage.getItem('dc_appid'),
@@ -103,7 +107,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.cartData.price,
-          goods_info: JSON.stringify(goodsItem),
+          goods_info: JSON.stringify(this.carts),
           format: 'cors'
         }
         this.$http({

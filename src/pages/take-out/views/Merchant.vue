@@ -14,7 +14,7 @@
           <ul class="">
             <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}" @click="groupSelect(index, group)">
               <div>
-                {{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
+                {{group.cate}}<span class="count" v-show="group.count">{{group.count  > 9 ? '...' : group.count}}</span>
               </div>
             </li>
           </ul>

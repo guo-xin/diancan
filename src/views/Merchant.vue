@@ -7,11 +7,11 @@
     </div>
     <div id="c-restaurant-content-box" class="l-r">
       <div class="list-group-box">
-        <div class="list-group" ref="group">
+        <div class="list-group" ref="cate">
           <ul>
-            <li v-for="(group, index) in groupList" :class="{'active': selectIndex === index}"
-                @click="groupSelect(index, group)">
-              <div>{{group.cate}}<span class="count" v-show="group._count">{{group._count  > 9 ? '...' : group._count}}</span>
+            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}"
+                @click="cateSelect(index)">
+              <div>{{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
               </div>
             </li>
           </ul>
@@ -33,13 +33,18 @@
                   <p class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec_list[0].txamt | formatCurrency}}</p>
                 </div>
               </div>
-              <!--商品+-选择-->
-              <goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
+              <!-- 商品+-选择 -->
+              <goods-select v-if="goods.spec_list.length === 1" class="goods-select-container"
                             :goods="goods"
-                            :plus="plusHandler"
-                            :minus="minusHandler"
-                            :diy="diyHandler">
+                            :count="goods.count"
+                            @updateGoodsCount="updateGoodsCount"
+                            @changeCart="changeCartSingle">
               </goods-select>
+
+              <!-- <cart-goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
+                            :cartIndex="index"
+                            :count="goods.count"
+                            :plus="plus"></cart-goods-select> -->
               <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
               </div>
@@ -52,11 +57,8 @@
     <!--选择规格-->
     <select-spec :visible="showSpec"
                  :goods="selectSpecGoods"
-                 :plus="plusHandler"
-                 :minus="minusHandler"
-                 :diy="diyHandler"
-                 @hideSpecHandler="hideSpecHandler"
-                 @selectSpecBtn="selectSpecBtn">
+                 :updateGoodsCount="updateGoodsCount"
+                 @hideSpecHandler="hideSpecHandler">
     </select-spec>
 
     <goods-detail :visible="showDetail"
@@ -64,7 +66,8 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar v-show="cart.length" :plus="plusHandler" :minus="minusHandler" :diy="diyHandler" :cart="cart" @cleanGoods="cleanGoods"></cart-bar>
+    <cart-bar :updateGoodsCount="updateGoodsCount">
+    </cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -86,11 +89,9 @@
   import GoodsDetail from 'components/GoodsDetail'
   import ScanQrcode from 'components/ScanQrcode.vue'
   import Config from 'methods/Config'
-
-  const STORAGEKEY = 'LIST-VIEW-goods_list'
+  import store from '../vuex/store'
 
   export default {
-    props: ['cart'],
     components: {
       Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
     },
@@ -100,7 +101,8 @@
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
         selectIndex: 0, // 激活分类
-        groupList: [],  // 分类列表
+        allGoods: [], // 接口返回的所有商品含分类
+        cateList: [],  // 分类列表
         goodsList: [],  // 商品列表
         showSpec: false,
         selectSpecGoods: null,
@@ -115,6 +117,9 @@
       }
     },
     computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      },
       isEmptyInfo () {
         return !Util.isEmptyObject(this.order_info)
       }
@@ -143,10 +148,20 @@
           return
         }
         this.mchnt_id = args.mchnt_id
-        this.setStorage(data.data)
-        this.$emit('getCart', args.mchnt_id)
-        let goods = this.mergeGoods(data.data && data.data.goods)
-        this.groupList = goods
+        let goods = data.data.goods
+        goods.map(cate => {
+          // 分类列表 计数
+          this.cateList.push({
+            name: cate.cate,
+            cate_id: cate.cate_id,
+            cate_count: 0
+          })
+          // specAttrsCount对象 用来给不同规格+属性 组合的商品 计数
+          cate.goods_list.map((goods) => {
+            goods.specAttrsCount = {}
+          })
+        })
+        this.allGoods = goods
         this.isClose = data.data.merchant_setting.sale_state === 0
         this.goodsList = (function () {
           if (goods && goods.length !== 0) {
@@ -157,10 +172,11 @@
         })()
         this.order_info = data.data.order_info
         this.merchantSetting = data.data.merchant_setting
+        // 刷新 BScroll 组件
         this.$nextTick(() => {
           document.getElementsByClassName('list-group')[0].style.height = window.innerHeight + 'px'
           document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight + 'px'
-          this.typeScroller = new BScroll(this.$refs.group, {
+          this.typeScroller = new BScroll(this.$refs.cate, {
             startX: 0,
             startY: 0,
             click: true
@@ -171,6 +187,7 @@
             click: true
           })
         })
+        // 分享店铺信息
         const shopname = data.data.shopname
         const logourl = data.data.logo_url
         Util.setTitle(shopname)
@@ -191,143 +208,71 @@
           }
         })
       },
-      getKey () {
-        return STORAGEKEY + '_' + this.mchnt_id
-      },
-      mergeGoods (goods) {
-        goods.map(cate => {
-          cate._count = 0
-          cate.goods_list.map(g => {
-            g._lastSpec = 0
-            g.spec_list.map(spec => {
-              spec._count = 0
-              return spec
-            })
-            return g
-          })
-          return cate
-        })
-        let cart = this.cart || []
-        let delArr = []
-        let delCart = []
-        cart.forEach((cartGoods, index) => {
-          let hasFind = false
-          let count = 0
-          let cate = goods.find(cate => {
-            return cartGoods.cate_id === cate.cate_id
-          })
-          if (cate) {
-            let g = cate.goods_list.find(g => {
-              return g.unionid === cartGoods.unionid
-            })
-            let _index = 0
-            if (g) {
-              let spec = g.spec_list.find((spec, _i) => {
-                if (cartGoods.spec_list[cartGoods._specIndex].id) {
-                  _index = _i
-                }
-                return spec.id === cartGoods.spec_list[cartGoods._specIndex].id
-              })
-              if (spec) {
-                hasFind = true
-                count = cartGoods.spec_list[cartGoods._specIndex]._count || 0
-                spec._count = count
-                g._lastSpec = g._lastSpec || _index
-              }
-            }
-            cate._count += count
-          }
-          if (!hasFind) {
-            let name = cartGoods.name + '(' + cartGoods.spec_list[cartGoods._specIndex].name + ')'
-            delArr.push(name)
-            delCart.push(index)
-          }
-        })
-        delArr.length && this.$emit('toast', delArr.join(' ') + '已下架')
-        delCart.reverse().forEach(item => {
-          cart.splice(item, 1)
-        })
-        this.$emit('saveCartEv', this.mchnt_id, cart)
-        return goods
-      },
-      groupSelect (index, item) {
+      cateSelect (index) {
         this.selectIndex = index
-        this.goodsList = item.goods_list
+        this.goodsList = this.allGoods[index].goods_list
         this.$nextTick(function () {
           this.typeScroller.refresh()
           this.menuScroller.refresh()
         })
       },
-      plusHandler (goods, specIndex) {
-        this.addCartHandler(goods, specIndex, true)
-        _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
-      },
-      minusHandler (goods, specIndex) {
-        this.addCartHandler(goods, specIndex, false)
-        _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
-      },
-      diyHandler (goods, specIndex, number) {
-        this.addCartHandler(goods, specIndex, number)
-        _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
-      },
-      addCartHandler (goods, specIndex, type) {
-        let isDIY = false
-        if (type === true) {
-          type = 1
-        } else if (type === false) {
-          type = -1
+      changeCartSingle (goods, count) {
+        let cartIndex = this.carts.findIndex((g) => {
+          return g.unionid === goods.unionid
+        })
+        if (cartIndex < 0) {
+          let cartGoods = {
+            name: goods.name,
+            cate_id: goods.cate_id,
+            unionid: goods.unionid,
+            count: 1,
+            spec: goods.spec_list[0],
+            type: 'single'
+          }
+          store.commit('ADDCARTS', cartGoods) // 新增
         } else {
-          isDIY = true
-        }
-        let index = -1
-        let i = -1
-        this.groupList.find((g, _index) => {
-          if (g.cate_id === goods.cate_id) {
-            index = _index
+          if (count === 0) {
+            this.carts.splice(cartIndex, 1) // 移除
+          } else {
+            store.commit('UPDATECARTCOUNT', { // +1
+              index: cartIndex,
+              count
+            })
           }
-          return g.cate_id === goods.cate_id
-        })
-        this.groupList[index].goods_list.find((g, _index) => {
-          let spec = g.spec_list.find((spec, _specIndex) => {
-            return spec.id === goods.spec_list[specIndex].id
-          })
-          if (spec) {
-            i = _index
-          }
-          return spec
-        })
-
-        if (index < 0) {
-          return
         }
+      },
+      updateGoodsCount (cateid, unionid, selectedSpecAttr, count, type) {
+        let cateIndex = this.cateList.findIndex((cate) => {
+          return cate.cate_id === cateid
+        })
+        this.updateCatesCount(cateIndex, count, type)
 
-        // up group
-        let oldGoods = this.groupList[index].goods_list[i]
-        let newCount = isDIY ? type : (oldGoods.spec_list[specIndex]._count || 0) + type
-        if (newCount < 0) {
-          return
+        let updateIndex = this.allGoods[cateIndex].goods_list.findIndex((goods) => {
+          return goods.unionid === unionid
+        })
+
+        if (!selectedSpecAttr) {
+          this.allGoods[cateIndex].goods_list[updateIndex].count = count
+        } else {
+          this.$set(this.allGoods[cateIndex].goods_list[updateIndex].specAttrsCount, selectedSpecAttr, count)
         }
-        let spec = Object.assign({}, oldGoods.spec_list[specIndex], {_count: newCount})
-        this.$set(this.groupList[index].goods_list[i].spec_list, specIndex, spec)
-        let newGoods = Object.assign({}, oldGoods)
-        // this.groupList[index].$set(.goods_list, i, newGoods)
-        this.$set(this.groupList[index].goods_list, i, newGoods)
-
-        this.$emit('changeCart', newGoods, specIndex, this.mchnt_id)
-
-        let oldGroup = this.groupList[index]
-        oldGroup._count = oldGroup._count || 0
-        let newGroup = Object.assign({}, oldGroup, {_count: isDIY ? type : oldGroup._count + type})
-        this.$set(this.groupList, index, newGroup)
+      },
+      updateCatesCount (cateIndex, count, type) {
+        let catecount = this.cateList[cateIndex].cate_count
+        if (type === 'plus') {
+          this.cateList[cateIndex].cate_count = catecount + 1
+          _hmt.push(['_trackEvent', 'view-merchant', 'click-plusBtn'])
+        } else if (type === 'minus') {
+          if (catecount === 0) return
+          this.cateList[cateIndex].cate_count = catecount - 1
+          _hmt.push(['_trackEvent', 'view-merchant', 'click-minusBtn'])
+        } else if (type === 'diy') {
+          this.cateList[cateIndex].cate_count = count
+          _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
+        }
       },
       hasSelect (goods) {
         return !!goods.spec_list.find(spec => spec._count)
-      },
-      setStorage (data) {
-        window.sessionStorage.setItem(this.getKey(), JSON.stringify(data))
-      },
-      getStorage () {
-        return JSON.parse(window.sessionStorage.getItem(this.getKey()))
       },
       showSpecHandler (goods) {
         this.selectSpecGoods = goods
@@ -345,21 +290,6 @@
       },
       hideDetailHandler () {
         this.showDetail = false
-      },
-      cleanGoods () {
-        let data = this.getStorage() || {}
-        let goods = data.goods || []
-        goods.map(group => {
-          return group.goods_list.map(goods => {
-            goods._lastSpec = 0
-            return goods
-          })
-        })
-        this.groupList = goods
-        this.goodsList = goods[this.selectIndex].goods_list
-      },
-      selectSpecBtn (goods, specIndex) {
-        this.goodsList.find(g => g.unionid === goods.unionid)._lastSpec = specIndex
       },
       shareStore (shopname, logourl) {
         let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
