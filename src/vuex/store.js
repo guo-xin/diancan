@@ -6,8 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     formatted_address: '未获取到地理位置',
-    carts: [],
-    cartsCount: 0
+    carts: []
   },
   getters: {
     doneFormat: state => {
@@ -23,6 +22,9 @@ const store = new Vuex.Store({
     },
     ADDCARTS (state, cart) {
       state.carts.push(cart)
+    },
+    DELCARTS (state, index) {
+      state.carts.splice(index, 1)
     },
     UPDATECARTCOUNT (state, item) {
       state.carts[item.index].count = item.count

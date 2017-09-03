@@ -1,8 +1,6 @@
 <template>
   <div id="app">
     <router-view
-      @toast="toast"
-      @changeCart="changeCart"
       @hideOptionMenu="hideOptionMenu"
       @menuShareAppMessage="menuShareTimeline"
       @menuShareTimeline="menuShareTimeline"
@@ -12,7 +10,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { STORE_CART } from 'methods/Config'
   import store from '../../vuex/store'
 
   export default {
@@ -28,6 +25,11 @@
     },
     created () {
     },
+    computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      }
+    },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
         let url = window.location.origin + window.location.pathname + window.location.search + window.sessionStorage.getItem('redirect_uri')
@@ -39,48 +41,6 @@
       setOpenId () {
         this.user.open_id = sessionStorage.getItem('dc_openid') || ''
         this.appId = sessionStorage.getItem('dc_appid') || ''
-      },
-      getKey (mchntId) {
-        return STORE_CART + '_' + mchntId
-      },
-      saveCart (mchntId) {
-        // Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      },
-      toast (msg) {
-        this.msg = msg
-      },
-      changeCart (goods, mchntId) {
-        let spec = goods.spec ? goods.spec : goods.spec_list[goods._lastSpec]
-        let attrValues = []
-        let attrValuesString = ''
-        goods.attr_list.map((attr) => {
-          let attrValue = attr.attr_value_list[attr._lastAttr]
-          attrValues.push(attrValue)
-          attrValuesString += `，${attrValue.value_name}`
-        })
-
-        let cartIndex = this.cart.findIndex((goods, index) => {
-          return goods.spec.id === spec.id && goods.attrValuesString === attrValuesString
-        })
-
-        if (cartIndex > 0) {    // +1
-          this.cart[cartIndex].count += 1
-        } else if (cartIndex === 0) {   // 移除
-          this.cart.splice(cartIndex, 1)
-        } else {  // 新增
-          let cartGoods = {
-            name: goods.name,
-            cate_id: goods.cate_id,
-            unionid: goods.unionid,
-            spec: spec,
-            count: 1,
-            attrValues: attrValues,
-            attrValuesString: attrValuesString
-          }
-          store.commit('ADDCARTS', cartGoods)
-          this.cart.push(cartGoods)
-        }
-        // this.saveCart(mchntId)  存localStorage
       },
       hideOptionMenu () {  // 隐藏右上角菜单
         this.$wechat.hideOptionMenu()

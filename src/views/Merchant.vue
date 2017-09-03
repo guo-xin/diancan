@@ -41,10 +41,6 @@
                             @changeCart="changeCartSingle">
               </goods-select>
 
-              <!-- <cart-goods-select v-if="goods.spec_list.length===1" class="goods-select-container"
-                            :cartIndex="index"
-                            :count="goods.count"
-                            :plus="plus"></cart-goods-select> -->
               <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
               </div>
@@ -66,8 +62,7 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :updateGoodsCount="updateGoodsCount">
-    </cart-bar>
+    <cart-bar :updateGoodsCount="updateGoodsCount"></cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>

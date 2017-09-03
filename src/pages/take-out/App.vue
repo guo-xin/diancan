@@ -1,21 +1,17 @@
 <template>
   <div id="app-container">
     <router-view
-      :cart="cart"
       :deliver="deliver"
-      @changeCart="changeCart"
-      @saveCartEv="saveCartEv"
-      @getCart="getCart"
       @updateDeliver="updateDeliver">
     </router-view>
   </div>
 </template>
 
 <script>
-  import Store from '../../methods/Store'
-  import {STORE_CART} from '../../methods/Config'
+  import store from '../../vuex/store'
 
   export default {
+    store,
     data () {
       return {
         user: {
@@ -23,8 +19,6 @@
         },
         mchnt_id: '',
         appId: '',
-        cart: [],
-        msg: '',
         deliver: {
           shipping_fee: 0,
           min_shipping_fee: 0,
@@ -35,11 +29,11 @@
       }
     },
     created () {
-      // 清空购物车
-      this.$root.eventHub.$on('cleanCart', (mchntId) => {
-        this.cart = []
-        this.saveCartEv(mchntId, [])
-      })
+    },
+    computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      }
     },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
@@ -53,44 +47,40 @@
         this.user.open_id = sessionStorage.getItem('dc_openid') || ''
         this.appId = sessionStorage.getItem('dc_appid') || ''
       },
-      getKey (mchntId) {
-        return STORE_CART + '_' + mchntId
-      },
       updateDeliver (newDeliver) {
         this.deliver = newDeliver
       },
-      saveCart (mchntId) {
-        Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      },
-      changeCart (goods, specIndex, mchntId) {
-        let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
-        let index = -1
-        let spec = goods.spec_list[specIndex]
-        this.cart.find((g, _index) => {
-          let isfind = g.spec_list[g._specIndex].id === spec.id
-          if (isfind) {
-            index = _index
-          }
-          return isfind
+      changeCart (goods, mchntId) {
+        let spec = goods.spec ? goods.spec : goods.spec_list[goods._lastSpec]
+        let attrValues = []
+        let attrValuesString = ''
+        goods.attr_list.map((attr) => {
+          let attrValue = attr.attr_value_list[attr._lastAttr]
+          attrValues.push(attrValue)
+          attrValuesString += `，${attrValue.value_name}`
         })
-        if (index < 0) {  // 新增
-          spec._count = 1
-          this.cart.push(divGoods)
-        } else {
-          if (spec._count) { // 修改数量
-            this.$set(this.cart, index, divGoods)
-          } else {  // 移除
-            this.cart.splice(index, 1)
+
+        let cartIndex = this.carts.findIndex((goods, index) => {
+          return goods.spec.id === spec.id && goods.attrValuesString === attrValuesString
+        })
+
+        if (cartIndex > 0) {    // +1
+          this.carts[cartIndex].count += 1
+        } else if (cartIndex === 0) {   // 移除
+          this.carts.splice(cartIndex, 1)
+        } else {  // 新增
+          let cartGoods = {
+            name: goods.name,
+            cate_id: goods.cate_id,
+            unionid: goods.unionid,
+            spec: spec,
+            count: 1,
+            attrValues: attrValues,
+            attrValuesString: attrValuesString
           }
+          store.commit('ADDCARTS', cartGoods)
         }
-        this.saveCart(mchntId)
-      },
-      saveCartEv (mchntId, cart) {
-        this.cart = cart || []
-        this.saveCart(mchntId)
-      },
-      getCart (mchntId) {
-        this.cart = Store.get(this.getKey(mchntId)) || []
+        // this.saveCart(mchntId)  存localStorage
       }
     }
   }

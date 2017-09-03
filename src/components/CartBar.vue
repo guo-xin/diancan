@@ -47,7 +47,7 @@
 <script type="text/ecmascript-6">
   /* global _hmt */
   import BScroll from 'better-scroll'
-  import GoodsSelect from '../components/GoodsSelect'
+  import GoodsSelect from 'components/GoodsSelect'
   import store from '../vuex/store'
   export default {
     components: {
@@ -100,7 +100,7 @@
         })
 
         if (count === 0) {
-          this.carts.splice(cartIndex, 1) // 移除
+          store.commit('DELCARTS', cartIndex) // 移除
         } else {
           store.commit('UPDATECARTCOUNT', { // +1
             index: cartIndex,
