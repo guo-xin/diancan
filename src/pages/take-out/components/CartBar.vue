@@ -71,8 +71,6 @@
       }
     },
     created () {
-      console.log('cart created')
-      console.log(this.deliver)
       this.$nextTick(() => {
         this.scroller = new BScroll(this.$refs.cart, {
           startX: 0,
@@ -94,9 +92,6 @@
           count += goods.count
           price += goods.count * spec.txamt
         })
-        console.log('cartData')
-        console.log(price)
-        console.log(count)
         return {
           count,
           price
@@ -116,7 +111,7 @@
       changeCart (goods, count) {
         let cartIndex = this.carts.findIndex((g) => {
           if (g.attrValuesString) {
-            return g.attrValuesString === goods.attrValuesString
+            return g.unionid === goods.unionid && g.attrValuesString === goods.attrValuesString
           } else { // 单规格商品 用unionid 判断
             return g.unionid === goods.unionid
           }

@@ -74,8 +74,6 @@
             this.carts.map((cart) => {
               this.specAttrsCount[cart.selectedSpecAttr] = cart.count
             })
-            console.log('this.specAttrsCount')
-            console.log(this.specAttrsCount)
             this.scroller = new BScroll(this.$refs.spec, {
               startX: 0,
               startY: 0,
@@ -94,8 +92,6 @@
       }
     },
     created () {
-      console.log('selectSpec created')
-      console.log(this.goods)
     },
     methods: {
       changeCartSpecAttr (goods, count) {
@@ -107,7 +103,7 @@
           attrValuesString += `，${attrValue.value_name}`
         })
         let cartIndex = this.carts.findIndex((g) => {
-          return g.attrValuesString === attrValuesString
+          return g.unionid === goods.unionid && g.attrValuesString === attrValuesString
         })
         if (cartIndex < 0) {
           let cartGoods = {
@@ -124,7 +120,7 @@
           store.commit('ADDCARTS', cartGoods) // 新增
         } else {
           if (count === 0) {
-            this.carts.splice(cartIndex, 1) // 移除
+            store.commit('DELCARTS', cartIndex) // 移除
           } else {
             store.commit('UPDATECARTCOUNT', { // +1
               index: cartIndex,
@@ -134,57 +130,10 @@
         }
       },
       selectSpec (index) {
-        console.log('selectSpec')
-        console.log(index)
         this.$set(this.selectedSpecAttr, 0, index)
-        // this.selectSpecAttr[0] = index
       },
       selectAttr (attrListIndex, attrIndex) {
         this.$set(this.selectedSpecAttr, attrListIndex + 1, attrIndex)
-        // this.selectSpecAttr[attrListIndex + 1] = attrIndex
-        console.log('selectSpec')
-      },
-      descartes (args) {
-        let isArray = function (o) {
-          return Object.prototype.toString.call(o) === '[object Array]'
-        }
-        let rs = []
-
-        for (let i = 0; i < args.length; i++) {
-          if (!isArray(args[i])) {
-            return false  // 参数必须为数组
-          }
-        }
-
-        // 两个笛卡尔积换算
-        let bothDescartes = function (m, n) {
-          let r = []
-          for (let i = 0; i < m.length; i++) {
-            for (let ii = 0; ii < n.length; ii++) {
-              let t = []
-              if (isArray(m[i])) {
-                t = m[i].slice(0)  // 此处使用slice目的为了防止t变化，导致m也跟着变化
-              } else {
-                t.push(m[i])
-              }
-              t.push(n[ii])
-              r.push(t)
-            }
-          }
-          return r
-        }
-
-        // 多个笛卡尔基数换算
-        for (let i = 0; i < args.length; i++) {
-          if (i === 0) {
-            rs = args[i]
-          } else {
-            rs = bothDescartes(rs, args[i])
-          }
-        }
-
-        console.log(rs)
-        return rs
       },
       closeSpec () {
         this.$emit('hideSpecHandler')

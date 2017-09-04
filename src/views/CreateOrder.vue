@@ -97,8 +97,6 @@
         //     // cate_id: goods.cate_id
         //   }
         // })
-        console.log('this.carts')
-        console.log(this.carts)
         let args = {
           open_id: this.$parent.user.open_id,
           appid: sessionStorage.getItem('dc_appid'),

@@ -227,8 +227,8 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        // 达达配送需要多传参数
 
+        // 达达配送需要多传参数
         let dada_args = {}
         if (this.isDadaDeliver) {
           dada_args.delivery_no = this.delivery_no

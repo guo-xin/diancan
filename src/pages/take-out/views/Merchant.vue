@@ -64,7 +64,7 @@
     <!-- 购物车 -->
     <cart-bar :updateGoodsCount="updateGoodsCount"
               :overtime="merchantSetting.overtime"
-              :nodelivery="merchantSetting.delivery_open_state === 0"  
+              :nodelivery="merchantSetting.delivery_open_state === 0"
               :deliver="deliver"></cart-bar>
 
     <!--扫描二维码蒙层-->
@@ -154,9 +154,6 @@
         this.$emit('updateDeliver', deliver)
         // 商品购物车
         this.merchantSetting = mSet
-        // this.setStorage(data.data)
-        // this.$emit('getCart', this.mchnt_id)
-        // let goods = this.mergeGoods(data.data.goods)
         let goods = data.data.goods
         goods.map(cate => {
           // 分类列表 计数
@@ -178,8 +175,6 @@
             return ''
           }
         })()
-        console.log(this.allGoods)
-        console.log(this.goodsList)
         this.order_info = data.data.order_info
         // 刷新 BScroll 组件
         this.$nextTick(() => {
@@ -218,7 +213,6 @@
         })
       },
       changeCartSingle (goods, count) {
-        console.log(this.carts)
         let cartIndex = this.carts.findIndex((g) => {
           return g.unionid === goods.unionid
         })
@@ -234,7 +228,7 @@
           store.commit('ADDCARTS', cartGoods) // 新增
         } else {
           if (count === 0) {
-            this.carts.splice(cartIndex, 1) // 移除
+            store.commit('DELCARTS', cartIndex) // 移除
           } else {
             store.commit('UPDATECARTCOUNT', { // +1
               index: cartIndex,
@@ -285,7 +279,6 @@
         return !!goods.spec_list.find(spec => spec._count)
       },
       showSpecHandler (goods) {
-        console.log(goods)
         this.selectSpecGoods = goods
         // 移动端滚动穿透问题
         document.querySelector('body').classList.add('popup-open')

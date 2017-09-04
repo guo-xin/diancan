@@ -42,7 +42,6 @@
     methods: {
       plus () {
         let count = this.countValue + 1
-        console.log(this.selectedSpecAttr)
         this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, this.selectedSpecAttr, count, 'plus')
         this.$emit('changeCart', this.goods, count)
       },
@@ -56,7 +55,6 @@
         this.$emit('changeCart', this.goods, val)
       },
       blurHandler (e) {
-        console.log('blurHandler')
         let val = e.target.value || 0
         this.diy(parseInt(val))
       }

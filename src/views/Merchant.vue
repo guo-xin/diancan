@@ -227,7 +227,7 @@
           store.commit('ADDCARTS', cartGoods) // 新增
         } else {
           if (count === 0) {
-            this.carts.splice(cartIndex, 1) // 移除
+            store.commit('DELCARTS', cartIndex) // 移除
           } else {
             store.commit('UPDATECARTCOUNT', { // +1
               index: cartIndex,
