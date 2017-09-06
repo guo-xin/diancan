@@ -94,7 +94,7 @@
           return {
             id: spec.id,
             count: goods.count,
-            attr_list: goods.attr_list
+            attr_list: goods.attr_list || []
           }
         })
         let args = {

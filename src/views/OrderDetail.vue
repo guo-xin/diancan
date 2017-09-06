@@ -18,7 +18,7 @@
             <div v-for="goods in group.goods">
               <div class="goods-name" >
                 <strong>{{goods.name}}</strong>
-                <em>{{goods.spec_name}}</em>
+                <p><em>{{goods.spec_name}}</em><em v-for="attr in goods.attr_list">，{{attr.attr_value_list[0]}}</em></p>
               </div>
               <span><sub>￥</sub>{{goods.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
             </div>

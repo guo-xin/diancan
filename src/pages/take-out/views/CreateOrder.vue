@@ -237,14 +237,14 @@
         }
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        // let goodsItem = this.carts.map((goods) => {
-        //   let spec = goods.spec
-        //   return {
-        //     id: spec.id,
-        //     count: goods.count
-        //     // cate_id: goods.cate_id
-        //   }
-        // })
+        let goodsInfo = this.carts.map((goods) => {
+          let spec = goods.spec
+          return {
+            id: spec.id,
+            count: goods.count,
+            attr_list: goods.attr_list || []
+          }
+        })
         let args = {
           open_id: this.$parent.user.open_id || sessionStorage.getItem('dc_openid'),
           appid: sessionStorage.getItem('dc_appid'),
@@ -252,7 +252,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.payAmt,
-          goods_info: this.carts,
+          goods_info: JSON.stringify(goodsInfo),
           format: 'cors',
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id
