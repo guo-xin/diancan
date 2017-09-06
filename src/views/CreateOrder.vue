@@ -16,7 +16,7 @@
         <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec.name}} {{goods.attrValuesString}}</em>
+            <em>{{goods.spec.name}}{{goods.attrValuesString}}</em>
           </div>
           <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>

@@ -34,7 +34,7 @@
               <div>
                 <div class="name one_text">{{goods.name}}</div>
                 <div class="goods-info">
-                  <p class="spec">{{goods.spec.name}} {{goods.attrValuesString}}</p>
+                  <p class="spec">{{goods.spec.name}}{{goods.attrValuesString}}</p>
                   <span class="price"><em class="dollar">¥&nbsp;</em>{{goods.spec.txamt | formatCurrency}}</span>
                 </div>
               </div>
