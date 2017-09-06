@@ -38,6 +38,7 @@
   /* global _hmt */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
+  import store from '../vuex/store'
   export default {
     data () {
       return {
@@ -186,8 +187,7 @@
       },
       orderPaySuccess () {
         // 订单支付成功
-        // this.$dispatch('on-cleanCart', this.mchnt_id)
-        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
+        store.commit('CLEANCARTS')
         this.queryOrder()
       },
       orderPayFail () {

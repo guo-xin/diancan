@@ -46,6 +46,7 @@
   /* eslint-disable  */
   import Config from 'methods/Config'
   import Util from 'methods/Util'
+  import store from '../../../vuex/store'
   export default {
     props: ['deliver'],
     data () {
@@ -334,7 +335,7 @@
         }
       },
       orderPaySuccess () {  // 订单支付成功
-        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
+        store.commit('CLEANCARTS') // 清空购物车
         this.queryOrder()
       },
       orderPayFail () { // 支付失败
