@@ -16,7 +16,7 @@
         <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec.name}}</em>
+            <em>{{goods.spec.name}} {{goods.attrValuesString}}</em>
           </div>
           <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
@@ -88,15 +88,14 @@
          */
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        // let cart = this.cart || []
-        // let goodsItem = cart.map((goods) => {
-        //   let spec = goods.spec_list[goods._specIndex]
-        //   return {
-        //     id: spec.id,
-        //     count: spec._count
-        //     // cate_id: goods.cate_id
-        //   }
-        // })
+        let goodsInfo = this.carts.map((goods) => {
+          let spec = goods.spec
+          return {
+            id: spec.id,
+            count: goods.count,
+            attr_list: goods.attr_list
+          }
+        })
         let args = {
           open_id: this.$parent.user.open_id,
           appid: sessionStorage.getItem('dc_appid'),
@@ -105,7 +104,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.cartData.price,
-          goods_info: JSON.stringify(this.carts),
+          goods_info: JSON.stringify(goodsInfo),
           format: 'cors'
         }
         this.$http({

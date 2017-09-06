@@ -49,38 +49,6 @@
       },
       updateDeliver (newDeliver) {
         this.deliver = newDeliver
-      },
-      changeCart (goods, mchntId) {
-        let spec = goods.spec ? goods.spec : goods.spec_list[goods._lastSpec]
-        let attrValues = []
-        let attrValuesString = ''
-        goods.attr_list.map((attr) => {
-          let attrValue = attr.attr_value_list[attr._lastAttr]
-          attrValues.push(attrValue)
-          attrValuesString += `，${attrValue.value_name}`
-        })
-
-        let cartIndex = this.carts.findIndex((goods, index) => {
-          return goods.spec.id === spec.id && goods.attrValuesString === attrValuesString
-        })
-
-        if (cartIndex > 0) {    // +1
-          this.carts[cartIndex].count += 1
-        } else if (cartIndex === 0) {   // 移除
-          this.carts.splice(cartIndex, 1)
-        } else {  // 新增
-          let cartGoods = {
-            name: goods.name,
-            cate_id: goods.cate_id,
-            unionid: goods.unionid,
-            spec: spec,
-            count: 1,
-            attrValues: attrValues,
-            attrValuesString: attrValuesString
-          }
-          store.commit('ADDCARTS', cartGoods)
-        }
-        // this.saveCart(mchntId)  存localStorage
       }
     }
   }

@@ -68,9 +68,11 @@
         if (val) {
           this.$nextTick(() => {
             this.selectedSpecAttr = [0]
-            this.goods.attr_list.map((index) => {
-              this.selectedSpecAttr.push(0)
-            })
+            if (this.goods.attr_list) {
+              this.goods.attr_list.map((index) => {
+                this.selectedSpecAttr.push(0)
+              })
+            }
             this.carts.map((cart) => {
               this.specAttrsCount[cart.selectedSpecAttr] = cart.count
             })
@@ -95,13 +97,21 @@
     },
     methods: {
       changeCartSpecAttr (goods, count) {
-        let attrValues = []
+        let attrList = []
         let attrValuesString = ''
-        goods.attr_list.map((attr, index) => {
-          let attrValue = attr.attr_value_list[this.selectedSpecAttr[index + 1]]
-          attrValues.push(attrValue)
-          attrValuesString += `，${attrValue.value_name}`
-        })
+        if (goods.attr_list) {
+          goods.attr_list.map((attr, index) => {
+            let attrValue = attr.attr_value_list[this.selectedSpecAttr[index + 1]]
+            let attrValueArray = [] // 后端下单接口makeorder attr_value_list 只支持'数组'格式
+            attrValueArray.push(attrValue)
+            attrList.push({
+              attr_id: attr.attr_id,
+              attr_name: attr.attr_name,
+              attr_value_list: attrValueArray
+            })
+            attrValuesString += `，${attrValue.value_name}`
+          })
+        }
         let cartIndex = this.carts.findIndex((g) => {
           return g.unionid === goods.unionid && g.attrValuesString === attrValuesString
         })
@@ -113,7 +123,7 @@
             count: 1,
             spec: goods.spec_list[this.selectedSpecAttr[0]],
             type: 'multi-attr',
-            attrValues: attrValues,
+            attr_list: attrList,
             attrValuesString: attrValuesString,
             selectedSpecAttr: this.selectedSpecAttr.toString()
           }
