@@ -40,17 +40,19 @@
       </section>
     </div>
     <loading :visible="isLoading"></loading>
+    <red-packet v-show="false"></red-packet>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import util from 'methods/Util'
   import loading from '../components/loading/Loading'
+  import RedPacket from '../components/RedPacket'
   import config from 'methods/Config'
 
   export default {
     components: {
-      loading
+      loading, RedPacket
     },
     data () {
       return {
