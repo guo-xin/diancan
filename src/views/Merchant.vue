@@ -62,7 +62,7 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :updateGoodsCount="updateGoodsCount"></cart-bar>
+    <cart-bar :updateGoodsCount="updateGoodsCount" @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -265,6 +265,17 @@
           this.cateList[cateIndex].cate_count = count
           _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
         }
+      },
+      cleanCatesGoodsCount () {
+        this.cateList.map((cate) => {
+          cate.cate_count = 0
+        })
+        this.allGoods.map((cate) => {
+          cate.goods_list.map((goods) => {
+            goods.count = 0
+            goods.specAttrsCount = {}
+          })
+        })
       },
       hasSelect (goods) {
         return !!goods.spec_list.find(spec => spec._count)

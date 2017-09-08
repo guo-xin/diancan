@@ -85,7 +85,7 @@
           if (data.respcd === config.code.OK) {
             this.hasDetail = data.data.goods_list
             this.order = data.data
-            const shopname = data.data.orderinfo.shop_name
+            const shopname = data.data.merchant_info.shop_name
             util.setTitle(shopname)
           } else {
             this.$toast(data.respmsg)
