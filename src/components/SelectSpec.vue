@@ -112,8 +112,14 @@
             attrValuesString += `，${attrValue.value_name}`
           })
         }
+        let type = goods.attr_list.length === 0 ? 'spec' : 'attr'
         let cartIndex = this.carts.findIndex((g) => {
-          return g.unionid === goods.unionid && g.selectedSpecAttr === goods.selectedSpecAttr
+          if (type === 'spec') {
+            let selectedSpecIndex = parseInt(this.selectedSpecAttr[0])
+            return g.spec.id === goods.spec_list[selectedSpecIndex].id
+          } else {
+            return g.unionid === goods.unionid && g.selectedSpecAttr === this.selectedSpecAttr.toString()
+          }
         })
         if (cartIndex < 0) {
           let cartGoods = {
@@ -122,7 +128,7 @@
             unionid: goods.unionid,
             count: 1,
             spec: goods.spec_list[this.selectedSpecAttr[0]],
-            type: 'multi-attr',
+            type: type,
             attr_list: attrList,
             attrValuesString: attrValuesString,
             selectedSpecAttr: this.selectedSpecAttr.toString()
