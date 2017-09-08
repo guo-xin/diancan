@@ -132,6 +132,7 @@
       },
       cleanCartHandle () {
         store.commit('CLEANCARTS')
+        this.$emit('cleanCatesGoodsCount')
         this.visibleList = false
         this.refresh()
         _hmt.push(['_trackEvent', 'view-merchant', 'click-cleanCart'])

@@ -65,7 +65,8 @@
     <cart-bar :updateGoodsCount="updateGoodsCount"
               :overtime="merchantSetting.overtime"
               :nodelivery="merchantSetting.delivery_open_state === 0"
-              :deliver="deliver"></cart-bar>
+              :deliver="deliver"
+              @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -122,8 +123,9 @@
     },
     created () {
       this.isLoading = true
+      this.mchnt_id = this.$route.params.mchnt_id
       let args = {
-        mchnt_id: this.$route.params.mchnt_id,
+        mchnt_id: this.mchnt_id,
         format: 'jsonp',
         open_id: sessionStorage.getItem('dc_openid') || '',
         sale_type: 3
@@ -266,6 +268,17 @@
           this.cateList[cateIndex].cate_count = count
           _hmt.push(['_trackEvent', 'view-merchant', 'click-diyBtn'])
         }
+      },
+      cleanCatesGoodsCount () {
+        this.cateList.map((cate) => {
+          cate.cate_count = 0
+        })
+        this.allGoods.map((cate) => {
+          cate.goods_list.map((goods) => {
+            goods.count = 0
+            goods.specAttrsCount = {}
+          })
+        })
       },
       cateSelect (index) {
         this.selectIndex = index

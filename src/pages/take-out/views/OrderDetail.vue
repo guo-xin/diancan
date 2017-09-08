@@ -16,7 +16,7 @@
       </ul>
     </section>
     <section class="delivery-address item">
-      <p>{{order.orderinfo.customer_info.contact_name}}　{{order.orderinfo.customer_info.mobile}}</p>
+      <p>{{order.orderinfo.customer_info.contact_name}}　{{order.merchant_info.mobile}}</p>
       <p>{{order.orderinfo.customer_info.detail_addr}}</p>
     </section>
     <section class="order-info item">
@@ -57,11 +57,11 @@
           <img :src="(order.merchant_info.head_img ? order.merchant_info.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         </figure>
         <div>
-          <h2>{{order.orderinfo.shop_name}}</h2>
+          <h2>{{order.merchant_info.shop_name}}</h2>
           <p v-show="order.merchant_info.address"><i class="icon-marker"></i>{{order.merchant_info.address}}</p>
         </div>
       </div>
-      <a :href="'tel:' + order.orderinfo.merchant_info.mobile"><i class="icon-phone"></i></a>
+      <a :href="'tel:' + order.merchant_info.mobile"><i class="icon-phone"></i></a>
     </section>
     <!-- 接口不支持，先注释掉 -->
     <!-- <section class="follow">

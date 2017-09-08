@@ -113,7 +113,7 @@
           })
         }
         let cartIndex = this.carts.findIndex((g) => {
-          return g.unionid === goods.unionid && g.attrValuesString === attrValuesString
+          return g.unionid === goods.unionid && g.selectedSpecAttr === goods.selectedSpecAttr
         })
         if (cartIndex < 0) {
           let cartGoods = {
