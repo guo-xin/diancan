@@ -135,7 +135,7 @@
       },
       cleanCartHandle () {
         store.commit('CLEANCARTS')
-        sessionStorage.removeItem(`carts${this.mchnt_id}`)
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.$emit('cleanCatesGoodsCount')
         this.visibleList = false
         this.refresh()

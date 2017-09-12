@@ -14,7 +14,7 @@
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
     <transition name="totop">
       <div class="cart-list" v-show="visibleList">
-        <div class="title" @click="cleanCartHandler()">
+        <div class="title" @click="cleanCartHandle()">
           <img src="../assets/clean.png">
           <span>清空购物车</span>
         </div>
@@ -113,8 +113,9 @@
         this.visibleList = !this.visibleList
         this.refresh()
       },
-      cleanCartHandler () {
+      cleanCartHandle () {
         store.commit('CLEANCARTS')
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.visibleList = false
         this.$emit('cleanCatesGoodsCount')
         this.refresh()

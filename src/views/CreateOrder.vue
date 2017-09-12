@@ -192,7 +192,7 @@
       orderPaySuccess () {
         // 订单支付成功
         store.commit('CLEANCARTS')
-        sessionStorage.removeItem(`carts${this.mchnt_id}`)
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.queryOrder()
       },
       orderPayFail () {
