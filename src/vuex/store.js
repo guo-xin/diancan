@@ -20,6 +20,9 @@ const store = new Vuex.Store({
     UPDATEADDRESS (state, formattedAddress) {
       state.formatted_address = formattedAddress
     },
+    GETCARTS (state, carts) {
+      state.carts = carts
+    },
     ADDCARTS (state, cart) {
       state.carts.push(cart)
     },
