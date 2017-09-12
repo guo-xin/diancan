@@ -71,6 +71,10 @@
     },
     created () {
       let params = this.$route.params
+      let carts = JSON.parse(sessionStorage.getItem(`carts${params.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
+      }
       this.mchnt_id = params.mchnt_id
       this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
@@ -336,6 +340,7 @@
       },
       orderPaySuccess () {  // 订单支付成功
         store.commit('CLEANCARTS') // 清空购物车
+        sessionStorage.removeItem(`carts${this.mchnt_id}`)
         this.queryOrder()
       },
       orderPayFail () { // 支付失败

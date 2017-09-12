@@ -36,14 +36,6 @@
                     @updateGoodsCount="updateGoodsCount"
                     @changeCart="changeCartSpecAttr">
       </goods-select>
-
-      <!--商品选择-->
-      <!-- <goods-select class="goods-select-container"
-                    :goods="goods"
-                    :activate="lastSpec"
-                    :plus="plus"
-                    :minus="minus"
-                    :diy="diy"></goods-select> -->
     </div>
     <div class="mark" @click.stop="closeSpec()" @touchmove.stop.prevent></div>
   </div>
@@ -68,11 +60,9 @@
         if (val) {
           this.$nextTick(() => {
             this.selectedSpecAttr = [0]
-            if (this.goods.attr_list) {
-              this.goods.attr_list.map((index) => {
-                this.selectedSpecAttr.push(0)
-              })
-            }
+            this.goods.attr_list.map((index) => {
+              this.selectedSpecAttr.push(0)
+            })
             this.carts.map((cart) => {
               this.specAttrsCount[cart.selectedSpecAttr] = cart.count
             })

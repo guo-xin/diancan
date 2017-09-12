@@ -66,6 +66,7 @@
     props: ['overtime', 'deliver', 'nodelivery', 'updateGoodsCount'],
     data () {
       return {
+        mchnt_id: this.$route.params.mchnt_id,
         visibleList: false,
         scroller: null
       }
@@ -134,6 +135,7 @@
       },
       cleanCartHandle () {
         store.commit('CLEANCARTS')
+        sessionStorage.removeItem(`carts${this.mchnt_id}`)
         this.$emit('cleanCatesGoodsCount')
         this.visibleList = false
         this.refresh()
@@ -149,7 +151,7 @@
         this.$router.push({
           name: 'createOrder',
           params: {
-            mchnt_id: this.$route.params.mchnt_id
+            mchnt_id: this.mchnt_id
           }
         })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])

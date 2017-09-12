@@ -9,10 +9,9 @@
       <div class="list-group-box">
         <div class="list-group" ref="group">
           <ul>
-            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}"
-                @click="cateSelect(index, cate)">
+            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index, cate)">
               <div>
-                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count  > 9 ? '...' : cate.cate_count}}</span>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
               </div>
             </li>
           </ul>
@@ -124,16 +123,19 @@
     created () {
       this.isLoading = true
       this.mchnt_id = this.$route.params.mchnt_id
-      let args = {
-        mchnt_id: this.mchnt_id,
-        format: 'jsonp',
-        open_id: sessionStorage.getItem('dc_openid') || '',
-        sale_type: 3
+      let carts = JSON.parse(sessionStorage.getItem(`carts${this.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
       }
       this.$http({
         url: Config.apiHost + 'diancan/c/goods_list',
         method: 'JSONP',
-        params: args
+        params: {
+          mchnt_id: this.mchnt_id,
+          format: 'jsonp',
+          open_id: sessionStorage.getItem('dc_openid') || '',
+          sale_type: 3
+        }
       }).then(function (response) {
         this.isLoading = false
         let data = response.data
@@ -177,6 +179,9 @@
             return ''
           }
         })()
+        // localStorage 购物车 商品数量同步
+        this.mergeCartsCount()
+        // 订单信息
         this.order_info = data.data.order_info
         // 刷新 BScroll 组件
         this.$nextTick(() => {
@@ -194,6 +199,7 @@
             click: true
           })
         })
+        // 微信朋友圈、微信好友 分享
         const shopname = data.data.shopname
         const logourl = data.data.logo_url
         Util.setTitle(shopname)
@@ -202,9 +208,33 @@
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
+      sessionStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       next()
     },
     methods: {
+      mergeCartsCount () {
+        this.carts.map(cgoods => {
+          this.cateList.map(cate => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.cate_count += cgoods.count
+            }
+          })
+
+          this.allGoods.map((cate) => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.goods_list.map((goods) => {
+                if (cgoods.type === 'single' && goods.unionid === cgoods.unionid) {
+                  goods.count = cgoods.count
+                } else if (cgoods.type === 'spec' && goods.unionid === cgoods.unionid) {
+                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
+                } else if (cgoods.type === 'attr' && goods.unionid === cgoods.unionid) {
+                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
+                }
+              })
+            }
+          })
+        })
+      },
       goDetail () {
         this.$router.push({
           name: 'orderDetail',

@@ -121,16 +121,21 @@
     },
     created () {
       this.isLoading = true
-      let args = {
-        mchnt_id: this.$route.params.mchnt_id,
-        format: 'cors',
-        expire_time: this.$route.params.expire_time,
-        open_id: sessionStorage.getItem('dc_openid') || ''
+      let mchntId = this.$route.params.mchnt_id
+      this.mchnt_id = mchntId
+      let carts = JSON.parse(sessionStorage.getItem(`carts${mchntId}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
       }
       this.$http({
         url: Config.apiHost + 'diancan/c/goods_list',
         method: 'get',
-        params: args
+        params: {
+          mchnt_id: mchntId,
+          format: 'cors',
+          expire_time: this.$route.params.expire_time,
+          open_id: sessionStorage.getItem('dc_openid') || ''
+        }
       })
       .then(function (response) {
         this.isLoading = false
@@ -142,7 +147,6 @@
           this.$toast(data.respmsg)
           return
         }
-        this.mchnt_id = args.mchnt_id
         let goods = data.data.goods
         goods.map(cate => {
           // 分类列表 计数
@@ -165,6 +169,8 @@
             return ''
           }
         })()
+        // localStorage 购物车 商品数量同步
+        this.mergeCartsCount()
         this.order_info = data.data.order_info
         this.merchantSetting = data.data.merchant_setting
         // 刷新 BScroll 组件
@@ -191,9 +197,33 @@
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
+      sessionStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       next()
     },
     methods: {
+      mergeCartsCount () {
+        this.carts.map(cgoods => {
+          this.cateList.map(cate => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.cate_count += cgoods.count
+            }
+          })
+
+          this.allGoods.map((cate) => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.goods_list.map((goods) => {
+                if (cgoods.type === 'single' && goods.unionid === cgoods.unionid) {
+                  goods.count = cgoods.count
+                } else if (cgoods.type === 'spec' && goods.unionid === cgoods.unionid) {
+                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
+                } else if (cgoods.type === 'attr' && goods.unionid === cgoods.unionid) {
+                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
+                }
+              })
+            }
+          })
+        })
+      },
       goDetail () {
         this.$router.push({
           name: 'orderDetail',
