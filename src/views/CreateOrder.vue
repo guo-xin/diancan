@@ -53,7 +53,7 @@
     },
     created () {
       let params = this.$route.params
-      let carts = JSON.parse(sessionStorage.getItem(`carts${params.mchnt_id}`))
+      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`))
       if (carts) {
         store.commit('GETCARTS', carts)
       }

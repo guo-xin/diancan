@@ -123,7 +123,7 @@
     created () {
       this.isLoading = true
       this.mchnt_id = this.$route.params.mchnt_id
-      let carts = JSON.parse(sessionStorage.getItem(`carts${this.mchnt_id}`))
+      let carts = JSON.parse(localStorage.getItem(`carts${this.mchnt_id}`))
       if (carts) {
         store.commit('GETCARTS', carts)
       }
@@ -155,6 +155,7 @@
           deliver.min_shipping_fee = mSet.min_shipping_fee
         }
         deliver.start_delivery_fee = mSet.start_delivery_fee
+        sessionStorage.setItem(`deliver${this.mchnt_id}`, JSON.stringify(deliver))
         this.$emit('updateDeliver', deliver)
         // 商品购物车
         this.merchantSetting = mSet
@@ -208,7 +209,7 @@
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
-      sessionStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
+      localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       next()
     },
     methods: {

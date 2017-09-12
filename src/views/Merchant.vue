@@ -123,7 +123,7 @@
       this.isLoading = true
       let mchntId = this.$route.params.mchnt_id
       this.mchnt_id = mchntId
-      let carts = JSON.parse(sessionStorage.getItem(`carts${mchntId}`))
+      let carts = JSON.parse(localStorage.getItem(`carts${mchntId}`))
       if (carts) {
         store.commit('GETCARTS', carts)
       }
@@ -197,7 +197,7 @@
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
-      sessionStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
+      localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       next()
     },
     methods: {
