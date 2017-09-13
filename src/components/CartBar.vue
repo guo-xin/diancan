@@ -20,7 +20,7 @@
         </div>
         <div class="cart-list_box" ref="cart">
           <ul v-show="carts.length">
-            <li v-for="(goods, index) in carts">
+            <li v-for="goods in carts">
               <div>
                 <div class="name one_text">{{goods.name}}</div>
                 <div class="goods-info">
@@ -31,9 +31,11 @@
               <!--商品选择-->
               <goods-select class="goods-select-container"
                             :goods="goods"
+                            :goodsType="goods.type"
                             :count="goods.count"
                             :selectedSpecAttr="goods.selectedSpecAttr"
                             @updateGoodsCount="updateGoodsCount"
+                            @updateCatesCount="updateCatesCount"
                             @changeCart="changeCart">
               </goods-select>
             </li>
@@ -53,9 +55,10 @@
     components: {
       GoodsSelect
     },
-    props: ['updateGoodsCount'],
+    props: ['updateGoodsCount', 'updateCatesCount'],
     data () {
       return {
+        mchnt_id: this.$route.params.mchnt_id,
         visibleList: false,
         scroller: null
       }
@@ -93,7 +96,7 @@
         let cartIndex = this.carts.findIndex((g) => {
           if (g.type === 'spec') {
             return g.unionid === goods.unionid && g.spec.id === goods.spec.id
-          } else if (g.type === 'atrr') {
+          } else if (g.type === 'attr') {
             return g.unionid === goods.unionid && g.attrValuesString === goods.attrValuesString
           } else { // 单规格商品 用unionid 判断
             return g.unionid === goods.unionid

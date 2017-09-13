@@ -41,9 +41,11 @@
               <!--商品选择-->
               <goods-select class="goods-select-container"
                             :goods="goods"
+                            :goodsType="goods.type"
                             :count="goods.count"
                             :selectedSpecAttr="goods.selectedSpecAttr"
                             @updateGoodsCount="updateGoodsCount"
+                            @updateCatesCount="updateCatesCount"
                             @changeCart="changeCart">
               </goods-select>
             </li>
@@ -63,7 +65,7 @@
     components: {
       GoodsSelect
     },
-    props: ['overtime', 'deliver', 'nodelivery', 'updateGoodsCount'],
+    props: ['overtime', 'deliver', 'nodelivery', 'updateGoodsCount', 'updateCatesCount'],
     data () {
       return {
         mchnt_id: this.$route.params.mchnt_id,
@@ -113,8 +115,8 @@
         let cartIndex = this.carts.findIndex((g) => {
           if (g.type === 'spec') {
             return g.unionid === goods.unionid && g.spec.id === goods.spec.id
-          } else if (g.type === 'atrr') {
-            return g.unionid === goods.unionid && g.attrValuesString === goods.attrValuesString
+          } else if (g.type === 'attr') {
+            return g.unionid === goods.unionid && g.selectedSpecAttr === goods.selectedSpecAttr
           } else { // 单规格商品 用unionid 判断
             return g.unionid === goods.unionid
           }

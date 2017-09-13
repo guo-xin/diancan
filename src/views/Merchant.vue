@@ -9,9 +9,9 @@
       <div class="list-group-box">
         <div class="list-group" ref="cate">
           <ul>
-            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}"
-                @click="cateSelect(index)">
-              <div>{{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
+            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index)">
+              <div>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
               </div>
             </li>
           </ul>
@@ -36,6 +36,7 @@
               <!-- 商品+-选择 -->
               <goods-select v-if="goods.spec_list.length === 1" class="goods-select-container"
                             :goods="goods"
+                            :goodsType="'single'"
                             :count="goods.count"
                             @updateGoodsCount="updateGoodsCount"
                             @changeCart="changeCartSingle">
@@ -53,7 +54,7 @@
     <!--选择规格-->
     <select-spec :visible="showSpec"
                  :goods="selectSpecGoods"
-                 :updateGoodsCount="updateGoodsCount"
+                 :updateCatesCount="updateCatesCount"
                  @hideSpecHandler="hideSpecHandler">
     </select-spec>
 
@@ -62,7 +63,9 @@
                   :goods="selectDetail"></goods-detail>
 
     <!--购物车-->
-    <cart-bar :updateGoodsCount="updateGoodsCount" @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
+    <cart-bar :updateGoodsCount="updateGoodsCount"
+              :updateCatesCount="updateCatesCount"
+              @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -155,9 +158,10 @@
             cate_id: cate.cate_id,
             cate_count: 0
           })
-          // specAttrsCount对象 用来给不同规格+属性 组合的商品 计数
           cate.goods_list.map((goods) => {
-            goods.specAttrsCount = {}
+            if (goods.spec_list.length === 1) {
+              goods.count = 0
+            }
           })
         })
         this.allGoods = goods
@@ -195,6 +199,12 @@
         this.shareStore(shopname, logourl)
       })
     },
+    mounted () {
+      let _this = this
+      window.onbeforeunload = function () {
+        localStorage.setItem(`carts${_this.mchnt_id}`, JSON.stringify(_this.carts))
+      }
+    },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
       localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
@@ -214,10 +224,6 @@
               cate.goods_list.map((goods) => {
                 if (cgoods.type === 'single' && goods.unionid === cgoods.unionid) {
                   goods.count = cgoods.count
-                } else if (cgoods.type === 'spec' && goods.unionid === cgoods.unionid) {
-                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
-                } else if (cgoods.type === 'attr' && goods.unionid === cgoods.unionid) {
-                  goods.specAttrsCount[cgoods.selectedSpecAttr] = cgoods.count
                 }
               })
             }
@@ -266,23 +272,22 @@
           }
         }
       },
-      updateGoodsCount (cateid, unionid, selectedSpecAttr, count, type) {
+      updateGoodsCount (cateid, unionid, count, type) {
         let cateIndex = this.cateList.findIndex((cate) => {
           return cate.cate_id === cateid
         })
-        this.updateCatesCount(cateIndex, count, type)
+        this.updateCatesCount(cateid, count, type)
 
         let updateIndex = this.allGoods[cateIndex].goods_list.findIndex((goods) => {
           return goods.unionid === unionid
         })
 
-        if (!selectedSpecAttr) {
-          this.allGoods[cateIndex].goods_list[updateIndex].count = count
-        } else {
-          this.$set(this.allGoods[cateIndex].goods_list[updateIndex].specAttrsCount, selectedSpecAttr, count)
-        }
+        this.allGoods[cateIndex].goods_list[updateIndex].count = count
       },
-      updateCatesCount (cateIndex, count, type) {
+      updateCatesCount (cateid, count, type) {
+        let cateIndex = this.cateList.findIndex((cate) => {
+          return cate.cate_id === cateid
+        })
         let catecount = this.cateList[cateIndex].cate_count
         if (type === 'plus') {
           this.cateList[cateIndex].cate_count = catecount + 1
@@ -303,7 +308,6 @@
         this.allGoods.map((cate) => {
           cate.goods_list.map((goods) => {
             goods.count = 0
-            goods.specAttrsCount = {}
           })
         })
       },

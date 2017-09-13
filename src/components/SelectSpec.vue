@@ -32,8 +32,9 @@
       <goods-select class="goods-select-container"
                     :goods="goods"
                     :selectedSpecAttr="selectedSpecAttr.toString()"
-                    :count="goods.specAttrsCount[selectedSpecAttr]"
-                    @updateGoodsCount="updateGoodsCount"
+                    :count="specAttrsCount[selectedSpecAttr.toString()]"
+                    @updateCatesCount="updateCatesCount"
+                    @updateSpecAttrsCount="updateSpecAttrsCount"
                     @changeCart="changeCartSpecAttr">
       </goods-select>
     </div>
@@ -47,7 +48,7 @@
   import store from '../vuex/store'
   export default {
     components: {GoodsSelect},
-    props: ['goods', 'visible', 'updateGoodsCount'],
+    props: ['goods', 'visible', 'updateCatesCount'],
     data () {
       return {
         scroller: null,
@@ -58,13 +59,17 @@
     watch: {
       'visible': function (val, oldVal) {
         if (val) {
+          this.specAttrsCount = {}
           this.$nextTick(() => {
             this.selectedSpecAttr = [0]
             this.goods.attr_list.map((index) => {
               this.selectedSpecAttr.push(0)
             })
+            // 打开规格弹框时，同步购物车各种规格的数量
             this.carts.map((cart) => {
-              this.specAttrsCount[cart.selectedSpecAttr] = cart.count
+              if (cart.unionid === this.goods.unionid) {
+                this.$set(this.specAttrsCount, cart.selectedSpecAttr, cart.count)
+              }
             })
             this.scroller = new BScroll(this.$refs.spec, {
               startX: 0,
@@ -134,6 +139,9 @@
             })
           }
         }
+      },
+      updateSpecAttrsCount (selectedSpecAttr, count) {
+        this.$set(this.specAttrsCount, selectedSpecAttr, count)
       },
       selectSpec (index) {
         this.$set(this.selectedSpecAttr, 0, index)
