@@ -68,6 +68,8 @@
       <p>长按二维码关注，<br/>获取更多店铺福利！</p>
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
     </section> -->
+    <red-packet v-show="showRedPacket" @hideRedPacketView="hideRedPacketView"></red-packet>
+    <get-points v-show="showGetPoints"></get-points>
   </div>
 </template>
 
@@ -80,10 +82,12 @@
   import img2 from '../assets/img_progress_2@2x.png'
   import img3 from '../assets/img_progress_3@2x.png'
   import img4 from '../assets/img_progress_4@2x.jpg'
+  import RedPacket from '../../../components/RedPacket'
+  import GetPoints from '../../../components/GetPoints'
 
   export default {
     components: {
-      Loading
+      Loading, RedPacket, GetPoints
     },
     data () {
       return {
@@ -103,7 +107,9 @@
           }
         },
         type: 'android',
-        deliveryImg: ''
+        deliveryImg: '',
+        showRedPacket: false,
+        showGetPoints: true
       }
     },
     computed: {
@@ -113,6 +119,11 @@
           backgroundSize: '100%',
           fontSize: '30px'
         }
+      }
+    },
+    methods: {
+      hideRedPacketView () {
+        this.showRedPacket = false
       }
     },
     created () {

@@ -40,7 +40,7 @@
       </section>
     </div>
     <loading :visible="isLoading"></loading>
-    <red-packet v-show="false"></red-packet>
+    <red-packet v-show="showRedPacket" @hideRedPacketView="hideRedPacketView"></red-packet>
   </div>
 </template>
 
@@ -60,7 +60,8 @@
         order: {
           orderinfo: ''
         },
-        hasDetail: false
+        hasDetail: false,
+        showRedPacket: true
       }
     },
     created () {
@@ -91,6 +92,9 @@
             this.$toast(data.respmsg)
           }
         })
+      },
+      hideRedPacketView () {
+        this.showRedPacket = false
       }
     }
   }
