@@ -9,10 +9,9 @@
       <div class="list-group-box">
         <div class="list-group" ref="group">
           <ul>
-            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}"
-                @click="cateSelect(index, cate)">
+            <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index)">
               <div>
-                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count  > 9 ? '...' : cate.cate_count}}</span>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
               </div>
             </li>
           </ul>
@@ -37,6 +36,7 @@
               <!-- 商品+-选择 -->
               <goods-select v-if="goods.spec_list.length === 1" class="goods-select-container"
                             :goods="goods"
+                            :goodsType="'single'"
                             :count="goods.count"
                             @updateGoodsCount="updateGoodsCount"
                             @changeCart="changeCartSingle">
@@ -53,7 +53,7 @@
     <!--选择规格-->
     <select-spec :visible="showSpec"
                  :goods="selectSpecGoods"
-                 :updateGoodsCount="updateGoodsCount"
+                 :updateCatesCount="updateCatesCount"
                  @hideSpecHandler="hideSpecHandler">
     </select-spec>
 
@@ -63,6 +63,7 @@
 
     <!-- 购物车 -->
     <cart-bar :updateGoodsCount="updateGoodsCount"
+              :updateCatesCount="updateCatesCount"
               :overtime="merchantSetting.overtime"
               :nodelivery="merchantSetting.delivery_open_state === 0"
               :deliver="deliver"
@@ -124,16 +125,19 @@
     created () {
       this.isLoading = true
       this.mchnt_id = this.$route.params.mchnt_id
-      let args = {
-        mchnt_id: this.mchnt_id,
-        format: 'jsonp',
-        open_id: sessionStorage.getItem('dc_openid') || '',
-        sale_type: 3
+      let carts = JSON.parse(localStorage.getItem(`carts${this.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
       }
       this.$http({
         url: Config.apiHost + 'diancan/c/goods_list',
         method: 'JSONP',
-        params: args
+        params: {
+          mchnt_id: this.mchnt_id,
+          format: 'jsonp',
+          open_id: sessionStorage.getItem('dc_openid') || '',
+          sale_type: 3
+        }
       }).then(function (response) {
         this.isLoading = false
         let data = response.data
@@ -153,6 +157,7 @@
           deliver.min_shipping_fee = mSet.min_shipping_fee
         }
         deliver.start_delivery_fee = mSet.start_delivery_fee
+        sessionStorage.setItem(`deliver${this.mchnt_id}`, JSON.stringify(deliver))
         this.$emit('updateDeliver', deliver)
         // 商品购物车
         this.merchantSetting = mSet
@@ -164,9 +169,11 @@
             cate_id: cate.cate_id,
             cate_count: 0
           })
-          // specAttrsCount对象 用来给不同规格+属性 组合的商品 计数
+          // single 无属性无规格商品，直接count计数
           cate.goods_list.map((goods) => {
-            goods.specAttrsCount = {}
+            if (goods.spec_list.length === 1) {
+              goods.count = 0
+            }
           })
         })
         this.allGoods = goods
@@ -177,6 +184,9 @@
             return ''
           }
         })()
+        // localStorage 购物车 商品数量同步
+        this.mergeCartsCount()
+        // 订单信息
         this.order_info = data.data.order_info
         // 刷新 BScroll 组件
         this.$nextTick(() => {
@@ -194,6 +204,7 @@
             click: true
           })
         })
+        // 微信朋友圈、微信好友 分享
         const shopname = data.data.shopname
         const logourl = data.data.logo_url
         Util.setTitle(shopname)
@@ -202,9 +213,29 @@
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
+      localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       next()
     },
     methods: {
+      mergeCartsCount () {
+        this.carts.map(cgoods => {
+          this.cateList.map(cate => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.cate_count += cgoods.count
+            }
+          })
+
+          this.allGoods.map((cate) => {
+            if (cate.cate_id === cgoods.cate_id) {
+              cate.goods_list.map((goods) => {
+                if (cgoods.type === 'single' && goods.unionid === cgoods.unionid) {
+                  goods.count = cgoods.count
+                }
+              })
+            }
+          })
+        })
+      },
       goDetail () {
         this.$router.push({
           name: 'orderDetail',
@@ -238,24 +269,24 @@
             })
           }
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       },
-      updateGoodsCount (cateid, unionid, selectedSpecAttr, count, type) {
+      updateGoodsCount (cateid, unionid, count, type) {
         let cateIndex = this.cateList.findIndex((cate) => {
           return cate.cate_id === cateid
         })
-        this.updateCatesCount(cateIndex, count, type)
+        this.updateCatesCount(cateid, count, type)
 
         let updateIndex = this.allGoods[cateIndex].goods_list.findIndex((goods) => {
           return goods.unionid === unionid
         })
 
-        if (!selectedSpecAttr) {
-          this.allGoods[cateIndex].goods_list[updateIndex].count = count
-        } else {
-          this.$set(this.allGoods[cateIndex].goods_list[updateIndex].specAttrsCount, selectedSpecAttr, count)
-        }
+        this.allGoods[cateIndex].goods_list[updateIndex].count = count
       },
-      updateCatesCount (cateIndex, count, type) {
+      updateCatesCount (cateid, count, type) {
+        let cateIndex = this.cateList.findIndex((cate) => {
+          return cate.cate_id === cateid
+        })
         let catecount = this.cateList[cateIndex].cate_count
         if (type === 'plus') {
           this.cateList[cateIndex].cate_count = catecount + 1
@@ -276,7 +307,6 @@
         this.allGoods.map((cate) => {
           cate.goods_list.map((goods) => {
             goods.count = 0
-            goods.specAttrsCount = {}
           })
         })
       },

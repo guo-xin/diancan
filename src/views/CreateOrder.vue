@@ -53,6 +53,10 @@
     },
     created () {
       let params = this.$route.params
+      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
+      }
       this.hasAddress = params.address !== ':address'
       this.mchnt_id = params.mchnt_id
       this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
@@ -188,6 +192,7 @@
       orderPaySuccess () {
         // 订单支付成功
         store.commit('CLEANCARTS')
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.queryOrder()
       },
       orderPayFail () {

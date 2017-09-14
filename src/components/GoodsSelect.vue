@@ -19,6 +19,7 @@
   export default {
     props: {
       goods: Object,
+      goodsType: String,
       count: {
         type: Number,
         default: 0
@@ -42,16 +43,31 @@
     methods: {
       plus () {
         let count = this.countValue + 1
-        this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, this.selectedSpecAttr, count, 'plus')
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, count, 'plus')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, count, 'plus')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, count)
+        }
         this.$emit('changeCart', this.goods, count)
       },
       minus () {
         let count = this.countValue - 1
-        this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, this.selectedSpecAttr, count, 'minus')
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, count, 'minus')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, count, 'minus')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, count)
+        }
         this.$emit('changeCart', this.goods, count)
       },
       diy (val) {
-        this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, this.selectedSpecAttr, val, 'diy')
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, val, 'diy')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, val, 'diy')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, val)
+        }
         this.$emit('changeCart', this.goods, val)
       },
       blurHandler (e) {

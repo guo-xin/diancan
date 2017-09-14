@@ -32,18 +32,11 @@
       <goods-select class="goods-select-container"
                     :goods="goods"
                     :selectedSpecAttr="selectedSpecAttr.toString()"
-                    :count="goods.specAttrsCount[selectedSpecAttr]"
-                    @updateGoodsCount="updateGoodsCount"
+                    :count="specAttrsCount[selectedSpecAttr.toString()]"
+                    @updateCatesCount="updateCatesCount"
+                    @updateSpecAttrsCount="updateSpecAttrsCount"
                     @changeCart="changeCartSpecAttr">
       </goods-select>
-
-      <!--商品选择-->
-      <!-- <goods-select class="goods-select-container"
-                    :goods="goods"
-                    :activate="lastSpec"
-                    :plus="plus"
-                    :minus="minus"
-                    :diy="diy"></goods-select> -->
     </div>
     <div class="mark" @click.stop="closeSpec()" @touchmove.stop.prevent></div>
   </div>
@@ -55,9 +48,10 @@
   import store from '../vuex/store'
   export default {
     components: {GoodsSelect},
-    props: ['goods', 'visible', 'updateGoodsCount'],
+    props: ['goods', 'visible', 'updateCatesCount'],
     data () {
       return {
+        mchnt_id: this.$route.params.mchnt_id,
         scroller: null,
         selectedSpecAttr: [0],
         specAttrsCount: {}
@@ -66,15 +60,17 @@
     watch: {
       'visible': function (val, oldVal) {
         if (val) {
+          this.specAttrsCount = {}
           this.$nextTick(() => {
             this.selectedSpecAttr = [0]
-            if (this.goods.attr_list) {
-              this.goods.attr_list.map((index) => {
-                this.selectedSpecAttr.push(0)
-              })
-            }
+            this.goods.attr_list.map((index) => {
+              this.selectedSpecAttr.push(0)
+            })
+            // 打开规格弹框时，同步购物车各种规格的数量
             this.carts.map((cart) => {
-              this.specAttrsCount[cart.selectedSpecAttr] = cart.count
+              if (cart.unionid === this.goods.unionid) {
+                this.$set(this.specAttrsCount, cart.selectedSpecAttr, cart.count)
+              }
             })
             this.scroller = new BScroll(this.$refs.spec, {
               startX: 0,
@@ -112,8 +108,14 @@
             attrValuesString += `，${attrValue.value_name}`
           })
         }
+        let type = goods.attr_list.length === 0 ? 'spec' : 'attr'
         let cartIndex = this.carts.findIndex((g) => {
-          return g.unionid === goods.unionid && g.selectedSpecAttr === goods.selectedSpecAttr
+          if (type === 'spec') {
+            let selectedSpecIndex = parseInt(this.selectedSpecAttr[0])
+            return g.spec.id === goods.spec_list[selectedSpecIndex].id
+          } else {
+            return g.unionid === goods.unionid && g.selectedSpecAttr === this.selectedSpecAttr.toString()
+          }
         })
         if (cartIndex < 0) {
           let cartGoods = {
@@ -122,7 +124,7 @@
             unionid: goods.unionid,
             count: 1,
             spec: goods.spec_list[this.selectedSpecAttr[0]],
-            type: 'multi-attr',
+            type: type,
             attr_list: attrList,
             attrValuesString: attrValuesString,
             selectedSpecAttr: this.selectedSpecAttr.toString()
@@ -138,6 +140,10 @@
             })
           }
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
+      },
+      updateSpecAttrsCount (selectedSpecAttr, count) {
+        this.$set(this.specAttrsCount, selectedSpecAttr, count)
       },
       selectSpec (index) {
         this.$set(this.selectedSpecAttr, 0, index)

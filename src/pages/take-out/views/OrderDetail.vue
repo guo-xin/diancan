@@ -168,7 +168,7 @@
             break
           }
         }
-        const shopname = data.data.orderinfo.shop_name
+        const shopname = data.data.merchant_info.shop_name
         Util.setTitle(shopname)
       })
     }

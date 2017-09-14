@@ -14,13 +14,13 @@
     <div class="mask" v-show="visibleList" @click.stop="visibleList=false"></div>
     <transition name="totop">
       <div class="cart-list" v-show="visibleList">
-        <div class="title" @click="cleanCartHandler()">
+        <div class="title" @click="cleanCartHandle()">
           <img src="../assets/clean.png">
           <span>清空购物车</span>
         </div>
         <div class="cart-list_box" ref="cart">
           <ul v-show="carts.length">
-            <li v-for="(goods, index) in carts">
+            <li v-for="goods in carts">
               <div>
                 <div class="name one_text">{{goods.name}}</div>
                 <div class="goods-info">
@@ -31,9 +31,11 @@
               <!--商品选择-->
               <goods-select class="goods-select-container"
                             :goods="goods"
+                            :goodsType="goods.type"
                             :count="goods.count"
                             :selectedSpecAttr="goods.selectedSpecAttr"
                             @updateGoodsCount="updateGoodsCount"
+                            @updateCatesCount="updateCatesCount"
                             @changeCart="changeCart">
               </goods-select>
             </li>
@@ -53,9 +55,10 @@
     components: {
       GoodsSelect
     },
-    props: ['updateGoodsCount'],
+    props: ['updateGoodsCount', 'updateCatesCount'],
     data () {
       return {
+        mchnt_id: this.$route.params.mchnt_id,
         visibleList: false,
         scroller: null
       }
@@ -91,7 +94,9 @@
     methods: {
       changeCart (goods, count) {
         let cartIndex = this.carts.findIndex((g) => {
-          if (g.attrValuesString) {
+          if (g.type === 'spec') {
+            return g.unionid === goods.unionid && g.spec.id === goods.spec.id
+          } else if (g.type === 'attr') {
             return g.unionid === goods.unionid && g.attrValuesString === goods.attrValuesString
           } else { // 单规格商品 用unionid 判断
             return g.unionid === goods.unionid
@@ -106,13 +111,15 @@
             count
           })
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       },
       showList () {
         this.visibleList = !this.visibleList
         this.refresh()
       },
-      cleanCartHandler () {
+      cleanCartHandle () {
         store.commit('CLEANCARTS')
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.visibleList = false
         this.$emit('cleanCatesGoodsCount')
         this.refresh()
