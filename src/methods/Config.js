@@ -8,9 +8,6 @@ const test = process.env.NODE_ENV === 'testing'
 const dev = process.env.NODE_ENV === 'development'
 
 // 生产环境,线上配置
-// let host = 'http://wx.qfpay.com/'
-// let o2Host = 'https://o2.qfpay.com/'
-// let oHost = 'https://o.qfpay.com/'
 let rootHost = 'https://o.qfpay.com/dc/'
 let payHost = 'https://openapi.qfpay.com/'
 let apiHost = 'https://o.qfpay.com/'
@@ -69,10 +66,6 @@ module.exports = {
     UNKOWNERR: '2400', // 未知错误
     VERIFYCODE: '1001', //    验证码不正确
     REGISTERERR: '1000' //    注册失败
-  },
-  /**
-   * 常量 key
-   */
-  STORE_CART: 'STORE_CART_v2'  // 购物车
+  }
   // OPENID: 'diancan_openid_' + appid
 }

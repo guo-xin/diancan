@@ -1,11 +1,11 @@
 <template>
   <div class="l-r item-add show-all">
-    <div class="btn-touch" v-show="count" @click.stop="minus(goods, activate)">
+    <div class="btn-touch" v-show="countValue" @click.stop="minus()">
       <i class="icon-reduce"></i>
     </span>
     </div>
-    <input class="item-count" type="tel" v-show="count" v-model="count" @focus="focusHandler(count)" @blur="blurHandler">
-    <div class="btn-touch" @click.stop="plus(goods, activate)">
+    <input class="item-count" type="tel" v-show="countValue" v-model.number="countValue" @blur="blurHandler($event)">
+    <div class="btn-touch" @click.stop="plus()">
       <i class="icon-add"></i>
     </span>
     </div>
@@ -19,40 +19,60 @@
   export default {
     props: {
       goods: Object,
-      activate: {
+      goodsType: String,
+      count: {
         type: Number,
         default: 0
       },
-      minus: Function,
-      plus: Function,
-      diy: Function
+      selectedSpecAttr: {
+        type: String,
+        default: ''
+      }
     },
     data () {
       return {
-        countValue: '',
-        oldValue: ''
       }
     },
-    watch: {
+    created () {
     },
     computed: {
-      count () {
-        return this.goods.spec_list[this.activate]._count
+      countValue () {
+        return this.count
       }
     },
     methods: {
-      focusHandler (count) {
-        this.oldValue = count
+      plus () {
+        let count = this.countValue + 1
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, count, 'plus')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, count, 'plus')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, count)
+        }
+        this.$emit('changeCart', this.goods, count)
+      },
+      minus () {
+        let count = this.countValue - 1
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, count, 'minus')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, count, 'minus')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, count)
+        }
+        this.$emit('changeCart', this.goods, count)
+      },
+      diy (val) {
+        if (this.goodsType === 'single') {
+          this.$emit('updateGoodsCount', this.goods.cate_id, this.goods.unionid, val, 'diy')
+        } else {
+          this.$emit('updateCatesCount', this.goods.cate_id, val, 'diy')
+          this.$emit('updateSpecAttrsCount', this.selectedSpecAttr, val)
+        }
+        this.$emit('changeCart', this.goods, val)
       },
       blurHandler (e) {
-        let val
-        if (isNaN(Number(this.countValue)) || Number(this.countValue) > 999) {
-          val = this.oldValue
-          this.countValue = this.oldValue
-        } else {
-          val = e.target.value
-        }
-        this.diy(this.goods, this.activate, parseInt(val))
+        let val = e.target.value || 0
+        this.diy(parseInt(val))
       }
     }
   }

@@ -1,11 +1,6 @@
 <template>
   <div id="app">
     <router-view
-      @toast="toast"
-      :cart="cart"
-      @changeCart="changeCart"
-      @saveCartEv="saveCartEv"
-      @getCart="getCart"
       @hideOptionMenu="hideOptionMenu"
       @menuShareAppMessage="menuShareTimeline"
       @menuShareTimeline="menuShareTimeline"
@@ -15,26 +10,25 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Store from 'methods/Store'
-  import { STORE_CART } from 'methods/Config'
+  import store from '../../vuex/store'
 
   export default {
+    store,
     data () {
       return {
         user: {
           open_id: ''
         },
         appId: '',
-        cart: [],
         msg: ''
       }
     },
     created () {
-      // 清空购物车
-      this.$root.eventHub.$on('cleanCart', (mchntId) => {
-        this.cart = []
-        this.saveCartEv(mchntId, [])
-      })
+    },
+    computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      }
     },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
@@ -47,45 +41,6 @@
       setOpenId () {
         this.user.open_id = sessionStorage.getItem('dc_openid') || ''
         this.appId = sessionStorage.getItem('dc_appid') || ''
-      },
-      getKey (mchntId) {
-        return STORE_CART + '_' + mchntId
-      },
-      saveCart (mchntId) {
-        Store.set(this.getKey(mchntId), this.cart, 5 * 60 * 60 * 1000)
-      },
-      toast (msg) {
-        this.msg = msg
-      },
-      changeCart (goods, specIndex, mchntId) {
-        let divGoods = Object.assign({}, goods, {_specIndex: specIndex})
-        let index = -1
-        let spec = goods.spec_list[specIndex]
-        this.cart.find((g, _index) => {
-          let isfind = g.spec_list[g._specIndex].id === spec.id
-          if (isfind) {
-            index = _index
-          }
-          return isfind
-        })
-        if (index < 0) {  // 新增
-          spec._count = 1
-          this.cart.push(divGoods)
-        } else {
-          if (spec._count) { // 修改数量
-            this.$set(this.cart, index, divGoods)
-          } else {  // 移除
-            this.cart.splice(index, 1)
-          }
-        }
-        this.saveCart(mchntId)
-      },
-      saveCartEv (mchntId, cart) {
-        this.cart = cart || []
-        this.saveCart(mchntId)
-      },
-      getCart (mchntId) {
-        this.cart = Store.get(this.getKey(mchntId)) || []
       },
       hideOptionMenu () {  // 隐藏右上角菜单
         this.$wechat.hideOptionMenu()

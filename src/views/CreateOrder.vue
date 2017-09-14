@@ -13,12 +13,12 @@
     </section>
     <section class="order item">
       <ul class="goods-list">
-        <li v-for="goods in cart">
+        <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+            <em>{{goods.spec.name}}{{goods.attrValuesString}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
       <div class="total">
@@ -38,8 +38,8 @@
   /* global _hmt */
   import Config from '../methods/Config'
   import { isWX } from '../methods/Util'
+  import store from '../vuex/store'
   export default {
-    props: ['cart'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -53,18 +53,25 @@
     },
     created () {
       let params = this.$route.params
+      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
+      }
       this.hasAddress = params.address !== ':address'
       this.mchnt_id = params.mchnt_id
       this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
     },
     computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      },
       cartData () {
         let count = 0
         let price = 0
-        this.cart.forEach((goods, index) => {
-          let spec = goods.spec_list[goods._specIndex]
-          count += spec._count
-          price += spec._count * spec.txamt
+        this.carts.forEach((goods, index) => {
+          let spec = goods.spec
+          count += goods.count
+          price += goods.count * spec.txamt
         })
         return {
           count,
@@ -86,13 +93,12 @@
          */
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        let cart = this.cart || []
-        let goodsItem = cart.map((goods) => {
-          let spec = goods.spec_list[goods._specIndex]
+        let goodsInfo = this.carts.map((goods) => {
+          let spec = goods.spec
           return {
             id: spec.id,
-            count: spec._count
-            // cate_id: goods.cate_id
+            count: goods.count,
+            attr_list: goods.attr_list || []
           }
         })
         let args = {
@@ -103,7 +109,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.cartData.price,
-          goods_info: JSON.stringify(goodsItem),
+          goods_info: JSON.stringify(goodsInfo),
           format: 'cors'
         }
         this.$http({
@@ -185,8 +191,8 @@
       },
       orderPaySuccess () {
         // 订单支付成功
-        // this.$dispatch('on-cleanCart', this.mchnt_id)
-        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
+        store.commit('CLEANCARTS')
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.queryOrder()
       },
       orderPayFail () {

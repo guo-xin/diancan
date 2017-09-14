@@ -15,12 +15,12 @@
     </section>
     <section class="goods item">
       <ul class="goods-list">
-        <li v-for="goods in cart">
+        <li v-for="goods in carts">
           <div>
             <strong>{{goods.name}}</strong>
-            <em>{{goods.spec_list[goods._specIndex].name}}</em>
+            <em>{{goods.spec.name}}{{goods.attrValuesString}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec_list[goods._specIndex].txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.spec_list[goods._specIndex]._count}}</em></span>
+          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
       <div class="deliver-fee">
@@ -46,8 +46,9 @@
   /* eslint-disable  */
   import Config from 'methods/Config'
   import Util from 'methods/Util'
+  import store from '../../../vuex/store'
   export default {
-    props: ['cart', 'deliver'],
+    props: ['deliver'],
     data () {
       return {
         mchnt_id: '',       // 商户ID
@@ -70,6 +71,12 @@
     },
     created () {
       let params = this.$route.params
+      let deliver = JSON.parse(sessionStorage.getItem(`deliver${params.mchnt_id}`))
+      this.$emit('updateDeliver', deliver)
+      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`))
+      if (carts) {
+        store.commit('GETCARTS', carts)
+      }
       this.mchnt_id = params.mchnt_id
       this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
@@ -96,14 +103,17 @@
       })
     },
     computed: {
+      carts () {
+        return this.$store.getters.getCarts
+      },
       cartData () {
         let count = 0
         let price = 0
-        let cart = this.cart
-        cart.forEach((goods, index) => {
-          let spec = goods.spec_list[goods._specIndex]
-          count += spec._count
-          price += spec._count * spec.txamt
+        let carts = this.carts || []
+        carts.forEach((goods, index) => {
+          let spec = goods.spec
+          count += goods.count
+          price += goods.count * spec.txamt
         })
         return {
           count,
@@ -224,8 +234,8 @@
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
-        // 达达配送需要多传参数
 
+        // 达达配送需要多传参数
         let dada_args = {}
         if (this.isDadaDeliver) {
           dada_args.delivery_no = this.delivery_no
@@ -233,13 +243,12 @@
         }
         this.btnText = '支付中...'
         this.note = ('' + this.note).trim()
-        let cart = this.cart || []
-        let goodsItem = cart.map((goods) => {
-          let spec = goods.spec_list[goods._specIndex]
+        let goodsInfo = this.carts.map((goods) => {
+          let spec = goods.spec
           return {
             id: spec.id,
-            count: spec._count
-            // cate_id: goods.cate_id
+            count: goods.count,
+            attr_list: goods.attr_list || []
           }
         })
         let args = {
@@ -249,7 +258,7 @@
           note: this.note,
           pay_way: 'weixin',
           pay_amt: this.payAmt,
-          goods_info: JSON.stringify(goodsItem),
+          goods_info: JSON.stringify(goodsInfo),
           format: 'cors',
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id
@@ -332,7 +341,8 @@
         }
       },
       orderPaySuccess () {  // 订单支付成功
-        this.$root.eventHub.$emit('cleanCart', this.mchnt_id)
+        store.commit('CLEANCARTS') // 清空购物车
+        localStorage.removeItem(`carts${this.mchnt_id}`)
         this.queryOrder()
       },
       orderPayFail () { // 支付失败

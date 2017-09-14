@@ -26,7 +26,7 @@
   }
 
   var ENV = '<%= htmlWebpackPlugin.options.RUN_ENV %>';
-  if('production' === ENV) {
+  if ('production' === ENV || 'testing' === ENV) {
     var _hmt = _hmt || [];
     (function() {
       var hm = document.createElement("script");
