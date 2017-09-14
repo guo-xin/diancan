@@ -51,6 +51,7 @@
     props: ['goods', 'visible', 'updateCatesCount'],
     data () {
       return {
+        mchnt_id: this.$route.params.mchnt_id,
         scroller: null,
         selectedSpecAttr: [0],
         specAttrsCount: {}
@@ -139,6 +140,7 @@
             })
           }
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       },
       updateSpecAttrsCount (selectedSpecAttr, count) {
         this.$set(this.specAttrsCount, selectedSpecAttr, count)

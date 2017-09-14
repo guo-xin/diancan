@@ -211,12 +211,6 @@
         this.shareStore(shopname, logourl)
       })
     },
-    mounted () {
-      let _this = this
-      window.onbeforeunload = function () {
-        localStorage.setItem(`carts${_this.mchnt_id}`, JSON.stringify(_this.carts))
-      }
-    },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
       localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
@@ -275,6 +269,7 @@
             })
           }
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       },
       updateGoodsCount (cateid, unionid, count, type) {
         let cateIndex = this.cateList.findIndex((cate) => {

@@ -130,6 +130,7 @@
             count
           })
         }
+        localStorage.setItem(`carts${this.mchnt_id}`, JSON.stringify(this.carts))
       },
       showList () {
         this.visibleList = !this.visibleList
