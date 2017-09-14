@@ -27,8 +27,18 @@
       </div>
     </section>
     <section class="payment item">
-      <em>支付方式</em>
-      <span><i></i>微信支付</span>
+      <div class="wechat" :class="{'active': payment === 'wechat'}" @click="choosePayment('wechat')">
+        <strong>
+          <i class="icon-wechat"></i><span>微信支付</span>
+        </strong>
+        <i class="icon-checked"></i>
+      </div>
+      <div class="balance" :class="{'active': payment === 'balance'}" @click="choosePayment('balance')">
+        <strong>
+          <i class="icon-wallet"></i><span>余额支付<em>￥80.00</em></span>
+        </strong>
+        <i class="icon-checked"></i>
+      </div>
     </section>
     <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
   </div>
@@ -48,7 +58,8 @@
         note: '',           // 备注
         orderId: '',
         checkout: {},
-        btnText: '确认下单'
+        btnText: '确认下单',
+        payment: 'wechat'
       }
     },
     created () {
@@ -80,6 +91,9 @@
       }
     },
     methods: {
+      choosePayment (payment) {
+        this.payment = payment
+      },
       createOrder () {  // 创建订单
         /**
          * open_id
@@ -307,6 +321,7 @@
     }
     div {
       flex: 1;
+      margin-right: 40px;
       strong {
         font-weight: normal;
         display: block;
@@ -340,19 +355,58 @@
     text-align: right;
   }
   .payment {
-    display: flex;
-    span {
+    padding: 0;
+    padding-left: 30px;
+    strong, > i {
       display: block;
-      flex: 1;
-      text-align: right;
+    }
+    strong {
+      font-weight: normal;
       i {
-        width: 42px;
-        height: 40px;
         margin-right: 16px;
-        display: inline-block;
+      }
+      span, i {
         vertical-align: middle;
-        background: url('../assets/wechat.svg') no-repeat;
-        background-size: 100% auto;
+      }
+    }
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      padding-right: 30px;
+      &.wechat {
+        border-bottom: 2px solid #E5E5E5;
+        .icon-wechat {
+          font-size: 40px;
+          color: $green;
+        }
+      }
+      &.balance {
+        .icon-wallet {
+          font-size: 36px;
+          color: $orange;
+        }
+        em {
+          color: $orange;
+          margin-left: 10px;
+        }
+      }
+      &.active {
+        .icon-checked {
+          background-color: $green;
+          border-color: $green;
+          color: #fff;
+        }
+      }
+      .icon-checked {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 26px;
+        color: transparent;
+        border: 4px solid $midGray;
+        border-radius: 100%;
       }
     }
   }

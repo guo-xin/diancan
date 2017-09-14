@@ -24,6 +24,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-checked:before {
+  content: "\e909";
+}
+.icon-wechat:before {
+  content: "\e90a";
+}
+.icon-wallet:before {
+  content: "\e90b";
+}
 .icon-right-arrow:before {
   content: "\e902";
 }

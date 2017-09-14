@@ -458,6 +458,7 @@
     }
     div {
       flex: 1;
+      margin-right: 40px;
       strong {
         display: block;
         font-weight: normal;
