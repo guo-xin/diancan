@@ -1,5 +1,10 @@
 <template>
   <div>
+    <get-store-info :merchantSetting="merchantSetting"
+                    :mchntActivity="mchntActivity"
+                    @showStoreDetailHandler="showStoreDetailHandler()"></get-store-info>
+    <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
+                       @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
     <div class="order-info" v-show="isEmptyInfo">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
         <a @click="goDetail">查看取餐号</a>
@@ -86,12 +91,14 @@
   import CartBar from 'components/CartBar'
   import GoodsDetail from 'components/GoodsDetail'
   import ScanQrcode from 'components/ScanQrcode.vue'
+  import GetStoreInfo from 'components/GetStoreInfo.vue'
+  import StoreInfoDetail from 'components/StoreInfoDetail.vue'
   import Config from 'methods/Config'
   import store from '../vuex/store'
 
   export default {
     components: {
-      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetStoreInfo, StoreInfoDetail
     },
     data () {
       return {
@@ -109,7 +116,14 @@
         order_info: {}, // 是否已存在订单
         isClose: false,
         isExpire: false,
-        merchantSetting: {},
+        merchantSetting: {}, // 店铺信息
+        mchntActivity: {
+          prepaid: {  // 储值活动
+            max_present_amt: 0,
+            expired: 1
+          }
+        }, // 店铺活动
+        showStoreDetail: false,
         typeScroller: null,
         menuScroller: null
       }
@@ -150,6 +164,8 @@
           this.$toast(data.respmsg)
           return
         }
+        let hashid = data.data.merchant_setting.en_mchnt_id
+        this.fetchMchntActivity(hashid)
         let goods = data.data.goods
         goods.map(cate => {
           // 分类列表 计数
@@ -193,8 +209,8 @@
           })
         })
         // 分享店铺信息
-        const shopname = data.data.shopname
-        const logourl = data.data.logo_url
+        const shopname = data.data.merchant_setting.shop_name
+        const logourl = data.data.merchant_setting.logo_url
         Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
@@ -205,6 +221,25 @@
       next()
     },
     methods: {
+      fetchMchntActivity (hashid) {
+        this.$http({
+          url: Config.mHost + 'v1/mkw/activity_tip',
+          method: 'JSONP',
+          params: {
+            enuserid: hashid,
+            format: 'jsonp'
+          }
+        }).then(function (response) {
+          let data = response.data
+          this.mchntActivity = data.data
+          sessionStorage.setItem('prepaid', JSON.stringify({
+            balance: data.data.prepaid.balance,
+            max_present_amt: data.data.prepaid.max_present_amt,
+            expired: data.data.prepaid.expired,
+            recharge_url: data.data.prepaid.recharge_url
+          }))
+        })
+      },
       mergeCartsCount () {
         this.carts.map(cgoods => {
           this.cateList.map(cate => {
@@ -340,6 +375,14 @@
           imgUrl: imgUrl,
           link: shareLink
         })
+      },
+      showStoreDetailHandler () {
+        this.showStoreDetail = true
+        document.querySelector('body').classList.add('popup-open')
+      },
+      hideStoreDetailHandler () {
+        this.showStoreDetail = false
+        document.querySelector('body').classList.remove('popup-open')
       }
     }
   }
@@ -373,7 +416,7 @@
         text-align: center;
         font-size: 30px;
         border-radius: 6px;
-        background-color: #FE9B20;
+        background-color: #ff8100;
         line-height: 1;
       }
     }

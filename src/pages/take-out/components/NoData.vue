@@ -1,6 +1,6 @@
 <template>
   <div class="c-nodata">
-    <h1>{{ msg }}</h1>
+    <p>{{ msg }}</p>
   </div>
 </template>
 

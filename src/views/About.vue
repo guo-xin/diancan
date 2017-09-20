@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <h1>{{ msg }}</h1>
+    <p>{{ msg }}</p>
     <button @click="clear">清除本地存储</button>
   </div>
 </template>
@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-h1 {
+p {
   color: #42b983;
 }
 </style>

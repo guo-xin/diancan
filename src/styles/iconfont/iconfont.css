@@ -24,6 +24,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-star:before {
+  content: "\e90c";
+}
+.icon-coupon:before {
+  content: "\e90d";
+}
 .icon-checked:before {
   content: "\e909";
 }
