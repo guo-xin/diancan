@@ -1,9 +1,11 @@
 <template>
-  <header class="store-info" @click="showStoreDetail()" :style="backgroundObj">
+  <header class="store-info" @click="showStoreDetail()" :style="backgroundObj()">
     <div class="inner">
       <h1>{{merchantSetting.shop_name}}</h1>
       <ul>
-        <li :class="{'hide': mchntActivity.prepaid.expired}"><i class="icon-wallet"></i><span>储值最高送¥{{mchntActivity.prepaid.max_present_amt | formatCurrency}}～</span></li>
+        <li :class="{'hide': mchntActivity.prepaid.expired}">
+          <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元～</span>
+        </li>
       </ul>
       <i class="icon-right-arrow"></i>
     </div>
@@ -18,17 +20,16 @@
         btnDisabled: false
       }
     },
-    computed: {
-      backgroundObj () {
-        return {
-          backgroundImage: 'url(' + this.merchantSetting.head_img + ')',
-          backgroundSize: '100% 100%'
-        }
-      }
-    },
     created () {
     },
     methods: {
+      backgroundObj () {
+        return {
+          backgroundImage: 'url(' + this.merchantSetting.head_img + ')',
+          backgroundSize: '100%',
+          backgroundPosition: 'center'
+        }
+      },
       showStoreDetail () {
         this.$emit('showStoreDetailHandler')
       }

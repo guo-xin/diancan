@@ -51,14 +51,16 @@
   }
   .location-bar {
     background-color: #000;
+    height: 60px;
+    align-items: center;
     display: flex;
+    padding-left: 30px;
     strong {
       font-size: 28px;
       font-weight: normal;
       display: block;
-      flex: 1;
       align-self: center;
-      padding-left: 36px;
+      flex: 1;
       padding-right: 30px;
       line-height: 1.5;
       font-size: 24px;
@@ -74,6 +76,7 @@
       color: $orange;
       padding: 6px 30px;
       height: 60px;
+      line-height: 60px;
       .icon-location {
         font-size: 36px;
       }

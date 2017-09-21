@@ -42,7 +42,7 @@
         <i v-else class="icon-checked"></i>
       </div>
       <div class="chuzhi" v-if="prepaid.expired === 0" @click="goChuzhi()">
-        <p>储值优惠，最高送¥{{prepaid.max_present_amt | formatCurrency}}</p><i class="icon-right-arrow"></i>
+        <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
       </div>
     </section>
     <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
@@ -101,6 +101,9 @@
     },
     methods: {
       choosePayment (payType) {
+        if (this.prepaid.balance < this.cartData.price) {
+          return
+        }
         this.payType = payType
       },
       goChuzhi () {
@@ -424,6 +427,7 @@
       .icon-checked {
         width: 30px;
         height: 30px;
+        display: inline-block;
         line-height: 30px;
         font-size: 26px;
         color: transparent;
