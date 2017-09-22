@@ -1,6 +1,10 @@
 <template>
   <div>
     <get-Location></get-Location>
+    <get-store-info :merchantSetting="merchantSetting" :mchntActivity="mchntActivity"
+                    @showStoreDetailHandler="showStoreDetailHandler()"></get-store-info>
+    <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
+                       @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
     <div class="order-info" v-if="isEmptyOrder">
       <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单</p>
       <button class="default-button" type="button" @click="goDetail">查看订单</button>
@@ -86,6 +90,8 @@
   import GoodsDetail from 'components/GoodsDetail'
   import ScanQrcode from 'components/ScanQrcode.vue'
   import GetLocation from 'components/GetLocation.vue'
+  import GetStoreInfo from 'components/GetStoreInfo.vue'
+  import StoreInfoDetail from 'components/StoreInfoDetail.vue'
   import Config from 'methods/Config'
   import BScroll from 'better-scroll'
   import store from '../../../vuex/store'
@@ -93,7 +99,7 @@
   export default {
     props: ['deliver'],
     components: {
-      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation, GetStoreInfo, StoreInfoDetail
     },
     data () {
       return {
@@ -109,7 +115,14 @@
         selectDetail: null,
         order_info: {}, // 是否已存在订单
         isExpire: false,
-        merchantSetting: {},
+        merchantSetting: {}, // 店铺信息
+        mchntActivity: {
+          prepaid: {
+            max_present_amt: 0,
+            expired: 1
+          }
+        }, // 店铺活动
+        showStoreDetail: false,
         typeScroller: null,
         menuScroller: null
       }
@@ -149,6 +162,7 @@
           return
         }
         let mSet = data.data.merchant_setting
+        this.fetchMchntActivity(mSet.en_mchnt_id)
         sessionStorage.setItem('isDadaDeliver', mSet.distribution)
         // 配送费
         let deliver = this.$parent.deliver
@@ -159,7 +173,7 @@
         deliver.start_delivery_fee = mSet.start_delivery_fee
         sessionStorage.setItem(`deliver${this.mchnt_id}`, JSON.stringify(deliver))
         this.$emit('updateDeliver', deliver)
-        // 商品购物车
+        this.shopbg = data.data.head_img
         this.merchantSetting = mSet
         let goods = data.data.goods
         goods.map(cate => {
@@ -205,8 +219,8 @@
           })
         })
         // 微信朋友圈、微信好友 分享
-        const shopname = data.data.shopname
-        const logourl = data.data.logo_url
+        const shopname = data.data.merchant_setting.shop_name
+        const logourl = data.data.merchant_setting.logo_url
         Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
@@ -217,6 +231,25 @@
       next()
     },
     methods: {
+      fetchMchntActivity (hashid) {
+        this.$http({
+          url: Config.mHost + 'v1/mkw/activity_tip',
+          method: 'JSONP',
+          params: {
+            enuserid: hashid,
+            format: 'jsonp'
+          }
+        }).then(function (response) {
+          let data = response.data
+          this.mchntActivity = data.data
+          sessionStorage.setItem('prepaid', JSON.stringify({
+            balance: data.data.prepaid.balance,
+            max_present_amt: data.data.prepaid.max_present_amt,
+            expired: data.data.prepaid.expired,
+            recharge_url: data.data.prepaid.recharge_url
+          }))
+        })
+      },
       mergeCartsCount () {
         this.carts.map(cgoods => {
           this.cateList.map(cate => {
@@ -352,6 +385,14 @@
           imgUrl: imgUrl,
           link: shareLink
         })
+      },
+      showStoreDetailHandler () {
+        this.showStoreDetail = true
+        document.querySelector('body').classList.add('popup-open')
+      },
+      hideStoreDetailHandler () {
+        this.showStoreDetail = false
+        document.querySelector('body').classList.remove('popup-open')
       }
     }
   }

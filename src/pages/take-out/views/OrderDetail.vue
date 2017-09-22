@@ -22,6 +22,7 @@
     <section class="order-info item">
       <p>订单编号：<span>{{order.orderinfo.order_id}}</span></p>
       <p>购买时间：<span>{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</span></p>
+      <p>支付方式：<span>{{order.orderinfo.pay_type === '800207' ? '微信支付' : '余额支付'}}</span></p>
       <!-- <button type="button">取消订单</button> -->
     </section>
     <section class="order-content item">

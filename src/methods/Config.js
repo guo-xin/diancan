@@ -14,6 +14,7 @@ let apiHost = 'https://o.qfpay.com/'
 let dcHost = 'https://o.qfpay.com/'
 let o2Host = 'https://o2.qfpay.com/'  // 获取微信openid
 let wxmpHost = 'https://wxmp.qfpay.com/'  // 获取微信分享
+let mHost = 'https://marketing.qfpay.com/'
 
 // let appid = 'wxeb6e671f5571abce'  // 公众号ID
 
@@ -25,6 +26,7 @@ if (test) {
   dcHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'
+  mHost = 'https://marketing.qa.qfpay.net/'
   // appid = 'wx087a3fc3f3757766'  // 公众号ID
 }
 
@@ -36,6 +38,7 @@ if (!dev) {
   dcHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'
+  mHost = 'https://marketing.qa.qfpay.net/'
 }
 
 module.exports = {
@@ -45,6 +48,7 @@ module.exports = {
   o2Host,
   wxmpHost,
   dcHost,
+  mHost,
   env: process.env.NODE_ENV,
   // appid,
   code: {

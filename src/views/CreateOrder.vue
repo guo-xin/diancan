@@ -27,8 +27,23 @@
       </div>
     </section>
     <section class="payment item">
-      <em>支付方式</em>
-      <span><i></i>微信支付</span>
+      <div class="wechat" :class="{'active': payType === '800207'}" @click="choosePayment('800207')">
+        <strong>
+          <i class="icon-wechat"></i><span>微信支付</span>
+        </strong>
+        <i class="icon-checked"></i>
+      </div>
+      <div class="balance" :class="{'active': payType === '700000'}" @click="choosePayment('700000')">
+        <strong :class="{'disabled': prepaid.balance < cartData.price}">
+          <i class="icon-wallet"></i><span>余额支付<em>￥{{prepaid.balance | formatCurrency}}</em></span>
+        </strong>
+        <em v-if="prepaid.balance === 0">储值享优惠</em>
+        <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
+        <i v-else class="icon-checked"></i>
+      </div>
+      <div class="chuzhi" v-if="prepaid.expired === 0" @click="goChuzhi()">
+        <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
+      </div>
     </section>
     <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
   </div>
@@ -48,7 +63,9 @@
         note: '',           // 备注
         orderId: '',
         checkout: {},
-        btnText: '确认下单'
+        btnText: '确认下单',
+        prepaid: {},   // 储值信息
+        payType: '800207'  // 支付方式 800207是微信，700000是储值
       }
     },
     created () {
@@ -57,6 +74,9 @@
       if (carts) {
         store.commit('GETCARTS', carts)
       }
+      let prepaid = JSON.parse(sessionStorage.getItem('prepaid'))
+      this.payType = prepaid.balance > this.cartData.price ? '700000' : '800207'  // 余额大于订单金额 默认选中余额支付
+      this.prepaid = prepaid
       this.hasAddress = params.address !== ':address'
       this.mchnt_id = params.mchnt_id
       this.address = params.address && this.hasAddress ? decodeURIComponent(params.address) : ''
@@ -80,6 +100,16 @@
       }
     },
     methods: {
+      choosePayment (payType) {
+        if (this.prepaid.balance < this.cartData.price) {
+          return
+        }
+        this.payType = payType
+      },
+      goChuzhi () {
+        let redirectUrl = window.location.href
+        window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
+      },
       createOrder () {  // 创建订单
         /**
          * open_id
@@ -87,7 +117,7 @@
          * mchnt_id   // 商户id
          * address    // 桌号
          * note       // 备注
-         * pay_way    // 支付方式: 'weixin'
+         * pay_type    // 支付方式
          * pay_amt    // 付款金额
          * goods_info // 商品信息 json
          */
@@ -102,13 +132,13 @@
           }
         })
         let args = {
-          open_id: this.$parent.user.open_id,
+          open_id: this.$parent.user.open_id || sessionStorage.getItem('dc_openid'),
           appid: sessionStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           address: this.address,
           note: this.note,
-          pay_way: 'weixin',
           pay_amt: this.cartData.price,
+          pay_type: this.payType,
           goods_info: JSON.stringify(goodsInfo),
           format: 'cors'
         }
@@ -133,7 +163,7 @@
       },
       getPayArgs (args) {
         args.userid = 0
-        args.pay_type = 800207
+        args.pay_type = this.payType
         args.type = 'h5'
 //        args.format = 'cors'
 
@@ -148,8 +178,12 @@
             this.btnText = '确认下单'
             return
           }
-          this.pay(data.pay_params)
           this.checkout = data
+          if (this.payType === '700000') {
+            this.orderPaySuccess()
+          } else {
+            this.pay(data.pay_params)
+          }
         }, (response) => {
           // error callback
         })
@@ -189,17 +223,11 @@
           onBridgeReady()
         }
       },
-      orderPaySuccess () {
-        // 订单支付成功
-        store.commit('CLEANCARTS')
-        localStorage.removeItem(`carts${this.mchnt_id}`)
-        this.queryOrder()
-      },
       orderPayFail () {
         // 支付失败
         this.btnText = '确认下单'
       },
-      queryOrder () {
+      orderPaySuccess () {
         let args = {
           order_id: this.orderId,
           mchnt_id: this.mchnt_id,
@@ -213,6 +241,8 @@
         }).then((response) => {
           let data = response.data
           if (data.respcd === Config.code.OK) {
+            store.commit('CLEANCARTS')
+            localStorage.removeItem(`carts${this.mchnt_id}`)
             this.$router.replace({
               name: 'orderDetail',
               params: {
@@ -310,6 +340,7 @@
     }
     div {
       flex: 1;
+      margin-right: 40px;
       strong {
         font-weight: normal;
         display: block;
@@ -343,19 +374,86 @@
     text-align: right;
   }
   .payment {
-    display: flex;
-    span {
+    padding: 0;
+    padding-left: 30px;
+    strong, > i {
       display: block;
-      flex: 1;
-      text-align: right;
+    }
+    strong {
+      font-weight: normal;
       i {
-        width: 42px;
-        height: 40px;
         margin-right: 16px;
-        display: inline-block;
+      }
+      span, i {
         vertical-align: middle;
-        background: url('../assets/wechat.svg') no-repeat;
-        background-size: 100% auto;
+      }
+    }
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      padding-right: 30px;
+      &.wechat {
+        .icon-wechat {
+          font-size: 40px;
+          color: $green;
+        }
+      }
+      &.balance {
+        border-top: 2px solid #E5E5E5;
+        .icon-wallet {
+          font-size: 36px;
+          color: $orange;
+        }
+        em {
+          color: $orange;
+          margin-left: 10px;
+        }
+        .red {
+          color: $red;
+        }
+        .disabled {
+          color: $midGray;
+          .icon-wallet, em {
+            color: $midGray;
+          }
+        }
+      }
+      &.active {
+        .icon-checked {
+          background-color: $green;
+          border-color: $green;
+          color: #fff;
+        }
+      }
+      .icon-checked {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        line-height: 30px;
+        font-size: 26px;
+        color: transparent;
+        border: 4px solid $midGray;
+        border-radius: 100%;
+      }
+    }
+    .chuzhi {
+      background-color: #FFF0E2;
+      color: $orange;
+      padding: 18px 0;
+      font-size: 24px;
+      border-radius: 6px;
+      margin-right: 30px;
+      margin-bottom: 24px;
+      padding-right: 30px;
+      display: flex;
+      p {
+        text-align: center;
+        flex: 1;
+      }
+      i {
+        display: block;
       }
     }
   }
