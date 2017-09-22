@@ -122,6 +122,7 @@
   .order-detail-view {
     background-color: #F7F7F7;
     padding-top: 64px;
+    padding-bottom: 64px;
     font-size: 30px;
   }
 
