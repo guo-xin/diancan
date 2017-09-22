@@ -7,7 +7,7 @@
       <ul :style="backgroundObj">
         <li v-for="item in order.orderinfo.delivery_info.info">
           <p>{{item.ctime | formatTime('hh:mm')}}</p>
-          <p v-if="item.delivery_state==0">付款</p>
+          <p v-if="item.delivery_state==0">付款成功</p>
           <p v-if="item.delivery_state==1">接单</p>
           <p v-if="item.delivery_state==2">发货</p>
           <p v-if="item.delivery_state==3">送达</p>
