@@ -1,39 +1,103 @@
 <template>
   <div class="red-packet-view">
     <section class="red-packet-div">
-      <div class="red-packet-header">{{ headerTxt }}</div>
-      <div class="red-packet-img"><img src="../assets/Redpacket.png" alt=""></div>
+      <div class="red-packet-header">{{ redPacketTitle }}</div>
+      <div class="red-packet-img">
+        <img class="RedPacketImg bounceOut" v-if="!openRedPacket" src="../assets/RedPacket.png" alt="">
+        <div class="OpenRedView bounceOut" v-if="openRedPacket" >
+          <img class="OpenRedPacketImg"  src="../assets/consumeBack.png" alt="">
+          <span  v-show="openRedPacket" class="numberaa">¥&nbsp;<em>{{ redPacketNumber }}</em></span>
+        </div>
+      </div>
       <div class="red-packet-getbtn" :class="{'activate': getBtnClicked}" @click="getPacket()" >{{ getBtnTxt }}</div>
-      <div class="red-packet-sharebtn changeColor" v-show="shareShow" @click.stop="wxShara()">{{ shareBtnTxt }}</div>
+      <div class="red-packet-sharebtn changeColor" v-if="shareShow" @click.stop="wxShara()">{{ shareBtnTxt }}</div>
     </section>
     <span class="closeView" @click.stop="closeView()"><i class="icon-closed"></i></span>
+    <!-- 提示分享遮罩 -->
+    <div class="shareView" v-show="showShareView" @click.stop="closeShareView()">
+      <div></div>
+    </div>
   </div>
 </template>
 <script type=" text/ecmascript-6">
   import WeChat from '../methods/wechat/index'
+  import filter from '../methods/Filters'
   export default {
+    props: ['activity'],
     data () {
       return {
-        headerTxt: '恭喜~老板送你一个红包~',
         getBtnTxt: '点击领取红包',
         shareBtnTxt: '分享给好友领取更多红包',
+        redPacketTitle: '',
         shareShow: false,
-        getBtnClicked: false
+        getBtnClicked: false,
+        showShareView: false,
+        openRedPacket: false,
+        coupons: [],// 消费返红包数据
+        page: {},
+        share: {},// 消费分享红包数据
+        redPacketNumber: ''// 红包数值
       }
+    },
+    created () {
+      // console.log(this.activity)
+      this.coupons = this.activity.coupons
+      this.redPacketNumber = filter.formatCurrency(this.coupons[0].amt)
+      this.page = this.activity.page
+      this.share = this.activity.share
+      // this.redPacketTitle = '红包来了'
+      this.redPacketTitle = this.coupons[0].title
+      // console.log(this.coupons)
+      // console.log(this.page)
+      // console.log(this.share)
     },
     methods: {
       getPacket () {
-        this.shareShow = true
         this.getBtnClicked = true
         this.getBtnTxt = '已领取'
+        this.openRedPacket = true
+        // 判断红包类型
+        this.isShare(this.share)
       },
       closeView () {
         this.$emit('hideRedPacketView')
       },
       wxShara () {
-        WeChat.menuShareAppMessage({
-          
-        })
+        // 弹出遮罩
+        this.showShareView = true
+      },
+      isShare (share) {
+        if (share.desc) {
+          this.shareShow = true
+          WeChat.menuShareAppMessage({
+            desc: this.share.desc,
+            imgUrl: this.share.icon_url,
+            link: this.share.share_url,
+            title: this.share.title,
+            success: function () {
+              this.showShareView = false
+            },
+            cancel: function () {
+              this.showShareView = false
+            }
+          })
+          WeChat.menuShareTimeline({
+            imgUrl: this.share.icon_url,
+            link: this.share.share_url,
+            title: this.share.title,
+            success: function () {
+              this.showShareView = false
+            },
+            cancel: function () {
+              this.showShareView = false
+            }
+          })
+        }else {
+          this.shareShow = false
+        }
+      },
+      closeShareView () {
+        this.showShareView = false
       }
     }
   }
@@ -54,23 +118,48 @@
       z-index: 2;
       margin: 100px auto 0;
       border-radius: 12px;
-      background: linear-gradient(to top, #fff 60%, #ffecdf);
+      background: linear-gradient(to top, #fff, #ffecdf);
       overflow: hidden;
       .red-packet-header {
         width: 100%;
         font-size: 36px;
         text-align: center;
-        margin-top: 90px;
-        margin-bottom: 48px;
+        margin-top: 64px;
         font-family: PingFang SC-Medium;
-        color: #4C3A3C;
+        color: #4C3A3C ;
       }
       .red-packet-img {
         width: 622px;
+        height: 492px;
         margin: 0 auto;
-        padding: 10px 0 14px 14px;
+        padding: 10px 0 0 14px;
         img {
-          width: 504px;
+          width: 520px;
+        }
+        .RedPacketImg {
+          width: 97%;
+          height: 97%;
+        }
+        .OpenRedView{
+          width: 600px;
+          height: 476px;
+          .OpenRedPacketImg {
+            width: 100%;
+            height: 100%;
+          }
+          span {
+            display: inline-block;
+            width: 310px;
+            text-align: center;
+            font-size: 52px;
+            color: #680713;
+            position: relative;
+            top: -360px;
+            left:150px;
+            em {
+              font-size: 72px;
+            }
+          }
         }
       }
       .red-packet-getbtn {
@@ -114,5 +203,47 @@
       margin: 82.6px auto 0 ;
     }
   }
-  
+  .shareView {
+    background-color: rgba(0, 0, 0, .7);
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    div {
+      width: 70%;
+      height: 440px;
+      float: right;
+      margin-right: 70px;
+      margin-top: 30px;
+      background: url(../assets/share_2.png) no-repeat;
+      background-size: 100% ;
+    }
+  }
+  // 红包展开动画
+  @keyframes bounceOut {
+    0% {
+      opacity: 1;
+      transform: scale3d(.1, .1, .1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  .bounceOut {
+    animation: bounceOut 0.5s;
+  }
+  @keyframes number {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .numberaa {
+    animation: number 1s;
+  }
 </style>

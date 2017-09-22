@@ -40,7 +40,9 @@
       </section>
     </div>
     <loading :visible="isLoading"></loading>
-    <red-packet v-show="showRedPacket" @hideRedPacketView="hideRedPacketView"></red-packet>
+    <red-packet v-if="showRedPacket" @hideRedPacketView="hideRedPacketView" :activity="activity"></red-packet>
+    <get-points v-if="showGetPoints" @hidePointView="hidePointView" :card="card" :activity="activity" :couponsUrl="couponsUrl" :customer="customer"></get-points>
+
   </div>
 </template>
 
@@ -48,11 +50,12 @@
   import util from 'methods/Util'
   import loading from '../components/loading/Loading'
   import RedPacket from '../components/RedPacket'
+  import GetPoints from '../components/GetPoints'
   import config from 'methods/Config'
 
   export default {
     components: {
-      loading, RedPacket
+      loading, RedPacket, GetPoints
     },
     data () {
       return {
@@ -61,7 +64,15 @@
           orderinfo: ''
         },
         hasDetail: false,
-        showRedPacket: true
+        showRedPacket: false,
+        showGetPoints: false,
+        activity: {}, // 红包数据
+        card: { // 集点数据
+          actv: {},
+          customer_info: {}
+        },
+        customer: {}, // 消费者信息
+        couponsUrl: '' // 我的红包链接
       }
     },
     created () {
@@ -75,6 +86,7 @@
          */
         this.isLoading = true
         let args = this.$route.params
+        let origin = this.$route.query.from
         args.format = 'jsonp'
         this.$http({
           url: `${config.apiHost}diancan/c/order_detail`,
@@ -83,18 +95,58 @@
         }).then(function (response) {
           this.isLoading = false
           let data = response.data
+          // console.log(data)
           if (data.respcd === config.code.OK) {
             this.hasDetail = data.data.goods_list
             this.order = data.data
             const shopname = data.data.merchant_info.shop_name
+            let syssn = data.data.orderinfo.syssn
+            if (!origin) { // 是否是付款成功后跳转过来的
+              this.showActive(syssn)
+            }
             util.setTitle(shopname)
           } else {
             this.$toast(data.respmsg)
           }
         })
       },
+      showActive (syssn) {
+        this.$http({
+          url: `https://marketing.qfpay.com/v1/mkw/activity`,
+          methods: 'GET',
+          params: {
+            syssn,
+            format: 'cors'// 处理跨域问题
+          }
+        }).then(function (res) {
+          let datas = res.body.data
+          console.log(datas)
+          this.activity = datas.activity
+          this.card = datas.card
+          this.couponsUrl = datas.coupons_url
+          this.customer = datas.customer
+          // console.log(this.activity)
+          // console.log(this.card)
+          this.checkActive(this.activity, this.card)
+        })
+      },
+      checkActive (activity, card) {
+        if (JSON.stringify(activity) !== '{}' && JSON.stringify(card.actv) === '{}') {
+          this.showRedPacket = true
+          this.showGetPoints = false
+        } else if (JSON.stringify(card.actv) !== '{}' && card.customer_info.diff_obtain_amt === 0) { // 集点活动存在且消费者达到集点
+          this.showRedPacket = false
+          this.showGetPoints = true
+        } else {
+          this.showRedPacket = false
+          this.showGetPoints = false
+        }
+      },
       hideRedPacketView () {
         this.showRedPacket = false
+      },
+      hidePointView () {
+        this.showGetPoints = false
       }
     }
   }

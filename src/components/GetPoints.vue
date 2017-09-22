@@ -1,72 +1,241 @@
 <template>
   <div class="out-dark-view">
     <div class="inner-white-view">
-      <section class="this-no-full" v-show="false">
+      <section class="this-no-full" v-if="showNoFullView">
     	  <section class="header-text">
-    	  	<div class="this-get-point">{{ thisGetPoint }}</div>
+    	  	<div class="this-get-point">{{ curGetPoint }}</div>
     	    <div class="remind-info">{{ remindinfo }}</div>
     	  </section>
         <section class="point-view">
-        	<ul>
-        		<li class="cir-point">1</li>
-        		<li class="cir-point">2</li>
-        		<li class="cir-point">3</li>
-        		<li class="cir-point">4</li>
-        		<li class="cir-point">5</li>
-        		<li class="cir-point">6</li>
-        		<li class="cir-point">7</li>
-        		<li class="cir-point">8</li>
+        	<ul :class="ulView">
+        		<li class="cir-point" v-for="index in fullPoints">
+              <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
+              <div class="starView" v-if="index <= curCardHave ? true : false">
+                <span class="newPoint" v-show="newPoint(index)"></span>
+              </div>
+            </li>
         	</ul>
-        	<p class="active-time">活动日期&nbsp;2016.5.10-2016.10.10</p>
+        	<p class="active-time">活动日期&nbsp;<span class="begin-time">{{ beginTime }}</span>-<span class="over-time">{{ overTime }}</span></p>
         </section>
-        <section class="conversion" v-show="true">
-          <div class="have-number">你有<span>{{ 3 }}</span>个可兑换券</div>
-          <div class="conversion-btn">点击兑换</div>
+        <section class="conversion" v-if="showExchange">
+          <div class="have-number">你有<span>{{ exchangeNumber }}</span>个可兑换券</div>
+          <div class="conversion-btn"><a :href="myCardsUrl">点击兑换</a></div>
         </section>
       </section>
-      <section class="this-full" v-show="true">
+      <section class="this-full" v-if="showFullView">
         <div class="full-view">
           <div class="test-info">
             <p class="congratulation-info">恭喜！</p>
-            <p class="this-get-info">你本次获得了<span>1张</span>兑换券</p>
+            <p class="this-get-info">你本次获得了<span>{{ addExchange }}张</span>兑换券</p>
           </div>
-          <div class="full-conversion-btn">点击兑换</div>
+          <div class="full-conversion-btn" >
+            <a :href="myCardsUrl">点击兑换</a>
+          </div>
         </div>
         <div class="new-car-info">
-          <div class="new-car-has"><span class="star"></span>
+          <div class="new-car-has"><img src="../assets/Star_1.png" class="star">
             <span class="has-number-txt">新集点卡已集点：</span>
-            <span class="has-number">{{ 0 }}/</span>
-            <span class="all-number">8</span>
+            <span class="has-number">{{  nextCardPoint }}/</span>
+            <span class="all-number">{{ fullPoints }}</span>
           </div>
-          <div class="to-points-car">集点卡<span></span></div>
+          <div class="to-points-car" @click="toNewCar()">集点卡<span class="icon-right-arrow"></span></div>
         </div>
       </section>
-    	<section class="red-pakect-view">
-    		<div class="red-pakect-img"></div>
+    	<section class="red-pakect-view" v-if="showRedPacketView">
+    		<div class="red-pakect-img"><span class="redPacketNumber">¥&nbsp;<em>{{ redPacketNumber }}</em></span></div>
         <div class="right-info">
           <div class="boss-get-info">
             <p>老板给了你一个红包，</p>
-            <p>快去<span>“我的红包”</span>看看吧!</p>
+            <p>快去<a :href="couponsUrl"><span>“我的红包”</span></a>看看吧!</p>
           </div>
-          <div class="shara-btn">点击分享,领取更多红包</div>
+          <div class="shara-btn" @click.stop="wxShara()" v-if="showSharaBtn" >点击分享,领取更多红包</div>
         </div>
     	</section>
       <span class="closeView" @click.stop="closeView()"><i class="icon-closed"></i></span>
     </div>
+    <!-- 提示分享遮罩 -->
+    <div class="shareView" v-show="showShareView" @click.stop="closeShareView()">
+      <div></div>
+    </div>
   </div>
 </template>
 <script type=" text/ecmascript-6">
+  import WeChat from '../methods/wechat/index'
+  import filter from '../methods/Filters'
   export default {
+    props: ['activity', 'card', 'couponsUrl','customer'],
     data () {
       return {
-        thisGetPoint: '本次消费集1点',
-        remindinfo: '再集5点可获得15.23元的超级大杯芒果欧蕾！'
+        showRedPacketView: false, //是否有红包活动
+        ulView: 'ulDefault', // 1-5个集点默认样式
+        curGetPoint: '',// 本次消费可以集点数
+        remindinfo: '',// 集点提示信息
+        fullPoints: 5,// 商家设定的集点点数
+        addExchange: 0,// 此次消费新增的兑换券个数
+        showFullView: false, // 当前卡片集满
+        showNoFullView: true, // 当前卡片未集满
+        showExchange: false, // 点击兑换
+        curCardHave: 0,// 当前卡片已经集的点数
+        haveGet: false,
+        showShareView: false,
+        nextCardPoint: 0, //当前卡片集满还有多余的集点  自动到下一张卡上
+        exchangeNumber: 0,// 未兑换的兑换券数目
+        beginTime: '', // 集点活动开始时间
+        overTime: '', // 集点活动时间结束时间
+        redPacketNumber: '', // 红包金额
+        showSharaBtn: false,
+        myCardsUrl: '', //w我的兑换券链接
+        customerId: '', //顾客id
+        activityId: '' // 活动id
       }
+    },
+    created () {
+      /* 集点信息 */
+      // 本次集点数
+      let cur_get = this.card.customer_info.obtain_pts
+      this.curGetPoint = '本次消费集'+cur_get+'点'
+      // 格式化货币
+      let goods_price = filter.formatCurrency(this.card.actv.goods_amt)
+      // 差多少点集满
+      let diff_exchange = this.card.customer_info.diff_exchange
+      // remindinfo
+      this.remindinfo = '再集'+diff_exchange+'点可获得'+goods_price+'元的'+this.card.actv.goods_name+'!'
+      // 获取商家设置的点数
+      this.fullPoints = 8
+      // this.fullPoints = this.card.actv.exchange_pt
+      // 根据商家的点数改变布局
+      this.changePointsView(this.fullPoints)
+      // 获取当前卡片已经集的点数
+      this.curCardHave = this.card.actv.exchange_pt - this.card.customer_info.diff_exchange
+      // 活动开始结束时间
+      let start = new Date(this.card.actv.start_time*1000)
+      let over = new Date(this.card.actv.expire_time*1000)
+      this.beginTime = start.getFullYear()+'.'+(start.getMonth()+1)+'.'+start.getDate()
+      this.overTime = over.getFullYear()+'.'+(over.getMonth()+1)+'.'+over.getDate()
+      // 判断是否有兑换券未兑换
+      this.checkExchange(this.card.customer_info.exchange)
+      // 判断当前卡片集点数是否集满 是否有多余的几点
+      this.checkPoints(this.card.customer_info.add_exchange, this.fullPoints, diff_exchange)
+      // 获取此次消费新增的兑换券个数
+      this.addExchange = this.card.customer_info.add_exchange
+      /* 红包信息 */
+      //判断是否有红包活动
+      this.checkRedActv(this.activity)
+      //获取顾客id与活动id
+      this.customerId = this.customer.id
+      this.activityId = this.card.actv.id
+      // console.log(this.customerId)
+      // console.log(this.activityId)
+      // 获取 我的兑换券 链接
+      this.myCardsUrl = 'http://m.haojin.in/v2/exchange-cards.html?customer_id='+this.customerId+'&activity_id='+this.activityId
     },
     methods: {
     	closeView () {
+        this.$emit('hidePointView')
+    	},
+      wxShara () {
+        this.showShareView = true
+      },
+      changePointsView (n) {
+        switch (n) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            this.ulView = 'ulDefault';
+            break;
+          case 6:
+            this.ulView = 'ulClass_1';
+            break;
+          case 7:
+            this.ulView = 'ulClass_2';
+            break;
+          case 8:
+            this.ulView = 'ulClass_3';
+            break;
+          case 9:
+            this.ulView = 'ulClass_4';
+            break;
+          case 10:
+            this.ulView = 'ulClass_5';
+            break;
+          default:
+            this.ulView = 'ulDefault';
 
-    	}
+        }
+      },
+      checkExchange (n) {
+        if (n > 0) {
+          this.showExchange = true
+          this.exchangeNumber = n
+        }else {
+          this.showExchange = false
+        }
+      },
+      checkPoints (n, exNumber, diffNumber) { // n: 本次新增兑换券个数 exNumber: 商家设定的点数 diffNumber： 当前卡片差的点数
+        if (n>0) {
+          this.showFullView = true
+          this.showNoFullView = false
+          this.nextCardPoint = exNumber - diffNumber // 显示本张兑换券集满多余的集点数
+        }
+      },
+      newPoint (index) {
+        let n = this.curCardHave - index
+        if (n >= 0 && n < this.card.customer_info.obtain_pts ) {
+          return true
+        }else {
+          return false
+        }
+      },
+      checkRedActv (actv) { // 判断是否有红包活动
+        if (JSON.stringify(actv) !== '{}') { // 红包活动存在
+          this.showRedPacketView = true;
+          //红包数值
+          this.redPacketNumber = filter.formatCurrency(this.activity.coupons[0].amt)
+          //判断红包类型 消费返红包 消费分享红包
+          this.isShare(actv)
+        } else {
+          this.showRedPacketView = false;
+        }
+      },
+      isShare (actv) {
+        if (actv.share.desc !== "") {
+          this.showSharaBtn = true
+          WeChat.menuShareAppMessage({
+            desc: actv.share.desc,
+            imgUrl: actv.share.icon_url,
+            link: actv.share.share_url,
+            title: actv.share.title,
+            success: function () {
+              this.showShareView = false
+            },
+            cancel: function () {
+              this.showShareView = false
+            }
+          })
+          WeChat.menuShareTimeline({
+            imgUrl: actv.share.icon_url,
+            link: actv.share.share_url,
+            title: actv.share.title,
+            success: function () {
+              this.showShareView = false
+            },
+            cancel: function () {
+              this.showShareView = false
+            }
+          })
+        }else {
+          this.showSharaBtn = false;
+        }
+      },
+      closeShareView () {
+        this.showShareView = false
+      },
+      toNewCar () {
+        this.showFullView = false
+        this.showNoFullView = true
+      }
     }
   }
 </script>
@@ -122,33 +291,137 @@
 	    		border-radius: 8px;
 	    		box-shadow: 0 4px 12px 0 rgba(165,83,236,0.15);
 	        /*overflow: hidden*/
-	    		ul {
-	          width: 424px;
-	          height: 190px;
-	          margin: 0 auto;
-	          margin-top: 52px;
+          ul {
+            margin: 0 auto;
+	          margin-top: 32px;
+            height: 210px;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             flex-wrap: wrap;
-            align-content:space-between;
+            align-items: center;
+          }
+	    		.ulDefault {
+	          max-width: 540px;
 	    		}
+          .ulClass_1{
+            max-width: 360px;
+            li {
+              margin-right: 34px;
+            }
+            li:nth-child(3) {
+              margin-right: 0;
+            }
+            li:nth-child(6) {
+              margin-right: 0;
+            }
+          }
+          .ulClass_2{
+            max-width: 400px;
+            li {
+              margin-right: 34px;
+            }
+            li:nth-child(3) {
+              margin-right: 0;
+            }
+            li:nth-child(4) {
+              margin-right: 20px;
+            }
+            li:nth-child(5) {
+              margin-right: 20px;
+            }
+            li:nth-child(6) {
+              margin-right: 20px;
+            }
+            li:nth-child(7) {
+              margin-right: 0;
+            }
+          }
+          .ulClass_3{
+            max-width: 460px;
+            li {
+              margin-right: 34px;
+            }
+            li:nth-child(4) {
+              margin-right: 0;
+            }
+            li:nth-child(8) {
+              margin-right: 0;
+            }
+          }
+          .ulClass_4{
+            max-width: 520px;
+            li {
+              margin-right: 34px;
+            }
+            li:nth-child(4) {
+              margin-right: 0;
+            }
+            li:nth-child(5) {
+              margin-right: 20px;
+            }
+            li:nth-child(6) {
+              margin-right: 20px;
+            }
+            li:nth-child(7) {
+              margin-right: 20px;
+            }
+            li:nth-child(8) {
+              margin-right: 20px;
+            }
+            li:nth-child(9) {
+              margin-right: 0;
+            }
+          }
+          .ulClass_5{
+            max-width: 520px;
+            li {
+              margin-right: 24px;
+            }
+            li:nth-child(5) {
+              margin-right: 0;
+            }
+            li:nth-child(10) {
+              margin-right: 0;
+            }
+          }
 	    		.cir-point {
 	    			display: inline-block;
-	    			width: 80px;
-	    			height: 80px;
 	    			font-size: 40px;
 	    			text-align: center;
-	    			line-height: 80px;
 	    			color: #8B62E9;
-					  border: 4px dashed #D3C5F6;
-					  border-radius: 50%;
-            box-sizing: border-box;
-            margin-left: 34px;
-            &:nth-child(1) {
+            /*margin-left: 34px;*/
+            /*&:nth-child(1) {
               margin-left: 0;
             }
             &:nth-child(5) {
               margin-left: 0;
+            }*/
+            span {
+              display: inline-block;
+              width: 80px;
+  	    			height: 80px;
+              text-align: center;
+  	    			line-height: 80px;
+              border: 4px dashed #D3C5F6;
+              border-radius: 50%;
+              box-sizing: border-box;
+            }
+            .starView {
+              width: 80px;
+  	    			height: 80px;
+              background-image: url(../assets/star.png);
+              background-size: 100% 100%;
+              .newPoint {
+                border: none;
+                position: relative;
+                top: -30px;
+                left: -18px;
+                display: inline-block;
+                width: 116px;
+                height: 36px;
+                background: url(../assets/Group@2x.png) no-repeat center center;
+                background-size: 80% 80%;
+              }
             }
 	    		}
 	        .active-time {
@@ -184,19 +457,22 @@
 		    .conversion {
 	        width: 570px;
 	        height: 174px;
-	        border: 1px solid #DED3F7;
-	        border-radius: 10px;
+	        /*border: 1px solid #DED3F7;*/
+	        /*border-radius: 10px;*/
+          background-image: url(../assets/redpacket_bg3.png);
+          background-size: 100% 100%;
 	        margin: 40px auto 0;
 	        .have-number {
 	          width: 100%;
 	          height: 72px;
+            line-height: 84px;
 	          font-size: 30px;
 	          margin-top: 8px;
 	          color: #2F323A;
 	          text-align: center;
 	          span {
 	            font-size: 50px;
-	              color: #8B62E9;
+	              color: #A553EC;
 	          	}
 	        	}
 	        .conversion-btn {
@@ -210,6 +486,9 @@
 	          border-radius: 118px;
 	          font-size: 32px;
 	          margin-top: 8px;
+            a {
+              color: #fff;
+            }
 	        }
 		    }
 		  }
@@ -221,8 +500,11 @@
           margin: 0 auto;
           border: none;
           position: relative;
+          background-image: url(../assets/redpacket_bg2.png);
+          background-size: 120% 120%;
+          background-position: -20px -20px;
           border-radius: 8px;
-          box-shadow: 0 4px 12px 0 rgba(165,83,236,0.15);
+          box-shadow: 0 4px 12px 0 rgba(165, 83, 236, 0.15);
           .test-info {
             width: 100%;
             overflow: hidden;
@@ -260,6 +542,14 @@
             border-radius: 8px;
             text-align: center;
             color: #fff;
+            a {
+              position: absolute;
+              display: block;
+              z-index: 999;
+              color: #fff;
+              width: 522px;
+              height: 76px;
+            }
           }
         }
         .full-view:before {
@@ -297,9 +587,9 @@
             .star {
               display: inline-block;
               width:36px;
-              height: 56px;
+              height: 34px;
               float: left;
-              background-color: #fbf2e9;
+              margin-top: 8px;
             }
             .has-number-txt {
               display: inline-block;
@@ -323,12 +613,11 @@
             font-weight: 300;
             float: right;
             display: inline-block;
+            overflow: hidden;
             span {
               display: inline-block;
-              width: 12px;
-              height: 100%;
-              background: url(../assets/ic_arrow_down_orange.png) right center;
               margin-left: 12px;
+              margin-top: 10px;
             }
           }
         }
@@ -337,20 +626,39 @@
 			.red-pakect-view {
 				width: 570px;
 				height: 216px;
-				border: 1px solid #ebe4db;
-				border-radius: 10px;
 				margin: 40px auto 0;
-				background-color: #fbf2e9;
+				background: url(../assets/redpacket_bg1.png) no-repeat;
+        background-size: 100% 100%;
 		    .red-pakect-img {
 	      	width: 176px;
 	        height: 176px;
-	        background-color: #FE9B20;
+	        background-image: url(../assets/red_open2.png);
+          background-size: 100% 100%;
 	        float: left;
 	        margin: 24px 15px 0 26px;
+          color: #680713;
+          span {
+            display: inline-block;
+            width: 106px;
+            text-align: center;
+            margin-top: 56px;
+            margin-left: 20px;
+            font-family: PingFang SC-Medium;
+            font-size: 18px;
+            em {
+              font-size: 28px;
+            }
+          }
 	      }
 		    .right-info {
         	float: left;
         	margin-top: 24px;
+          height: 170px;
+          width: 312px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
         	.boss-get-info {
 	        	width: 312px;
 	        	height: 80px;
@@ -361,12 +669,13 @@
 	            line-height: 40px;
 	            text-align: center;
 	            span {
-            		color: #ef323c;
+            		color: #F12128;
 	            }
 	          }
         	}
         	.shara-btn {
           	height: 60px;
+            width: 292px;
           	color: #FFFFFF;
 				    font-size: 26px;
           	text-align: center;
@@ -388,5 +697,23 @@
       bottom: -102px;
       left: 305px;
 	  }
+  }
+  .shareView {
+    background-color: rgba(0, 0, 0, .7);
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    div {
+      width: 70%;
+      height: 440px;
+      float: right;
+      margin-right: 70px;
+      margin-top: 30px;
+      background: url(../assets/share_2.png) no-repeat;
+      background-size: 100% ;
+    }
   }
 </style>

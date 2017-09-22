@@ -42,12 +42,12 @@ const routes = [
     component: CreateOrder
   },
   {
-    path: '/order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
+    path: '/order_detail/:order_id/:mchnt_id/', // 订单详情: 订单id|商户id
     name: 'orderDetail',
     component: OrderDetail
   },
   {
-    path: '/!/order_detail/:order_id/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+    path: '/!/order_detail/:order_id/:mchnt_id/', // 兼容老链接 #!会自动去掉! 变成#
     redirect: { name: 'orderDetail' }
   },
   {

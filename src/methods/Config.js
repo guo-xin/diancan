@@ -29,7 +29,7 @@ if (test) {
 }
 
 // 开发配置
-if (dev) {
+if (!dev) {
   rootHost = 'https://o.qa.qfpay.net/'
   payHost = 'https://openapi.qa.qfpay.net/'
   apiHost = 'https://o.qa.qfpay.net/'

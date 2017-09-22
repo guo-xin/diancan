@@ -69,7 +69,7 @@
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
     </section> -->
     <red-packet v-show="showRedPacket" @hideRedPacketView="hideRedPacketView"></red-packet>
-    <get-points v-show="showGetPoints"></get-points>
+    <get-points v-show="showGetPoints" @hidePointView></get-points>
   </div>
 </template>
 
@@ -124,11 +124,15 @@
     methods: {
       hideRedPacketView () {
         this.showRedPacket = false
+      },
+      hidePointView () {
+        this.showGetPoints = false
       }
     },
     created () {
       this.isLoading = true
       let args = this.$route.params
+      console.log(args)
       /**
        * order_id     // 订单id
        * mchnt_id     // 商户id
