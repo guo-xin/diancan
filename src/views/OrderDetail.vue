@@ -36,6 +36,7 @@
         <ul>
           <li>订单编号：{{order.orderinfo.order_id}}</li>
           <li>购买时间：{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</li>
+          <li>支付方式：{{order.orderinfo.pay_type === '800207' ? '微信支付' : '余额支付'}}</li>
         </ul>
       </section>
     </div>
