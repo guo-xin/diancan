@@ -4,7 +4,7 @@
       <h1>{{merchantSetting.shop_name}}</h1>
       <ul>
         <li :class="{'hide': mchntActivity.prepaid.expired}">
-          <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元～</span>
+          <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
         </li>
       </ul>
       <i class="icon-right-arrow"></i>
