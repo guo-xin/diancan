@@ -33,8 +33,23 @@
       </div>
     </section>
     <section class="payment item">
-      <em>支付方式</em>
-      <span><i></i>微信支付</span>
+      <div class="wechat" :class="{'active': payType === '800207'}" @click="choosePayment('800207')">
+        <strong>
+          <i class="icon-wechat"></i><span>微信支付</span>
+        </strong>
+        <i class="icon-checked"></i>
+      </div>
+      <div class="balance" :class="{'active': payType === '700000'}" @click="choosePayment('700000')">
+        <strong>
+          <i class="icon-wallet"></i><span>余额支付<em>￥{{prepaid.balance | formatCurrency}}</em></span>
+        </strong>
+        <em v-if="prepaid.balance === 0">储值享优惠</em>
+        <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
+        <i v-else class="icon-checked"></i>
+      </div>
+      <div class="chuzhi" v-if="prepaid.expired === 0" @click="goChuzhi()">
+        <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
+      </div>
     </section>
     <button class="done-btn" @click.stop="reviewOrder" :disabled="btnText!=='确认下单'">
       <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
@@ -62,7 +77,9 @@
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
         deliveryStatus: '',    // 达达配送费状态
-        getDeliverFeeTimestamp: 0
+        getDeliverFeeTimestamp: 0,
+        prepaid: {},   // 储值信息
+        payType: '800207'  // 支付方式 800207是微信，700000是储值
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -77,6 +94,9 @@
       if (carts) {
         store.commit('GETCARTS', carts)
       }
+      let prepaid = JSON.parse(sessionStorage.getItem('prepaid'))
+      this.payType = prepaid.balance > this.cartData.price ? '700000' : '800207'  // 余额大于订单金额 默认选中余额支付
+      this.prepaid = prepaid
       this.mchnt_id = params.mchnt_id
       this.isDadaDeliver = parseInt(sessionStorage.getItem('isDadaDeliver')) === 1
       this.$http({
@@ -136,6 +156,16 @@
       }
     },
     methods: {
+      choosePayment (type) {
+        if (this.prepaid.balance < this.cartData.price) {
+          return
+        }
+        this.payType = type
+      },
+      goChuzhi () {
+        let redirectUrl = window.location.href
+        window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
+      },
       getDeliverFee () { // 获取达达等第三方配送费
         this.deliveryStatus = '正在获取...'
         this.getDeliverFeeTimestamp = new Date().getTime()
@@ -284,7 +314,7 @@
       },
       getPayArgs (args) {
         args.userid = 0
-        args.pay_type = 800207
+        args.pay_type = this.payType
         args.type = 'h5'
 //        args.format = 'cors'
 
@@ -299,8 +329,12 @@
             this.btnText = '确认下单'
             return
           }
-          this.pay(data.pay_params)
           this.checkout = data
+          if (this.payType === '700000') {
+            this.orderPaySuccess()
+          } else {
+            this.pay(data.pay_params)
+          }
         }, (response) => {
           this.$toast(response.data.data.respmsg)
         })
@@ -340,15 +374,10 @@
           onBridgeReady()
         }
       },
-      orderPaySuccess () {  // 订单支付成功
-        store.commit('CLEANCARTS') // 清空购物车
-        localStorage.removeItem(`carts${this.mchnt_id}`)
-        this.queryOrder()
-      },
       orderPayFail () { // 支付失败
         this.btnText = '确认下单'
       },
-      queryOrder () {
+      orderPaySuccess () {
         let args = {
           order_id: this.orderId,
           mchnt_id: this.mchnt_id,
@@ -362,6 +391,8 @@
         }).then((response) => {
           let data = response.data
           if (data.respcd === Config.code.OK) {
+            store.commit('CLEANCARTS') // 清空购物车
+            localStorage.removeItem(`carts${this.mchnt_id}`)
             this.$router.replace({
               name: 'orderDetail',
               params: {
@@ -458,6 +489,7 @@
     }
     div {
       flex: 1;
+      margin-right: 40px;
       strong {
         display: block;
         font-weight: normal;
@@ -503,19 +535,77 @@
     text-align: right;
   }
   .payment {
-    display: flex;
-    span {
+    padding: 0;
+    padding-left: 30px;
+    strong, > i {
       display: block;
-      flex: 1;
-      text-align: right;
+    }
+    strong {
+      font-weight: normal;
       i {
-        width: 42px;
-        height: 40px;
         margin-right: 16px;
-        display: inline-block;
+      }
+      span, i {
         vertical-align: middle;
-        background: url('../assets/wechat.svg') no-repeat;
-        background-size: 100% auto;
+      }
+    }
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0;
+      padding-right: 30px;
+      &.wechat {
+        border-bottom: 2px solid #E5E5E5;
+        .icon-wechat {
+          font-size: 40px;
+          color: $green;
+        }
+      }
+      &.balance {
+        .icon-wallet {
+          font-size: 36px;
+          color: $orange;
+        }
+        em {
+          color: $orange;
+          margin-left: 10px;
+        }
+      }
+      &.active {
+        .icon-checked {
+          background-color: $green;
+          border-color: $green;
+          color: #fff;
+        }
+      }
+      .icon-checked {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+        line-height: 30px;
+        font-size: 26px;
+        color: transparent;
+        border: 4px solid $midGray;
+        border-radius: 100%;
+      }
+    }
+    .chuzhi {
+      background-color: #FFF0E2;
+      color: $orange;
+      padding: 18px 0;
+      font-size: 24px;
+      border-radius: 6px;
+      margin-right: 30px;
+      margin-bottom: 24px;
+      padding-right: 30px;
+      display: flex;
+      p {
+        text-align: center;
+        flex: 1;
+      }
+      i {
+        display: block;
       }
     }
   }

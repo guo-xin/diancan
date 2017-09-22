@@ -1,16 +1,15 @@
 <template>
   <div class="order-detail-view">
-    <section class="shop">
-      <div class="l-r">
-        <h2 class="l_auto shopname">{{order.orderinfo.shop_name}}</h2>
-        <div class="num" v-show="order.orderinfo.address">{{order.orderinfo.address}}号桌</div>
-      </div>
-    </section>
     <section class="order_sn">
-      <div class="l-c-c order_sn_num"><span>取餐号</span>{{order.orderinfo.order_sn}}</div>
-      <p class="order_sn_text">请留意餐厅叫号，及时取餐哦～</p>
+      <h3><img src="../assets/icon-check.png" alt="">支付成功</h3>
+      <div class="order_sn_num"><span>取餐号</span><em>{{order.orderinfo.order_sn}}</em></div>
+      <p class="order_address" v-show="order.orderinfo.address">
+        <span>{{order.orderinfo.address}}号桌</span>
+      </p>
     </section>
-    <section class="show_detail" :class="{'activate': hasDetail}" @click="hasDetail=!hasDetail">查看订单详情<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAQBAMAAADzFNLhAAAAJ1BMVEUAAACLjZOLjJOLjZOLjZSNjZWLoqKKjpSLkJSLjZONjZSMj5OKjJIHsrhbAAAADHRSTlMA5dCuWR0LhTeETEldKZHPAAAAb0lEQVQI12NAB9yCDnA2i+AGBsYzx+H8mjMCQP4ZMyg3+QyQz3XmzKEAMJdV58yZBQwMjWfOSAB5EAZU2AFkGEghVNtJIDUHblANkAUUhVgEVRkK1QUzSRBqKswmqGFwl8ANgxoJMwxmpJIDA1YAADiDMgJvsIRuAAAAAElFTkSuQmCC"></section>
+    <section class="show_detail" :class="{'activate': hasDetail}" @click="hasDetail=!hasDetail">
+      {{hasDetail ? '关闭订单详情' : '查看订单详情'}}<img class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAQBAMAAADzFNLhAAAAJ1BMVEUAAACLjZOLjJOLjZOLjZSNjZWLoqKKjpSLkJSLjZONjZSMj5OKjJIHsrhbAAAADHRSTlMA5dCuWR0LhTeETEldKZHPAAAAb0lEQVQI12NAB9yCDnA2i+AGBsYzx+H8mjMCQP4ZMyg3+QyQz3XmzKEAMJdV58yZBQwMjWfOSAB5EAZU2AFkGEghVNtJIDUHblANkAUUhVgEVRkK1QUzSRBqKswmqGFwl8ANgxoJMwxmpJIDA1YAADiDMgJvsIRuAAAAAElFTkSuQmCC">
+    </section>
     <div v-show="hasDetail">
       <section class="order-content">
         <ul class="goods-list">
@@ -36,6 +35,7 @@
         <ul>
           <li>订单编号：{{order.orderinfo.order_id}}</li>
           <li>购买时间：{{order.orderinfo.pay_time | formatTime('yyyy-MM-dd hh:mm')}}</li>
+          <li>支付方式：{{order.orderinfo.pay_type === '800207' ? '微信支付' : '余额支付'}}</li>
         </ul>
       </section>
     </div>
@@ -115,59 +115,64 @@
   .b-top {
     border-top: 2px solid #E5E5E5; /*px*/
   }
-  section {
+  .order-content {
     padding: 30px;
   }
 
   .order-detail-view {
     background-color: #F7F7F7;
+    padding-top: 64px;
+    padding-bottom: 64px;
     font-size: 30px;
-  }
-
-  .shop {
-    .shopname {
-      font-size: 34px;
-      color: #2F323A;
-    }
-    .num {
-      font-size: 30px;
-      color: #8A8C92;
-    }
   }
 
   .order_sn {
-    margin: 30px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding-top: 0;
-    background: #fff;
-    border: 2px solid #FE9B20; /*px*/
+    margin:0 30px 40px;
+    padding-bottom: 40px;
+    background-color: #fff;
     border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
-    font-size: 30px;
     h3 {
+      position: relative;
+      padding-top: 0.9rem;
+      img {
+        width: 96px;
+        height: 96px;
+        display: block;
+        margin-bottom: 20px;
+        position: absolute;
+        left: 50%;
+        top: -48px;
+        margin-left: -48px;
+      }
       font-weight: normal;
-      line-height: 56px;
-      color: #9B9DA3;
-    }
-    p {
-      color: #2F323A;
+      color: #7ED321;
+      font-size: 36px;
     }
     .order_sn_num {
-      height: 188px;
-      font-size: 80px;
-      line-height: 56px;
+      padding: 40px 0;
+      span, em {
+        vertical-align: baseline;
+      }
       span {
         margin-right: 30px;
         font-size: 36px;
         color: #8A8C92;
+        vertical-align: 10%;
+      }
+      em {
+        font-size: 80px;
       }
     }
-    .order_sn_text {
-      /*margin-top: 20px;*/
-      padding-top: 30px;
-      border-top: 2px solid #FFDCB1; /*px*/
-      color: #FE9B20;
+    .order_address {
+      margin: 0 36px;
+      color: #8A8C92;
+      background: url('../assets/line--.svg') repeat-x center center;
+      span {
+        background-color: #fff;
+        padding: 0 30px;
+      }
     }
   }
 
@@ -235,28 +240,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 2px solid #E5E5E5;
     padding-top: 10px;
+    color: #2F323A;
     strong, span {
       display: block;
     }
     strong {
       font-weight: normal;
+      font-size: 34px;
     }
     span {
       font-size: 40px;
-      color: #FE9B20;
-      sub {
-        color: $aluminium;
-      }
     }
     text-align: right;
   }
   .note-item {
     margin-top: 36px;
-    background-color: #F7F7F7;
+    background-color: #EFEEED;
     padding: 24px 20px;
-    border-radius: 6px;
     color: $aluminium;
     em {
       color: $lightBlack;
@@ -264,8 +265,16 @@
   }
 
   .order-info {
+    padding: 0 30px;
     font-size: 26px;
     color: #8A8C92;
     background-color: transparent;
+    ul {
+      padding-top: 24px;
+      border-top: 2px solid #E5E5E5;
+    }
+    li {
+      line-height: 1.6;
+    }
   }
 </style>
