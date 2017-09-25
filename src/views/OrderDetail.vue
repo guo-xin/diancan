@@ -87,7 +87,7 @@
          */
         this.isLoading = true
         let args = this.$route.params
-        let origin = this.$route.query.from
+        let origin = this.$route.query.from // 确定上个路由来源
         args.format = 'jsonp'
         this.$http({
           url: `${config.apiHost}diancan/c/order_detail`,
@@ -113,7 +113,7 @@
       },
       showActive (syssn) {
         this.$http({
-          url: `https://marketing.qfpay.com/v1/mkw/activity`,
+          url: `${config.mHost}v1/mkw/activity`,
           methods: 'GET',
           params: {
             syssn,

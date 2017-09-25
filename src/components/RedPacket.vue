@@ -116,7 +116,10 @@
       padding-bottom: 72px;
       background-color: #fff;
       z-index: 2;
-      margin: 100px auto 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
       border-radius: 12px;
       background: linear-gradient(to top, #fff, #ffecdf);
       overflow: hidden;
@@ -196,11 +199,13 @@
     }
     .closeView {
       display: block;
-      width: 41px;
-      height: 41px;
-      font-size: 41px;
-      color: #fff;
-      margin: 82.6px auto 0 ;
+	    width: 41px;
+	    height: 41px;
+	    font-size: 41px;
+	    color: #fff;
+      position: fixed;
+      bottom: 160px;
+      left: 355px;
     }
   }
   .shareView {
