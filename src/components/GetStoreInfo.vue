@@ -41,6 +41,7 @@
   @import "../styles/base/_var";
   .store-info {
     position: relative;
+    z-index: 99;
     color: #fff;
     h1 {
       margin: 0;

@@ -204,9 +204,10 @@
         this.order_info = data.data.order_info
         // 刷新 BScroll 组件
         this.$nextTick(() => {
-          let topbarHeight = document.getElementsByTagName('header')[0].offsetHeight
-          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - topbarHeight + 'px'
-          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - topbarHeight + 'px'
+          let locationbarHeight = document.getElementsByClassName('location-bar')[0].offsetHeight
+          let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - locationbarHeight - storebarHeight + 'px'
+          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - locationbarHeight - storebarHeight + 'px'
           this.typeScroller = new BScroll(this.$refs.group, {
             startX: 0,
             startY: 0,

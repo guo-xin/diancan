@@ -11,9 +11,11 @@
         </div>
         <a :href="'tel:' + merchantSetting.mobile"><i class="icon-phone"></i></a>
       </header>
-      <p class="delivery" v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
-      <p class="delivery" v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
-      <p class="delivery" v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
+      <div class="delivery">
+        <p v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
+        <p v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
+        <p v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
+      </div>
       <ul class="activity-list">
         <li :class="{'hide': mchntActivity.prepaid.expired}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
@@ -79,7 +81,7 @@
       background-color: #fff;
       border-radius: 10px;
     }
-    header, p {
+    p {
       padding: 0 30px;
     }
     figure {
@@ -110,9 +112,9 @@
   }
   header {
     margin-top: 72px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
+    padding-right: 110px;
+    padding-left: 30px;
     h1 {
       font-size: 32px;
       font-weight: normal;
@@ -130,7 +132,9 @@
       margin-bottom: 20px;
     }
     .icon-phone {
-      display: inline-block;
+      position: absolute;
+      right: 30px;
+      top: 0;
       width: 70px;
       height: 70px;
       line-height: 70px;
@@ -142,6 +146,7 @@
     }
   }
   .delivery {
+    font-size: 24px;
     color: $aluminium;
     line-height: 1.5;
   }

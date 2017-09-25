@@ -195,8 +195,9 @@
         this.merchantSetting = data.data.merchant_setting
         // 刷新 BScroll 组件
         this.$nextTick(() => {
-          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight + 'px'
-          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight + 'px'
+          let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+          document.getElementsByClassName('list-group')[0].style.height = window.innerHeight - storebarHeight + 'px'
+          document.getElementsByClassName('shopmenu-list')[0].style.height = window.innerHeight - storebarHeight + 'px'
           this.typeScroller = new BScroll(this.$refs.cate, {
             startX: 0,
             startY: 0,
