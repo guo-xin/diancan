@@ -13,14 +13,14 @@
       </header>
       <p class="delivery" v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
       <p class="delivery" v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
-      <p class="delivery" v-else>配送范围：不限制配送范围</p>
+      <p class="delivery" v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
       <ul class="activity-list">
         <li :class="{'hide': mchntActivity.prepaid.expired}">
-          <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元～</span>
+          <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
           <button type="button" class="secondary-button small-button" @click="goChuzhi()">储值</button>
         </li>
-        <li class="hide"><i class="icon-coupon"></i><span>消费满¥20领红包～</span></li>
-        <li class="hide"><i class="icon-star"></i><span>消费满¥10可集点～</span></li>
+        <li class="hide"><i class="icon-coupon"></i><span>消费满¥20领红包</span></li>
+        <li class="hide"><i class="icon-star"></i><span>消费满¥10可集点</span></li>
       </ul>
       <i class="icon-closed"></i>
     </div>
