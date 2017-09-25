@@ -101,7 +101,7 @@
             this.order = data.data
             const shopname = data.data.merchant_info.shop_name
             let syssn = data.data.orderinfo.syssn
-            if (!origin) { // 是否是付款成功后跳转过来的
+            if (origin) { // 是否是付款成功后跳转过来的
               this.showActive(syssn)
             }
             util.setTitle(shopname)
