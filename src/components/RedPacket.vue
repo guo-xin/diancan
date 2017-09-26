@@ -11,8 +11,8 @@
       </div>
       <div class="red-packet-getbtn" :class="{'activate': getBtnClicked}" @click="getPacket()" >{{ getBtnTxt }}</div>
       <div class="red-packet-sharebtn changeColor" v-if="shareShow" @click.stop="wxShara()">{{ shareBtnTxt }}</div>
+      <span class="closeView" @click.stop="closeView()"><i class="icon-closed"></i></span>
     </section>
-    <span class="closeView" @click.stop="closeView()"><i class="icon-closed"></i></span>
     <!-- 提示分享遮罩 -->
     <div class="shareView" v-show="showShareView" @click.stop="closeShareView()">
       <div></div>
@@ -122,7 +122,7 @@
       transform: translate(-50%, -55%);
       border-radius: 12px;
       background: linear-gradient(to top, #fff, #ffecdf);
-      overflow: hidden;
+      // overflow: hidden;
       .red-packet-header {
         width: 100%;
         font-size: 36px;
@@ -176,7 +176,6 @@
         font-weight: 300;
         color: #fff;
         background-color: #F7503D;
-        margin-top: 42px;
         border-radius: 5px;
         &.activate {
           background-color: #c2c2c2;
@@ -204,8 +203,8 @@
 	    font-size: 41px;
 	    color: #fff;
       position: fixed;
-      bottom: 160px;
-      left: 355px;
+      bottom: -100px;
+      left: 300px;
     }
   }
   .shareView {
