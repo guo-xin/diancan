@@ -13,6 +13,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import shopbg from '../assets/shop_bg.png'
   export default {
     props: ['merchantSetting', 'mchntActivity'],
     data () {
@@ -24,10 +25,12 @@
     },
     methods: {
       backgroundObj () {
+        let bg = this.merchantSetting.head_img ? this.merchantSetting.head_img : shopbg
         return {
-          backgroundImage: 'url(' + this.merchantSetting.head_img + ')',
-          backgroundSize: '100%',
-          backgroundPosition: 'center'
+          backgroundImage: 'url(' + bg + ')',
+          backgroundSize: '100% auto',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }
       },
       showStoreDetail () {
@@ -41,6 +44,7 @@
   @import "../styles/base/_var";
   .store-info {
     position: relative;
+    z-index: 999;
     color: #fff;
     h1 {
       margin: 0;

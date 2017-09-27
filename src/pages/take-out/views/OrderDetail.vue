@@ -53,14 +53,12 @@
       </div>
     </section>
     <section class="shop-info item">
+      <figure>
+        <img :src="(order.merchant_info.head_img ? order.merchant_info.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
+      </figure>
       <div>
-        <figure>
-          <img :src="(order.merchant_info.head_img ? order.merchant_info.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
-        </figure>
-        <div>
-          <h2>{{order.merchant_info.shop_name}}</h2>
-          <p v-show="order.merchant_info.address"><i class="icon-marker"></i>{{order.merchant_info.address}}</p>
-        </div>
+        <h2>{{order.merchant_info.shop_name}}</h2>
+        <p v-show="order.merchant_info.address"><i class="icon-marker"></i>我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡</p>
       </div>
       <a :href="'tel:' + order.merchant_info.mobile"><i class="icon-phone"></i></a>
     </section>
@@ -309,47 +307,54 @@
     }
   }
   .shop-info {
+    position: relative;
     padding-top: 28px;
     padding-bottom: 28px;
+    padding-right: 100px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    > div {
-      display: flex;
-      figure {
-        margin: 0;
-        width: 106px;
-        img {
-          max-width: 100%;
-          vertical-align: top;
-        }
+    align-items: flex-start;
+    figure {
+      width: 106px;
+      margin: 0;
+      img {
+        max-width: 100%;
+        vertical-align: top;
       }
-      div {
-        margin-left: 18px;
-        h2 {
-          font-size: 30px;
-        }
-        p {
-          color: $aluminium;
-          font-size: 24px;
-          margin-top: 10px;
-          line-height: 1.5;
-        }
-        i {
-          color: $gray;
-          font-size: 26px;
-          vertical-align: -2px;
-          margin-right: 10px;
-        }
+    }
+    div {
+      flex: 1;
+      margin-left: 18px;
+      h2 {
+        font-size: 30px;
+        margin-bottom: 10px;
+      }
+      p {
+        color: $aluminium;
+        font-size: 24px;
+        line-height: 1.5;
+      }
+      i {
+        color: $gray;
+        font-size: 26px;
+        vertical-align: -2px;
+        margin-right: 10px;
       }
     }
     a {
-      width: 66px;
-      text-align: center;
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      box-sizing: border-box;
+      right: 0;
+      top: 50%;
+      margin-top: -45px;
+      text-align: right;
+      padding-right: 30px;
       color: $orange;
-    }
-    i {
-      font-size: 50px;
+      i {
+        font-size: 50px;
+      }
     }
   }
   .follow {

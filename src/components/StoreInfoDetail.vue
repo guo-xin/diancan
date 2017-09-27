@@ -32,7 +32,6 @@
 
 <script type="text/ecmascript-6">
   import shopbg from '../assets/shop_bg.png'
-
   export default {
     props: ['merchantSetting', 'mchntActivity', 'visible'],
     data () {
@@ -51,8 +50,9 @@
         let bg = this.merchantSetting.head_img ? this.merchantSetting.head_img : shopbg
         return {
           backgroundImage: 'url(' + bg + ')',
-          backgroundSize: 'auto 100%',
+          backgroundSize: '100% auto',
           backgroundPosition: 'center',
+          backgroundColor: '#E5E5E5',
           backgroundRepeat: 'no-repeat'
         }
       },
@@ -85,7 +85,7 @@
       background-color: #fff;
       border-radius: 10px;
     }
-    header, p {
+    p {
       padding: 0 30px;
     }
     figure {
@@ -116,9 +116,9 @@
   }
   header {
     margin-top: 72px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
+    padding-right: 110px;
+    padding-left: 30px;
     h1 {
       font-size: 32px;
       font-weight: normal;
@@ -136,7 +136,9 @@
       margin-bottom: 20px;
     }
     .icon-phone {
-      display: inline-block;
+      position: absolute;
+      right: 30px;
+      top: 0;
       width: 70px;
       height: 70px;
       line-height: 70px;
@@ -148,6 +150,7 @@
     }
   }
   .delivery {
+    font-size: 24px;
     color: $aluminium;
     line-height: 1.5;
     font-size: 24px;
