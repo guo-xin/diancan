@@ -236,13 +236,14 @@
     dd {
       display: inline-block;
       margin: 0 24px 20px 0;
-      padding: 14px 24px;
+      padding: 10px 24px;
+      min-width: 100px;
+      box-sizing: border-box;
+      text-align: center;
       line-height: 1.4;
       border-radius: 32px;
-
-      color: #FF8100;
-      border: 2px solid #FF8100;
-
+      color: #2F323A;
+      background-color: #ededed;
       &.activate {
         background-color: #FF8100;
         color: #fff;
