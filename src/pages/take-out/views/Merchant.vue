@@ -408,11 +408,11 @@
     bottom: 0;
     right: 0;
     background-color: #fff;
-    z-index: 999;
+    z-index: 1000;
   }
   .order-info {
     position: relative;
-    z-index: 999;
+    z-index: 100;
     background-color: #FFEAD1;
     padding: 20px;
     display: flex;
