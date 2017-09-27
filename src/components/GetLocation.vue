@@ -51,12 +51,11 @@
   }
   .location-bar {
     background-color: #000;
-    height: 60px;
+    height: 76px;
     align-items: center;
     display: flex;
     padding-left: 30px;
     strong {
-      font-size: 28px;
       font-weight: normal;
       display: block;
       align-self: center;
