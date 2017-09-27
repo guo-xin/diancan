@@ -2,7 +2,8 @@
   <div class="store-popup" v-if="visible" @click="hideStoreDetail($event)">
     <div class="inner">
       <figure class="bg" :style="backgroundObj()">
-        <img :src="merchantSetting.logo_url ? merchantSetting.logo_url : 'https://o95yi3b1h.qnssl.com/diancan/shop_logo.png'" class="logo">
+        <img v-if="merchantSetting.logo_url" :src="merchantSetting.logo_url" class="logo">
+        <img v-else src="../assets/shop_logo.png" class="logo">
       </figure>
       <header>
         <div>
@@ -11,9 +12,11 @@
         </div>
         <a :href="'tel:' + merchantSetting.mobile"><i class="icon-phone"></i></a>
       </header>
-      <p class="delivery" v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
-      <p class="delivery" v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
-      <p class="delivery" v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
+      <div class="delivery">
+        <p v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
+        <p v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
+        <p v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
+      </div>
       <ul class="activity-list">
         <li :class="{'hide': mchntActivity.prepaid.expired}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
@@ -28,6 +31,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import shopbg from '../assets/shop_bg.png'
 
   export default {
     props: ['merchantSetting', 'mchntActivity', 'visible'],
@@ -44,10 +48,12 @@
         window.location.assign(`${this.mchntActivity.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       backgroundObj () {
+        let bg = this.merchantSetting.head_img ? this.merchantSetting.head_img : shopbg
         return {
-          backgroundImage: 'url(' + this.merchantSetting.head_img + ')',
-          backgroundSize: '100%',
-          backgroundPosition: 'center'
+          backgroundImage: 'url(' + bg + ')',
+          backgroundSize: 'auto 100%',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
         }
       },
       hideStoreDetail (e) {
@@ -95,7 +101,7 @@
         margin-left: -54px;
         width: 108px;
         height: 108px;
-        border: 2px solid #fff;
+        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
         border-radius: 100%;
       }
     }
@@ -144,6 +150,7 @@
   .delivery {
     color: $aluminium;
     line-height: 1.5;
+    font-size: 24px;
   }
   .activity-list {
     margin: 20px 30px 0;
