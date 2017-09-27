@@ -32,7 +32,6 @@
 
 <script type="text/ecmascript-6">
   import shopbg from '../assets/shop_bg.png'
-
   export default {
     props: ['merchantSetting', 'mchntActivity', 'visible'],
     data () {
@@ -51,8 +50,9 @@
         let bg = this.merchantSetting.head_img ? this.merchantSetting.head_img : shopbg
         return {
           backgroundImage: 'url(' + bg + ')',
-          backgroundSize: 'auto 100%',
+          backgroundSize: '100% auto',
           backgroundPosition: 'center',
+          backgroundColor: '#E5E5E5',
           backgroundRepeat: 'no-repeat'
         }
       },
