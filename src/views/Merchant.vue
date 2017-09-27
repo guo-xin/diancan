@@ -401,6 +401,8 @@
     z-index: 999;
   }
   .order-info {
+    position: relative;
+    z-index: 999;
     background-color: #FFEAD1;
     line-height: 60px;
     padding: 20px;

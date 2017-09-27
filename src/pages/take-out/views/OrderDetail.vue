@@ -58,7 +58,7 @@
       </figure>
       <div>
         <h2>{{order.merchant_info.shop_name}}</h2>
-        <p v-show="order.merchant_info.address"><i class="icon-marker"></i>我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡我么东街口很疯狂几号放假卡</p>
+        <p v-show="order.merchant_info.address"><i class="icon-marker"></i>{{order.merchant_info.address}}</p>
       </div>
       <a :href="'tel:' + order.merchant_info.mobile"><i class="icon-phone"></i></a>
     </section>

@@ -15,7 +15,7 @@
       <div class="delivery">
         <p v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
         <p v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
-        <p v-if="merchantSetting.max_shipping_dist === 0">配送范围：不限制配送范围</p>
+        <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type !== 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
         <li :class="{'hide': mchntActivity.prepaid.expired}">
@@ -119,6 +119,7 @@
     position: relative;
     padding-right: 110px;
     padding-left: 30px;
+    min-height: 70px;
     h1 {
       font-size: 32px;
       font-weight: normal;
