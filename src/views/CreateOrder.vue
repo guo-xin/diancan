@@ -9,7 +9,7 @@
     </section>
     <section class="note item">
       <label for="note">备注：</label>
-      <textarea v-model="note" id="note" maxlength="70" placeholder="可填写口味要求或忌口等信息"></textarea>
+      <textarea v-model="note" id="note" maxlength="70" placeholder="如有特殊要求，请告知商家，最多50字"></textarea>
     </section>
     <section class="order item">
       <ul class="goods-list">

@@ -1,7 +1,7 @@
 <template>
   <div class="create-order-view">
     <section v-if="!hasAddress" class="address add" @click="goAddAddress">
-      <img src="../assets/btn_add.svg"><span>新增送餐地址</span>
+      <img src="../assets/btn_add.svg"><span>新增配送地址</span>
     </section>
     <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
       <p>{{current_addr.contact_name}}　{{current_addr.mobile}}</p>
@@ -11,7 +11,7 @@
     </section>
     <section class="note item">
       <label for="note">备注：</label>
-      <textarea v-model="note" id="note" maxlength="70" placeholder="可填写口味要求或忌口等信息"></textarea>
+      <textarea v-model="note" id="note" maxlength="70" placeholder="如有特殊要求，请告知商家，最多50字"></textarea>
     </section>
     <section class="goods item">
       <ul class="goods-list">
