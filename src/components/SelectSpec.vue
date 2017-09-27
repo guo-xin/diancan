@@ -175,7 +175,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 112;
+    z-index: 1000;
   }
 
   .mark {
