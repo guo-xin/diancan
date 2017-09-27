@@ -563,8 +563,8 @@
       display: inline-block;
       padding: 0 28px;
       background-color: #FF8100;
-      height: 60px;
-      line-height: 60px;
+      height: 52px;
+      line-height: 54px;
       border-radius: 30px;
       font-size: 24px;
       color: #fff;

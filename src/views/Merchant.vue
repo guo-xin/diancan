@@ -562,8 +562,8 @@
     span {
       display: inline-block;
       padding: 0 28px;
-      height: 60px;
-      line-height: 60px;
+      height: 52px;
+      line-height: 54px;
       border: none;
       border-radius: 30px;
       background-color: #FF8100;
