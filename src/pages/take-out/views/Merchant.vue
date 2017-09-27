@@ -411,6 +411,8 @@
     z-index: 999;
   }
   .order-info {
+    position: relative;
+    z-index: 999;
     background-color: #FFEAD1;
     padding: 20px;
     display: flex;
