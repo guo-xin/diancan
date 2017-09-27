@@ -47,7 +47,7 @@
         <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
         <i v-else class="icon-checked"></i>
       </div>
-      <div class="chuzhi" v-if="prepaid.expired === 0" @click="goChuzhi()">
+      <div class="chuzhi" style="display:none;" @click="goChuzhi()">
         <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
       </div>
     </section>
