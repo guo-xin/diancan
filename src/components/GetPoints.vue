@@ -66,7 +66,7 @@
     props: ['activity', 'card', 'couponsUrl','customer'],
     data () {
       return {
-        showRedPacketView: false, //是否有红包活动
+        showRedPacketView: false, // 是否有红包活动
         ulView: 'ulDefault', // 1-5个集点默认样式
         curGetPoint: '',// 本次消费可以集点数
         remindinfo: '',// 集点提示信息
@@ -78,14 +78,14 @@
         curCardHave: 0,// 当前卡片已经集的点数
         haveGet: false,
         showShareView: false,
-        nextCardPoint: 0, //当前卡片集满还有多余的集点  自动到下一张卡上
+        nextCardPoint: 0, // 当前卡片集满还有多余的集点  自动到下一张卡上
         exchangeNumber: 0,// 未兑换的兑换券数目
         beginTime: '', // 集点活动开始时间
         overTime: '', // 集点活动时间结束时间
         redPacketNumber: '', // 红包金额
-        showSharaBtn: false,
-        myCardsUrl: '', //w我的兑换券链接
-        customerId: '', //顾客id
+        showSharaBtn: false, // 分享按钮
+        myCardsUrl: '', // 我的兑换券链接
+        customerId: '', // 顾客id
         activityId: '' // 活动id
       }
     },
