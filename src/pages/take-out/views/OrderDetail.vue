@@ -43,6 +43,10 @@
         <!-- <span v-if="deliveryStatus">{{deliveryStatus}}</span> -->
         <span><sub>￥</sub>{{order.orderinfo.shipping_fee | formatCurrency}}</span>
       </div>
+      <div v-if="order.orderinfo.coupon_amt" class="coupon">
+        <em>店铺红包</em>
+        <span>-<sub>￥</sub>{{order.orderinfo.coupon_amt | formatCurrency}}</span>
+      </div>
       <div class="total">
         <strong>总计</strong>
         <!-- <del>原价¥63</del> -->
@@ -271,10 +275,26 @@
     margin-bottom: 26px;
     > span {
       display: block;
-      font-size: 32px;
+      font-size: 34px;
       &.except {
         text-decoration: line-through;
       }
+    }
+  }
+  .coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    em, span {
+      display: block;
+    }
+    em {
+      font-size: 30px;
+    }
+    > span {
+      font-size: 34px;
+      color: $orange;
     }
   }
   .total {

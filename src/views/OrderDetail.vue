@@ -23,6 +23,10 @@
             </div>
           </li>
         </ul>
+        <div v-if="order.orderinfo.coupon_amt" class="coupon">
+          <em>店铺红包</em>
+          <span>-<sub>￥</sub>{{order.orderinfo.coupon_amt | formatCurrency}}</span>
+        </div>
         <div class="total">
           <strong>总计</strong>
           <span><sub>￥</sub>{{order.orderinfo.txamt | formatCurrency}}</span>
@@ -234,6 +238,22 @@
       em {
         font-size: 26px;
       }
+    }
+  }
+  .coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    em, span {
+      display: block;
+    }
+    em {
+      font-size: 30px;
+    }
+    > span {
+      font-size: 34px;
+      color: $orange;
     }
   }
   .total {

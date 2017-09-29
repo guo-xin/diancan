@@ -553,6 +553,7 @@
   .coupon {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0 30px 30px;
     em, span {
       display: block;
