@@ -20,13 +20,17 @@
             <strong>{{goods.name}}</strong>
             <em>{{goods.spec.name}}{{goods.attrValuesString}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
+          <span class="fee-count"><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
       <div class="deliver-fee">
         <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
         <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span>
+      </div>
+      <div v-if="coupon.amt && payType === '800207'" class="coupon">
+        <em>店铺红包</em>
+        <span>-<sub>￥</sub>{{coupon.amt | formatCurrency}}</span>
       </div>
       <div class="total">
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
@@ -79,7 +83,11 @@
         deliveryStatus: '',    // 达达配送费状态
         getDeliverFeeTimestamp: 0,
         prepaid: {},   // 储值信息
-        payType: '800207'  // 支付方式 800207是微信，700000是储值
+        payType: '800207',  // 支付方式 800207是微信，700000是储值
+        coupon: {
+          amt: 0,
+          coupon_code: ''
+        }
       }
     },
     beforeRouteLeave (to, from, next) {
@@ -94,6 +102,7 @@
       if (carts) {
         store.commit('GETCARTS', carts)
       }
+      this.fetchCoupon(params.mchnt_id)
       let prepaid = JSON.parse(sessionStorage.getItem('prepaid'))
       this.payType = prepaid.balance > this.cartData.price ? '700000' : '800207'  // 余额大于订单金额 默认选中余额支付
       this.prepaid = prepaid
@@ -145,10 +154,13 @@
         if (this.isDadaDeliver) {   // 达达配送费
           payAmt += this.dadaDeliveryFee
         } else if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
-           payAmt += this.deliver.shipping_fee
-         } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
-           payAmt += this.deliver.shipping_fee
-         }
+          payAmt += this.deliver.shipping_fee
+        } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
+          payAmt += this.deliver.shipping_fee
+        }
+        if (this.coupon.amt && this.payType === '800207') {
+          payAmt -= this.coupon.amt
+        }
         return payAmt
       },
       current_addr () {
@@ -156,8 +168,27 @@
       }
     },
     methods: {
+      fetchCoupon (mchntid) {
+        this.$http({
+          url: Config.apiHost + 'diancan/coupon/get_coupon_list',
+          method: 'GET',
+          params: {
+            format: 'cors',
+            mchnt_id: mchntid,
+            txamt: this.cartData.price
+          }
+        }).then((response) => {
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            this.coupon.amt = data.data.amt
+            this.coupon.coupon_code = data.data.coupon_code
+          } else {
+            this.$toast(data.respmsg)
+          }
+        })
+      },
       choosePayment (type) {
-        if (this.prepaid.balance < this.cartData.price) {
+        if (this.prepaid.balance < this.payAmt) {
           return
         }
         this.payType = type
@@ -286,12 +317,12 @@
           appid: sessionStorage.getItem('dc_appid'),
           mchnt_id: this.mchnt_id,
           note: this.note,
-          pay_way: 'weixin',
           pay_amt: this.payAmt,
           goods_info: JSON.stringify(goodsInfo),
           format: 'cors',
           sale_type: 3,
-          addr_id: this.$parent.current_addr.addr_id
+          addr_id: this.$parent.current_addr.addr_id,
+          coupon_code: this.coupon.coupon_code
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
@@ -347,8 +378,7 @@
         }
         let _this = this
         let onBridgeReady = () => {
-          window.WeixinJSBridge.invoke(
-            'getBrandWCPayRequest', payParams,
+          window.WeixinJSBridge.invoke('getBrandWCPayRequest', payParams,
             function (res) {
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
@@ -500,7 +530,7 @@
         color: $aluminium;
       }
     }
-    span {
+    .fee-count {
       font-size: 34px;
       em {
         font-size: 26px;
@@ -518,6 +548,21 @@
       &.except {
         text-decoration: line-through;
       }
+    }
+  }
+  .coupon {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 30px 30px;
+    em, span {
+      display: block;
+    }
+    em {
+      font-size: 30px;
+    }
+    > span {
+      font-size: 34px;
+      color: $orange;
     }
   }
   .total {
