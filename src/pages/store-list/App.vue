@@ -135,7 +135,7 @@
   }
 
   body {
-    background: #F7F7F7;
+    background-color: #F7F7F7;
     height: 100%;
   }
   ul, h3, p, figure {

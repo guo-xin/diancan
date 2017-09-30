@@ -8,6 +8,7 @@ const WechatPlugin = (Vue) => {
 
 // 获取详细地址
 let getFormattedAddress = (data) => {
+  console.log('getFormattedAddress')
   return new Promise((resolve, reject) => {
     store.commit('UPDATEADDRESS', '未获取到地理位置')
     let args = {
@@ -21,15 +22,18 @@ let getFormattedAddress = (data) => {
       params: args
     })
     .then((response) => {
+      console.log(response)
       if (response.status === 200) {
         let formattedAddress = response.data.result.formatted_addresses.recommend
         store.commit('UPDATEADDRESS', formattedAddress)
         window.localStorage.setItem('formatted_address', formattedAddress)
         resolve()
+      } else {
+        store.commit('UPDATEADDRESS', '未获取到地理位置')
       }
     })
     .catch(() => {
-      window.alert('网络错误')
+      store.commit('UPDATEADDRESS', '未获取到地理位置')
       reject()
     })
   })
