@@ -322,7 +322,10 @@
           format: 'cors',
           sale_type: 3,
           addr_id: this.$parent.current_addr.addr_id,
-          coupon_code: this.coupon.coupon_code
+          coupon_code: ''
+        }
+        if (this.payType === '800207') {
+          args.coupon_code = this.coupon.coupon_code
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',

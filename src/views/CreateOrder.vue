@@ -177,8 +177,11 @@
           pay_amt: this.payAmt,
           pay_type: this.payType,
           goods_info: JSON.stringify(goodsInfo),
-          coupon_code: this.coupon.coupon_code,
+          coupon_code: '',
           format: 'cors'
+        }
+        if (this.payType === '800207') {
+          args.coupon_code = this.coupon.coupon_code
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
