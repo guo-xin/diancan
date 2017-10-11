@@ -108,7 +108,7 @@
         isLoading: false,
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
-        showOrderList: false,
+        showOrderList: false,   // 切换订单tab
         firstLoadOrders: true,
         selectIndex: 0, // 激活分类
         allGoods: [], // 接口返回的所有商品含分类
@@ -242,13 +242,6 @@
           })
           this.firstLoadOrders = false
         }
-        // 切换tabs时 还原Scroller的初始位置
-        // if (content === 'menu') {
-        //   this.orderScroller.refresh()
-        // } else {
-        //   this.typeScroller.refresh()
-        //   this.menuScroller.refresh()
-        // }
       },
       fetchMchntActivity (hashid) {
         this.$http({
