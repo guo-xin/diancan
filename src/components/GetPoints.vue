@@ -101,8 +101,8 @@
       // remindinfo
       this.remindinfo = '再集'+diff_exchange+'点可获得'+goods_price+'元的'+this.card.actv.goods_name+'!'
       // 获取商家设置的点数
-      this.fullPoints = 8
-      // this.fullPoints = this.card.actv.exchange_pt
+      // this.fullPoints = 8
+      this.fullPoints = this.card.actv.exchange_pt
       // 根据商家的点数改变布局
       this.changePointsView(this.fullPoints)
       // 获取当前卡片已经集的点数
