@@ -72,7 +72,7 @@
 
     <!-- 订单列表 -->
     <div class="order-wrapper" ref="order" v-show="showOrderList">
-      <order-list></order-list>
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded"></order-list>
     </div>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -131,7 +131,8 @@
         showStoreDetail: false,
         typeScroller: null,
         menuScroller: null,
-        orderScroller: null
+        orderScroller: null,
+        ordersLoaded: false   // 加载完所有订单
       }
     },
     computed: {
@@ -228,6 +229,9 @@
       next()
     },
     methods: {
+      updateOrdersLoaded () {
+        this.ordersLoaded = true
+      },
       toggleTab (content) {
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
@@ -238,6 +242,12 @@
               startX: 0,
               startY: 0,
               click: true
+            })
+            this.orderScroller.on('scrollEnd', () => {
+              if (!this.ordersLoaded) {
+                this.$refs.orderlist.getData()
+                this.orderScroller.refresh()
+              }
             })
           })
           this.firstLoadOrders = false

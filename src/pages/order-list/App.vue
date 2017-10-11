@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="order-list" v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item)'>
+      <li v-for="item in orders" @click='jumpUrl(item)'>
         <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
@@ -48,6 +48,7 @@
   import loading from '../../components/loading/juhua.vue'
 
   export default {
+    props: ['useTabs'],
     data () {
       return {
         init: true,
@@ -56,9 +57,7 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        responseData: {
-          list: []
-        },
+        orders: [],
         noData: false
       }
     },
@@ -80,13 +79,15 @@
       this.getData()
     },
     mounted () {
-      let _this = this
-      window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
-        var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          _this.getData()
+      if (!this.useTabs) {
+        let _this = this
+        window.onscroll = () => {
+          var scrollTop = document.body.scrollTop
+          var windowHeight = document.body.offsetHeight
+          var scrollHeight = document.body.scrollHeight
+          if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+            _this.getData()
+          }
         }
       }
     },
@@ -108,12 +109,13 @@
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
-              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
-              if (res.data.order_list.length === 0) {
+              _this.orders = _this.orders.concat(res.data.order_list)
+              if (_this.orders === 0) {
                 _this.noData = true
               }
               if (res.data.order_list.length < 20) {
                 _this.loaded = true
+                _this.$emit('updateOrdersLoaded')
               }
             } else {
               _this.$toast(res.respmsg)
