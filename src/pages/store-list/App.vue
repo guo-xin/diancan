@@ -25,7 +25,7 @@
       </li>
     </ul>
     <div v-if="noData" class="no-data">
-      <img src="assets/no_data.png" alt="">
+      <img src="./assets/no_data.png" alt="">
       <p>暂无数据</p>
     </div>
     <loading :visible="loading"></loading>
@@ -129,13 +129,15 @@
   }
 </script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
-  @import "../../styles/main.scss";
+  @import "../../styles/base/_reset";
+  @import "../../styles/base/_var";
+  @import "../../styles/iconfont/iconfont.css";
   html {
     height: 100%;
   }
 
   body {
-    background: #F7F7F7;
+    background-color: #F7F7F7;
     height: 100%;
   }
   ul, h3, p, figure {

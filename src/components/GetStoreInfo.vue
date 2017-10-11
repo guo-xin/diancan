@@ -3,7 +3,7 @@
     <div class="inner">
       <h1>{{merchantSetting.shop_name}}</h1>
       <ul>
-        <li :class="{'hide': mchntActivity.prepaid.expired}">
+        <li :class="{'hide': (mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
         </li>
       </ul>

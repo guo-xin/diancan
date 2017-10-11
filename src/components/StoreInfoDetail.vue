@@ -18,7 +18,7 @@
         <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
-        <li :class="{'hide': mchntActivity.prepaid.expired}">
+        <li :class="{'hide': (mchntActivity.prepaid || isNaN(mchntActivity.prepaid.max_present_amt))}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
           <button type="button" class="secondary-button small-button" style="display:none;" @click="goChuzhi()">储值</button>
         </li>

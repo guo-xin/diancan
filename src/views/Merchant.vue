@@ -5,12 +5,10 @@
                     @showStoreDetailHandler="showStoreDetailHandler()"></get-store-info>
     <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
                        @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
-    <div class="order-info" v-show="isEmptyInfo">
-      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单
-        <a @click="goDetail">查看取餐号</a>
-      </p>
+    <div class="tabbar">
+      <span :class="{'active':!showOrderList}" @click="toggleTab('menu')">菜单</span><span :class="{'active':showOrderList, 'hasorder': hasOrder}" @click="toggleTab('order')">订单</span>
     </div>
-    <div id="c-restaurant-content-box" class="l-r">
+    <div id="c-restaurant-content-box" class="l-r" v-show="!showOrderList">
       <div class="list-group-box">
         <div class="list-group" ref="cate">
           <ul>
@@ -54,24 +52,28 @@
           </ul>
         </div>
       </div>
+
+      <!--选择规格-->
+      <select-spec :visible="showSpec"
+                   :goods="selectSpecGoods"
+                   :updateCatesCount="updateCatesCount"
+                   @hideSpecHandler="hideSpecHandler">
+      </select-spec>
+
+      <goods-detail :visible="showDetail"
+                    @hideDetailHandler="hideDetailHandler"
+                    :goods="selectDetail"></goods-detail>
+
+      <!--购物车-->
+      <cart-bar :updateGoodsCount="updateGoodsCount"
+                :updateCatesCount="updateCatesCount"
+                @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
     </div>
 
-    <!--选择规格-->
-    <select-spec :visible="showSpec"
-                 :goods="selectSpecGoods"
-                 :updateCatesCount="updateCatesCount"
-                 @hideSpecHandler="hideSpecHandler">
-    </select-spec>
-
-    <goods-detail :visible="showDetail"
-                  @hideDetailHandler="hideDetailHandler"
-                  :goods="selectDetail"></goods-detail>
-
-    <!--购物车-->
-    <cart-bar :updateGoodsCount="updateGoodsCount"
-              :updateCatesCount="updateCatesCount"
-              @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
-
+    <!-- 订单列表 -->
+    <div class="order-wrapper" ref="order" v-show="showOrderList">
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded"></order-list>
+    </div>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
 
@@ -93,18 +95,21 @@
   import ScanQrcode from 'components/ScanQrcode.vue'
   import GetStoreInfo from 'components/GetStoreInfo.vue'
   import StoreInfoDetail from 'components/StoreInfoDetail.vue'
+  import OrderList from '../pages/order-list/App.vue'
   import Config from 'methods/Config'
   import store from '../vuex/store'
 
   export default {
     components: {
-      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetStoreInfo, StoreInfoDetail
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetStoreInfo, StoreInfoDetail, OrderList
     },
     data () {
       return {
         isLoading: false,
         mchnt_id: '',   // 商户id
         address: '',    // 桌号
+        showOrderList: false,   // 切换订单tab
+        firstLoadOrders: true,
         selectIndex: 0, // 激活分类
         allGoods: [], // 接口返回的所有商品含分类
         cateList: [],  // 分类列表
@@ -125,14 +130,16 @@
         }, // 店铺活动
         showStoreDetail: false,
         typeScroller: null,
-        menuScroller: null
+        menuScroller: null,
+        orderScroller: null,
+        ordersLoaded: false   // 加载完所有订单
       }
     },
     computed: {
       carts () {
         return this.$store.getters.getCarts
       },
-      isEmptyInfo () {
+      hasOrder () {
         return !Util.isEmptyObject(this.order_info)
       }
     },
@@ -222,6 +229,30 @@
       next()
     },
     methods: {
+      updateOrdersLoaded () {
+        this.ordersLoaded = true
+      },
+      toggleTab (content) {
+        this.showOrderList = content === 'order'
+        if (content === 'order' && this.firstLoadOrders) {
+          this.$nextTick(() => {
+            let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+            document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
+            this.orderScroller = new BScroll(this.$refs.order, {
+              startX: 0,
+              startY: 0,
+              click: true
+            })
+            this.orderScroller.on('scrollEnd', () => {
+              if (!this.ordersLoaded) {
+                this.$refs.orderlist.getData()
+                this.orderScroller.refresh()
+              }
+            })
+          })
+          this.firstLoadOrders = false
+        }
+      },
       fetchMchntActivity (hashid) {
         this.$http({
           url: Config.mHost + 'v1/mkw/activity_tip',
@@ -424,8 +455,40 @@
       }
     }
   }
-  .no-data {
-    height: 300px !important;
+
+  .tabbar {
+    padding: 0 15%;
+    font-size: 32px;
+    border-bottom: 2px solid #E5E5E5;
+    span {
+      width: 50%;
+      display: inline-block;
+      text-align: center;
+      height: 90px;
+      line-height: 90px;
+      color: #606470;
+      &.active {
+        color: #ff8100;
+        border-bottom: 4px solid #ff8100;
+      }
+      &.hasorder {
+        position: relative;
+      }
+      &.hasorder:after {
+        position: absolute;
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+        display: inline-block;
+        background-color: #FF2400;
+        top: 50%;
+        margin-top: -26px;
+      }
+    }
+  }
+  .order-wrapper {
+    overflow: hidden;
   }
 
   /*左侧分类列表*/
@@ -478,8 +541,11 @@
   .list-group ul {
     padding-bottom: 104px;
   }
-  .shopmenu-list ul {
-    padding-bottom: 180px;
+  .shopmenu-list {
+    overflow: hidden;
+    ul {
+      padding-bottom: 180px;
+    }
   }
 
   li.list-item {
