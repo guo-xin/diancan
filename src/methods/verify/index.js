@@ -93,7 +93,8 @@ const getMchntId = () => {
 const isLogin = () => {
   let hasCsid = Util.getCookie('csid')
   let hasOpenid = sessionStorage.getItem('dc_openid')
-  return hasCsid && hasOpenid
+  let hasMchntid = sessionStorage.getItem('mchntId') === getMchntId()
+  return hasCsid && hasOpenid && hasMchntid
 }
 
 const verify = async () => {
