@@ -18,9 +18,9 @@
         <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
-        <li :class="{'hide': (mchntActivity.prepaid || isNaN(mchntActivity.prepaid.max_present_amt))}">
+        <li :class="{'hide': (mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
-          <button type="button" class="secondary-button small-button" style="display:none;" @click="goChuzhi()">储值</button>
+          <button type="button" class="secondary-button small-button" @click="goChuzhi()">储值</button>
         </li>
         <li class="hide"><i class="icon-coupon"></i><span>消费满¥20领红包</span></li>
         <li class="hide"><i class="icon-star"></i><span>消费满¥10可集点</span></li>
@@ -43,7 +43,7 @@
     },
     methods: {
       goChuzhi () {
-        let redirectUrl = window.location.href
+        let redirectUrl = encodeURI(window.location.href)
         window.location.assign(`${this.mchntActivity.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       backgroundObj () {

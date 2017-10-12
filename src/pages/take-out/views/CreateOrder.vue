@@ -51,7 +51,7 @@
         <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
         <i v-else class="icon-checked"></i>
       </div>
-      <div class="chuzhi" style="display:none;" @click="goChuzhi()">
+      <div class="chuzhi"  @click="goChuzhi()">
         <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
       </div>
     </section>
@@ -194,7 +194,7 @@
         this.payType = type
       },
       goChuzhi () {
-        let redirectUrl = window.location.href
+        let redirectUrl = encodeURI(window.location.href)
         window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       getDeliverFee () { // 获取达达等第三方配送费
