@@ -5,6 +5,7 @@
       <div class="red-packet-img">
         <img class="RedPacketImg bounceOut" v-if="!openRedPacket" src="../assets/Redpacket.png" alt="">
         <div class="OpenRedView bounceOut" v-if="openRedPacket" >
+          <!-- 添加注释 -->
           <img class="OpenRedPacketImg"  src="../assets/consumeBack.png" alt="">
           <span  v-show="openRedPacket" class="numberaa">¥&nbsp;<em>{{ redPacketNumber }}</em></span>
         </div>
