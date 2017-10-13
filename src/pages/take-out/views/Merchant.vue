@@ -510,7 +510,6 @@
       padding: 30px 12px;
       font-size: 28px;
       color: #2F323A;
-      border-bottom: 2px solid #E5E5E5; /*px*/
       &.active {
         background-color: #fff;
         color: #FE9B20;
