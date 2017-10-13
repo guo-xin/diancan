@@ -1,19 +1,22 @@
 import Wechat from './wechat/index.js'
 import Vue from 'vue'
 import store from '../vuex/store'
+import config from 'methods/Config'
 
 const WechatPlugin = (Vue) => {
   Vue.prototype.$wechat = Wechat
 }
 
 // 获取详细地址
-let getFormattedAddress = (data) => {
-  console.log('getFormattedAddress')
+let getFormattedAddress = (overdist, coords) => {
+  if (overdist) {
+    return
+  }
   return new Promise((resolve, reject) => {
     store.commit('UPDATEADDRESS', '未获取到地理位置')
     let args = {
       key: 'R56BZ-S42KF-YGAJ6-N5APF-ASCI6-2VBL3',  // 腾讯地图 逆地址解析 http://lbs.qq.com/webservice_v1/guide-gcoder.html
-      location: `${data.latitude},${data.longitude}`, // '116.480881,39.989410'
+      location: `${coords.latitude},${coords.longitude}`, // '116.480881,39.989410'
       output: 'jsonp'
     }
     Vue.http({
@@ -22,26 +25,56 @@ let getFormattedAddress = (data) => {
       params: args
     })
     .then((response) => {
-      console.log(response)
       if (response.status === 200) {
         let formattedAddress = response.data.result.formatted_addresses.recommend
         store.commit('UPDATEADDRESS', formattedAddress)
         window.localStorage.setItem('formatted_address', formattedAddress)
         resolve()
-      } else {
-        store.commit('UPDATEADDRESS', '未获取到地理位置')
       }
     })
     .catch(() => {
-      store.commit('UPDATEADDRESS', '未获取到地理位置')
+      reject()
+    })
+  })
+}
+
+// 判断消费者 所在位置 超出配送范围
+let isOverdist = (coords) => {
+  return new Promise((resolve, reject) => {
+    store.commit('UPDATEADDRESS', '未获取到地理位置')
+    Vue.http({
+      url: `${config.apiHost}diancan/c/is_overdist`,
+      params: {
+        mchnt_id: sessionStorage.getItem('mchntId'),
+        longitude: coords.longitude,
+        latitude: coords.latitude,
+        format: 'cors'
+      }
+    })
+    .then((res) => {
+      let data = res.data
+      if (data.respcd === '0000') {
+        let formattedAddress = data.data.overdist ? '超出配送范围' : '未获取到地理位置'
+        store.commit('UPDATEADDRESS', formattedAddress)
+        window.localStorage.setItem('formatted_address', formattedAddress)
+        resolve(data.data.overdist)
+      }
+    })
+    .catch(() => {
       reject()
     })
   })
 }
 
 Wechat.getFormattedAddress = async () => {
-  let data = await Wechat.getCoords()
-  await getFormattedAddress(data)
+  let coords = await Wechat.getCoords()
+  await getFormattedAddress(false, coords)
+}
+
+Wechat.getOverdistFormattedAddress = async () => {
+  let coords = await Wechat.getCoords()
+  let overdist = await isOverdist(coords)
+  await getFormattedAddress(overdist, coords)
 }
 
 export { WechatPlugin, Wechat }
