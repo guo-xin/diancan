@@ -89,14 +89,11 @@ const getCoords = () => {
     wx.getLocation({
       type: 'gcj02',
       success: function (res) {
-        console.log('success getCoords')
-        console.log(res)
         window.localStorage.setItem('longitude', res.longitude)
         window.localStorage.setItem('latitude', res.latitude)
         resolve(res)
       },
       fail: function (res) {
-        console.log('fail getCoords')
         reject(res)
       }
     })
