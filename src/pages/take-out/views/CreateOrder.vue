@@ -33,6 +33,7 @@
         <span>-<sub>￥</sub>{{coupon.amt | formatCurrency}}</span>
       </div>
       <div class="total">
+        <del v-if='this.preAmt > payAmt'>原价<sub>￥</sub>{{this.preAmt | formatCurrency}}</del>
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>
@@ -81,6 +82,7 @@
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
         deliveryStatus: '',    // 达达配送费状态
+        preAmt: 0, // 原价
         getDeliverFeeTimestamp: 0,
         prepaid: {},   // 储值信息
         payType: '800207',  // 支付方式 800207是微信，700000是储值
@@ -150,13 +152,17 @@
         }
       },
       payAmt () {
+        console.log(this.deliver.shipping_fee)
         let payAmt = this.cartData.price
         if (this.isDadaDeliver) {   // 达达配送费
           payAmt += this.dadaDeliveryFee
+          this.preAmt = payAmt
         } else if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
           payAmt += this.deliver.shipping_fee
         } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
           payAmt += this.deliver.shipping_fee
+        } else if (this.deliver.shipping_fee) {
+          this.preAmt = payAmt + this.deliver.shipping_fee
         }
         if (this.coupon.amt && this.payType === '800207') {
           payAmt -= this.coupon.amt
