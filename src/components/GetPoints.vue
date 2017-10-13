@@ -7,14 +7,24 @@
     	    <div class="remind-info">{{ remindinfo }}</div>
     	  </section>
         <section class="point-view">
-        	<ul :class="ulView">
-        		<li class="cir-point" v-for="index in fullPoints">
-              <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
-              <div class="starView" v-if="index <= curCardHave ? true : false">
-                <span class="newPoint" v-show="newPoint(index)"></span>
+        	<div :class="ulView">
+            <div class="lineOne">
+              <div class="cir-point" v-for="index in fullPoints" v-if="index <= lineOneNumber">
+                  <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
+                  <div class="starView" v-if="index <= curCardHave ? true : false">
+                    <span class="newPoint" v-show="newPoint(index)"></span>
+                  </div>
               </div>
-            </li>
-        	</ul>
+            </div>
+            <div class="lineTwo" v-if='fullPoints > 5'>
+              <div class="cir-point" v-for="index in fullPoints" v-if="index > lineOneNumber">
+                  <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
+                  <div class="starView" v-if="index <= curCardHave ? true : false">
+                    <span class="newPoint" v-show="newPoint(index)"></span>
+                  </div>
+              </div>
+            </div>
+        	</div>
         	<p class="active-time">活动日期&nbsp;<span class="begin-time">{{ beginTime }}</span>-<span class="over-time">{{ overTime }}</span></p>
         </section>
         <section class="conversion" v-if="showExchange">
@@ -44,7 +54,7 @@
     	<section class="red-pakect-view" v-if="showRedPacketView">
     		<div class="red-pakect-img"><span class="redPacketNumber">¥&nbsp;<em>{{ redPacketNumber }}</em></span></div>
         <div class="right-info">
-          <div class="boss-get-info">
+          <div :class="shareInfo">
             <p>老板给了你一个红包，</p>
             <p>快去<a :href="couponsUrl"><span>“我的红包”</span></a>看看吧!</p>
           </div>
@@ -71,12 +81,14 @@
         curGetPoint: '',// 本次消费可以集点数
         remindinfo: '',// 集点提示信息
         fullPoints: 5,// 商家设定的集点点数
+        lineOneNumber: 5, // 第一行显示的点数
         addExchange: 0,// 此次消费新增的兑换券个数
         showFullView: false, // 当前卡片集满
         showNoFullView: true, // 当前卡片未集满
         showExchange: false, // 点击兑换
         curCardHave: 0,// 当前卡片已经集的点数
         haveGet: false,
+        shareInfo: 'default', // 分享按钮上面的文字样式
         showShareView: false,
         nextCardPoint: 0, // 当前卡片集满还有多余的集点  自动到下一张卡上
         exchangeNumber: 0,// 未兑换的兑换券数目
@@ -101,7 +113,7 @@
       // remindinfo
       this.remindinfo = '再集'+diff_exchange+'点可获得'+goods_price+'元的'+this.card.actv.goods_name+'!'
       // 获取商家设置的点数
-      // this.fullPoints = 8
+      // this.fullPoints = 7
       this.fullPoints = this.card.actv.exchange_pt
       // 根据商家的点数改变布局
       this.changePointsView(this.fullPoints)
@@ -128,6 +140,32 @@
       // console.log(this.activityId)
       // 获取 我的兑换券 链接
       this.myCardsUrl = 'http://m.haojin.in/v2/exchange-cards.html?customer_id='+this.customerId+'&activity_id='+this.activityId
+      // 分享红包 链接数据
+      if (this.activity.share.desc) {
+        WeChat.menuShareAppMessage({
+          desc: actv.share.desc,
+          imgUrl: actv.share.icon_url,
+          link: actv.share.share_url,
+          title: actv.share.title,
+          success: function () {
+            this.showShareView = false
+          },
+          cancel: function () {
+            this.showShareView = false
+          }
+        })
+        WeChat.menuShareTimeline({
+          imgUrl: actv.share.icon_url,
+          link: actv.share.share_url,
+          title: actv.share.title,
+          success: function () {
+            this.showShareView = false
+          },
+          cancel: function () {
+            this.showShareView = false
+          }
+        })
+      }
     },
     methods: {
     	closeView () {
@@ -147,22 +185,26 @@
             break;
           case 6:
             this.ulView = 'ulClass_1';
+            this.lineOneNumber = 3;// 第一行显示的点数
             break;
           case 7:
             this.ulView = 'ulClass_2';
+            this.lineOneNumber = 3; // 第一行显示的点数
             break;
           case 8:
             this.ulView = 'ulClass_3';
+            this.lineOneNumber = 4; // 第一行显示的点数
             break;
           case 9:
             this.ulView = 'ulClass_4';
+            this.lineOneNumber = 4; // 第一行显示的点数
             break;
           case 10:
             this.ulView = 'ulClass_5';
+            this.lineOneNumber = 5; // 第一行显示的点数
             break;
           default:
             this.ulView = 'ulDefault';
-
         }
       },
       checkExchange (n) {
@@ -202,29 +244,7 @@
       isShare (actv) {
         if (actv.share.desc !== "") {
           this.showSharaBtn = true
-          WeChat.menuShareAppMessage({
-            desc: actv.share.desc,
-            imgUrl: actv.share.icon_url,
-            link: actv.share.share_url,
-            title: actv.share.title,
-            success: function () {
-              this.showShareView = false
-            },
-            cancel: function () {
-              this.showShareView = false
-            }
-          })
-          WeChat.menuShareTimeline({
-            imgUrl: actv.share.icon_url,
-            link: actv.share.share_url,
-            title: actv.share.title,
-            success: function () {
-              this.showShareView = false
-            },
-            cancel: function () {
-              this.showShareView = false
-            }
-          })
+          this.shareInfo = 'boss-get-info'
         }else {
           this.showSharaBtn = false;
         }
@@ -290,112 +310,86 @@
 	    		position: relative;
 	    		border-radius: 8px;
 	    		box-shadow: 0 4px 12px 0 rgba(165,83,236,0.15);
-	        /*overflow: hidden*/
-          ul {
-            margin: 0 auto;
-	          margin-top: 32px;
-            height: 210px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            align-items: center;
+          > div {
+            width: 100%;
+            > div {
+              margin: 0 auto;
+  	          margin-top: 32px;
+              height: 210px;
+              display: -webkit-flex;
+              display: flex;
+              flex-wrap: wrap;
+              -webkit-flex-wrap: wrap;
+              justify-content: space-around;
+              -webkit-justify-content: space-around;
+              align-items: center;
+              -webkit-align-items: center;
+            }
           }
 	    		.ulDefault {
-	          max-width: 540px;
+            .lineOne{
+              width: 520px;
+            }
 	    		}
           .ulClass_1{
-            max-width: 360px;
-            li {
-              margin-right: 34px;
+            padding-top: 20px;
+            .lineOne{
+              width: 360px;
+              height: 80px;
             }
-            li:nth-child(3) {
-              margin-right: 0;
-            }
-            li:nth-child(6) {
-              margin-right: 0;
+            .lineTwo{
+              width: 360px;
+              height: 80px;
             }
           }
           .ulClass_2{
-            max-width: 400px;
-            li {
-              margin-right: 34px;
+            padding-top: 20px;
+            .lineOne{
+              width: 360px;
+              height: 80px;
             }
-            li:nth-child(3) {
-              margin-right: 0;
-            }
-            li:nth-child(4) {
-              margin-right: 20px;
-            }
-            li:nth-child(5) {
-              margin-right: 20px;
-            }
-            li:nth-child(6) {
-              margin-right: 20px;
-            }
-            li:nth-child(7) {
-              margin-right: 0;
+            .lineTwo{
+              width: 440px;
+              height: 80px;
             }
           }
           .ulClass_3{
-            max-width: 460px;
-            li {
-              margin-right: 34px;
+            padding-top: 20px;
+            .lineOne{
+              width: 440px;
+              height: 80px;
             }
-            li:nth-child(4) {
-              margin-right: 0;
-            }
-            li:nth-child(8) {
-              margin-right: 0;
+            .lineTwo{
+              width: 440px;
+              height: 80px;
             }
           }
           .ulClass_4{
-            max-width: 520px;
-            li {
-              margin-right: 34px;
+            padding-top: 20px;
+            .lineOne{
+              width: 440px;
+              height: 80px;
             }
-            li:nth-child(4) {
-              margin-right: 0;
-            }
-            li:nth-child(5) {
-              margin-right: 20px;
-            }
-            li:nth-child(6) {
-              margin-right: 20px;
-            }
-            li:nth-child(7) {
-              margin-right: 20px;
-            }
-            li:nth-child(8) {
-              margin-right: 20px;
-            }
-            li:nth-child(9) {
-              margin-right: 0;
+            .lineTwo{
+              width: 520px;
+              height: 80px;
             }
           }
           .ulClass_5{
-            max-width: 520px;
-            li {
-              margin-right: 24px;
+            padding-top: 20px;
+            .lineOne{
+              width: 520px;
+              height: 80px;
             }
-            li:nth-child(5) {
-              margin-right: 0;
-            }
-            li:nth-child(10) {
-              margin-right: 0;
+            .lineTwo{
+              width: 520px;
+              height: 80px;
             }
           }
 	    		.cir-point {
-	    			display: inline-block;
 	    			font-size: 40px;
 	    			text-align: center;
 	    			color: #8B62E9;
-            /*margin-left: 34px;*/
-            /*&:nth-child(1) {
-              margin-left: 0;
-            }
-            &:nth-child(5) {
-              margin-left: 0;
-            }*/
             span {
               display: inline-block;
               width: 80px;
@@ -427,7 +421,7 @@
 	        .active-time {
 	        	font-size: 24px;
 	          color: #8A8C92;
-	          width: 400px;
+	          // width: 570px;
 	          text-align: center;
 	          height: 28px;
 	          line-height: 28px;
@@ -457,8 +451,6 @@
 		    .conversion {
 	        width: 570px;
 	        height: 174px;
-	        /*border: 1px solid #DED3F7;*/
-	        /*border-radius: 10px;*/
           background-image: url(../assets/redpacket_bg3.png);
           background-size: 100% 100%;
 	        margin: 40px auto 0;
@@ -655,15 +647,12 @@
         	margin-top: 24px;
           height: 170px;
           width: 312px;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          align-items: center;
         	.boss-get-info {
 	        	width: 312px;
 	        	height: 80px;
 	        	font-size: 28px;
 	        	color: #680713;
+            margin-top: 8px;
           	p {
 	          	width: 100%;
 	            line-height: 40px;
@@ -673,6 +662,21 @@
 	            }
 	          }
         	}
+          .default{
+            width: 312px;
+	        	height: 80px;
+	        	font-size: 28px;
+	        	color: #680713;
+            margin-top: 50px;
+            p {
+	          	width: 100%;
+	            line-height: 40px;
+	            text-align: center;
+	            span {
+            		color: #F12128;
+	            }
+	          }
+          }
         	.shara-btn {
           	height: 60px;
             width: 292px;
@@ -682,20 +686,21 @@
           	line-height: 60px;
           	background-color: #F7503D;
           	border-radius: 6px;
-				    margin-top: 20px;
+				    margin-top: 18px;
+            margin-left: 10px;
         	}
 		    }
 			}
   	}
 	  .closeView {
 	    display: block;
-	    width: 41px;
+	    width: 100%;
 	    height: 41px;
 	    font-size: 41px;
 	    color: #fff;
       position: fixed;
       bottom: -102px;
-      left: 305px;
+      text-align: center;
 	  }
   }
   .shareView {

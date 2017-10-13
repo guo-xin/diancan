@@ -50,6 +50,32 @@
       // console.log(this.coupons)
       // console.log(this.page)
       // console.log(this.share)
+      //如果是分享红包
+      if (this.share.desc) {
+        WeChat.menuShareAppMessage({
+          desc: this.share.desc,
+          imgUrl: this.share.icon_url,
+          link: this.share.share_url,
+          title: this.share.title,
+          success: function () {
+            this.showShareView = false
+          },
+          cancel: function () {
+            this.showShareView = false
+          }
+        })
+        WeChat.menuShareTimeline({
+          imgUrl: this.share.icon_url,
+          link: this.share.share_url,
+          title: this.share.title,
+          success: function () {
+            this.showShareView = false
+          },
+          cancel: function () {
+            this.showShareView = false
+          }
+        })
+      }
     },
     methods: {
       getPacket () {
@@ -69,29 +95,6 @@
       isShare (share) {
         if (share.desc) {
           this.shareShow = true
-          WeChat.menuShareAppMessage({
-            desc: this.share.desc,
-            imgUrl: this.share.icon_url,
-            link: this.share.share_url,
-            title: this.share.title,
-            success: function () {
-              this.showShareView = false
-            },
-            cancel: function () {
-              this.showShareView = false
-            }
-          })
-          WeChat.menuShareTimeline({
-            imgUrl: this.share.icon_url,
-            link: this.share.share_url,
-            title: this.share.title,
-            success: function () {
-              this.showShareView = false
-            },
-            cancel: function () {
-              this.showShareView = false
-            }
-          })
         }else {
           this.shareShow = false
         }
@@ -106,7 +109,7 @@
   .red-packet-view {
     background-color: rgba(0, 0, 0, .7);
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     height: 100%;
     left: 0;
@@ -115,7 +118,7 @@
       width: 86.6667%;
       padding-bottom: 72px;
       background-color: #fff;
-      z-index: 2;
+      z-index: 3;
       position: absolute;
       top: 50%;
       left: 50%;
