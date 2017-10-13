@@ -61,7 +61,7 @@ if (Util.isWX || process.env.NODE_ENV === 'production') {
   Wechat.ready()
   .then(() => {
     Wechat.hideOptionMenu()
-    Wechat.getFormattedAddress()
+    Wechat.getOverdistFormattedAddress()
     const menuList = {
       menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
     }
