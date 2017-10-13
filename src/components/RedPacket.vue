@@ -110,7 +110,7 @@
   .red-packet-view {
     background-color: rgba(0, 0, 0, .7);
     position: absolute;
-    z-index: 2;
+    z-index: 101;
     width: 100%;
     height: 100%;
     left: 0;
@@ -119,7 +119,7 @@
       width: 86.6667%;
       padding-bottom: 72px;
       background-color: #fff;
-      z-index: 3;
+      z-index: 102;
       position: absolute;
       top: 50%;
       left: 50%;

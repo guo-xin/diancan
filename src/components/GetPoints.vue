@@ -263,7 +263,7 @@
 	.out-dark-view {
     background-color: rgba(0, 0, 0, .7);
     position: absolute;
-    z-index: 1;
+    z-index: 101;
     width: 100%;
     height: 100%;
     left: 0;
@@ -272,7 +272,7 @@
 	    font-family: PingFang SC-Regular;
 	    width: 86.6667%;
 	    padding-bottom: 40px;
-	    z-index: 2;
+	    z-index: 102;
 	    background-color: #fff;
 	    border-radius: 12px;
 	    position: absolute;
