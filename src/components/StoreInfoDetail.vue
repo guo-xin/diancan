@@ -20,7 +20,7 @@
       <ul class="activity-list">
         <li :class="{'hide': (mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))}">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</span>
-          <button type="button" class="secondary-button small-button" @click="goChuzhi()">储值</button>
+          <button type="button" v-if="mchntActivity.prepaid.expired === 0" class="secondary-button small-button" @click="goChuzhi()">储值</button>
         </li>
         <li class="hide"><i class="icon-coupon"></i><span>消费满¥20领红包</span></li>
         <li class="hide"><i class="icon-star"></i><span>消费满¥10可集点</span></li>

@@ -1,6 +1,10 @@
 <template>
-  <div>
-    <ul class="order-list" v-if="!noData">
+  <div :class="{'hasbottom': useTabs}">
+    <div v-if="noData" class="no-data">
+      <img src="./assets/no_data.png" alt="">
+      <p>暂无订单</p>
+    </div>
+    <ul class="order-list" v-else>
       <li v-for="item in orders" @click='jumpUrl(item)'>
         <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
@@ -34,9 +38,8 @@
         </div>
       </li>
     </ul>
-    <div v-if="noData" class="no-data">
-      <img src="./assets/no_data.png" alt="">
-      <p>暂无订单</p>
+    <div class="no-more" v-show="loaded">
+      <p>没有更多了</p>
     </div>
     <loading :visible="loading"></loading>
   </div>
@@ -158,6 +161,9 @@
       line-height: 3;
     }
   }
+  .hasbottom {
+    padding-bottom: 180px;
+  }
   .order-list {
     li {
       &:first-child > div {
@@ -199,7 +205,6 @@
   }
   .order-list {
     list-style: none;
-    padding-bottom: 180px;
     margin: 0;
     li {
       margin-bottom: 24px;
@@ -278,5 +283,14 @@
         }
       }
     }
+  }
+  .no-more {
+    border-top: 2px solid #E5E5E5;
+    border-bottom: 2px solid #E5E5E5;
+    color: #8A8C92;
+    font-size: 24px;
+    background-color: #fff;
+    text-align: center;
+    padding: 24px 0;
   }
 </style>

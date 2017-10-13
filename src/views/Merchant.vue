@@ -132,15 +132,13 @@
         typeScroller: null,
         menuScroller: null,
         orderScroller: null,
+        hasOrder: false,  // 有无订单
         ordersLoaded: false   // 加载完所有订单
       }
     },
     computed: {
       carts () {
         return this.$store.getters.getCarts
-      },
-      hasOrder () {
-        return !Util.isEmptyObject(this.order_info)
       }
     },
     created () {
@@ -199,6 +197,7 @@
         // localStorage 购物车 商品数量同步
         this.mergeCartsCount()
         this.order_info = data.data.order_info
+        this.hasOrder = !Util.isEmptyObject(data.data.order_info)
         this.merchantSetting = data.data.merchant_setting
         // 刷新 BScroll 组件
         this.$nextTick(() => {
@@ -235,6 +234,7 @@
       toggleTab (content) {
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
+          this.hasOrder = false
           this.$nextTick(() => {
             let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
             document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
@@ -246,8 +246,8 @@
             this.orderScroller.on('scrollEnd', () => {
               if (!this.ordersLoaded) {
                 this.$refs.orderlist.getData()
-                this.orderScroller.refresh()
               }
+              this.orderScroller.refresh()
             })
           })
           this.firstLoadOrders = false
