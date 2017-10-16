@@ -52,6 +52,10 @@
       // console.log(this.page)
       // console.log(this.share)
       //如果是分享红包
+      const menuList = {
+        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+      }
+      WeChat.showMenuItems(menuList)
       if (this.share.desc) {
         WeChat.menuShareAppMessage({
           desc: this.share.desc,
@@ -110,7 +114,7 @@
   .red-packet-view {
     background-color: rgba(0, 0, 0, .7);
     position: absolute;
-    z-index: 101;
+    z-index: 200;
     width: 100%;
     height: 100%;
     left: 0;
@@ -119,7 +123,7 @@
       width: 86.6667%;
       padding-bottom: 72px;
       background-color: #fff;
-      z-index: 102;
+      z-index: 300;
       position: absolute;
       top: 50%;
       left: 50%;

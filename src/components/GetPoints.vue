@@ -113,7 +113,7 @@
       // remindinfo
       this.remindinfo = '再集'+diff_exchange+'点可获得'+goods_price+'元的'+this.card.actv.goods_name+'!'
       // 获取商家设置的点数
-      // this.fullPoints = 7
+      // this.fullPoints = 3
       this.fullPoints = this.card.actv.exchange_pt
       // 根据商家的点数改变布局
       this.changePointsView(this.fullPoints)
@@ -141,12 +141,16 @@
       // 获取 我的兑换券 链接
       this.myCardsUrl = 'http://m.haojin.in/v2/exchange-cards.html?customer_id='+this.customerId+'&activity_id='+this.activityId
       // 分享红包 链接数据
+      const menuList = {
+        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+      }
+      WeChat.showMenuItems(menuList)
       if (this.activity.share.desc) {
         WeChat.menuShareAppMessage({
-          desc: actv.share.desc,
-          imgUrl: actv.share.icon_url,
-          link: actv.share.share_url,
-          title: actv.share.title,
+          desc: this.activity.share.desc,
+          imgUrl: this.activity.share.icon_url,
+          link: this.activity.share.share_url,
+          title: this.activity.share.title,
           success: function () {
             this.showShareView = false
           },
@@ -155,9 +159,9 @@
           }
         })
         WeChat.menuShareTimeline({
-          imgUrl: actv.share.icon_url,
-          link: actv.share.share_url,
-          title: actv.share.title,
+          imgUrl: this.activity.share.icon_url,
+          link: this.activity.share.share_url,
+          title: this.activity.share.title,
           success: function () {
             this.showShareView = false
           },
@@ -263,7 +267,7 @@
 	.out-dark-view {
     background-color: rgba(0, 0, 0, .7);
     position: absolute;
-    z-index: 101;
+    z-index: 200;
     width: 100%;
     height: 100%;
     left: 0;
@@ -272,7 +276,7 @@
 	    font-family: PingFang SC-Regular;
 	    width: 86.6667%;
 	    padding-bottom: 40px;
-	    z-index: 102;
+	    z-index: 300;
 	    background-color: #fff;
 	    border-radius: 12px;
 	    position: absolute;
@@ -316,14 +320,17 @@
               margin: 0 auto;
   	          margin-top: 32px;
               height: 210px;
+              display: -webkit-box;
               display: -webkit-flex;
               display: flex;
-              flex-wrap: wrap;
-              -webkit-flex-wrap: wrap;
               justify-content: space-around;
+              -webkit--moz-box-pack: space-around;
+              box-pack: justify;
               -webkit-justify-content: space-around;
               align-items: center;
+              box-align:center;
               -webkit-align-items: center;
+              -webkit-box-align:center;
             }
           }
 	    		.ulDefault {
