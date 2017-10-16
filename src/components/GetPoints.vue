@@ -324,9 +324,9 @@
               display: -webkit-flex;
               display: flex;
               justify-content: space-around;
-              -webkit--moz-box-pack: space-around;
-              box-pack: justify;
               -webkit-justify-content: space-around;
+              box-pack: justify;
+              -webkit-box-pack: justify;
               align-items: center;
               box-align:center;
               -webkit-align-items: center;

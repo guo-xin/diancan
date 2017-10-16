@@ -26,7 +26,7 @@
         <span>-<sub>￥</sub>{{coupon.amt | formatCurrency}}</span>
       </div>
       <div class="total">
-        <del v-if='this.coupon.amt > 0'>原价<sub>￥</sub>{{this.cartData.price | formatCurrency}}</del>
+        <del v-if="this.coupon.amt > 0 && payType === '800207'">原价<sub>￥</sub>{{this.cartData.price | formatCurrency}}</del>
         <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>

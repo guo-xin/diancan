@@ -158,10 +158,7 @@
         if (JSON.stringify(activity) !== '{}' && JSON.stringify(card.actv) === '{}') {
           this.showRedPacket = true
           this.showGetPoints = false
-        } else if (JSON.stringify(activity) !== '{}' && card.customer_info.diff_obtain_amt !== 0) {
-          this.showRedPacket = true
-          this.showGetPoints = false
-        } else if (JSON.stringify(card.actv) !== '{}' && card.customer_info.diff_obtain_amt === 0) { // 集点活动存在且消费者达到集点
+        } else if (JSON.stringify(card.actv) !== '{}') { // 集点活动存在
           this.showRedPacket = false
           this.showGetPoints = true
         } else {
