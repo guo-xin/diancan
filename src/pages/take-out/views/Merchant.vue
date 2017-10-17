@@ -128,6 +128,12 @@
             amt: 0
           },
           point: {
+            exchange_pt: 0,
+            goods_amt: 0,
+            goods_name: '',
+            obtain_amt: 0,
+            obtain_limi: 0,
+            status: 0
           },
           prepaid: {
             max_present_amt: 0,

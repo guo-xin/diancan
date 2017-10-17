@@ -2,15 +2,15 @@
   <header class="store-info" @click="showStoreDetail()" :style="backgroundObj()">
     <div class="inner">
       <h1>{{merchantSetting.shop_name}}</h1>
-      <ul class="ulView">
-        <marquee direction="up" truespeed="truespeed" height="18px" scrolldelay="500" behavior="scroll">
-          <li :class="{'hide': (mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))}">
+      <div class="ul-content">
+        <ul :class="ulView">
+          <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">
             <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元~</span>
           </li>
-          <li v-if="mchntActivity.coupon.amt" class="coupon-view"><i class="icon-coupon"></i><span>消费满¥{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}领红包~</span></li>
-          <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满¥{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}可集点~</span></li>
-        </marquee>
-      </ul>
+          <li v-if="mchntActivity.coupon.amt" class="coupon-view"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
+          <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
+        </ul>
+      </div>
       <i class="icon-right-arrow"></i>
     </div>
   </header>
@@ -22,7 +22,9 @@
     props: ['merchantSetting', 'mchntActivity'],
     data () {
       return {
-        btnDisabled: false
+        btnDisabled: false,
+        ulView: 'twoAtv',
+        activity: {}
       }
     },
     created () {
@@ -39,6 +41,21 @@
       },
       showStoreDetail () {
         this.$emit('showStoreDetailHandler')
+      },
+      checkAtvNumber (arg) {
+        let count = 0
+        arg.map(function (value) {
+          console.log(JSON.stringify(value))
+          if (JSON.stringify(value) !== '{}') {
+            count++
+          }
+        })
+        console.log(count)
+        if (count === 2) {
+          this.ulView = 'twoAtv'
+        } else if (count === 3) {
+          this.ulView = 'threeAtv'
+        }
       }
     }
   }
@@ -55,14 +72,14 @@
       font-weight: normal;
       font-size: 32px;
     }
-    ul {
-      padding-top: 20px;
-      font-size: 28px;
+    .ul-content {
+      margin-top: 20px;
       height: 35px;
-      overflow: scroll;
-      li.hide {
-        visibility: hidden;
-      }
+      overflow: hidden;
+    }
+    ul {
+      font-size: 28px;
+      // animation: anim1 15s linear infinite normal;
       i, span {
         vertical-align: middle;
       }
@@ -92,6 +109,53 @@
     .inner {
       padding: 50px 30px 60px;
       background-color: rgba(0, 0, 0, 0.6);
+    }
+  }
+  .twoAtv {
+    animation: anim1 5s linear infinite normal;
+  }
+  .threeAtv {
+    animation: anim2 8s linear infinite normal;
+  }
+  // 活动滚动动画 3个活动
+  @keyframes anim1 {
+    0%{
+      transform:translateY(0px);
+    }
+    40%{
+      transform:translateY(0px);
+    }
+    50%{
+      transform:translateY(-35px);
+    }
+    90%{
+      transform:translateY(-35px);
+    }
+    100%{
+      transform:translateY(-70px);
+    }
+  }
+  @keyframes anim2 {
+    0%{
+      transform:translateY(0px);
+    }
+    27.5%{
+      transform:translateY(0px);
+    }
+    33.75%{
+      transform:translateY(-35px);
+    }
+    61.25%{
+      transform:translateY(-35px);
+    }
+    67.5%{
+      transform:translateY(-70px);
+    }
+    93.75%{
+      transform:translateY(-70px);
+    }
+    100%{
+      transform:translateY(-105px);
     }
   }
 </style>

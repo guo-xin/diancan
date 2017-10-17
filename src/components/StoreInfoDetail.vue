@@ -18,12 +18,12 @@
         <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
-        <li :class="{'hide': (mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))}">
+        <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">
           <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元~</span>
           <button type="button" v-if="mchntActivity.prepaid.expired === 0" class="secondary-button small-button" @click="goChuzhi()">储值</button>
         </li>
-        <li v-if="mchntActivity.coupon.amt"><i class="icon-coupon"></i><span>消费满¥{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}领红包~</span></li>
-        <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满¥{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}可集点~</span></li>
+        <li v-if="mchntActivity.coupon.amt"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
+        <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
       </ul>
       <i class="icon-closed"></i>
     </div>
