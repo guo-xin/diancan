@@ -124,6 +124,11 @@
         isExpire: false,
         merchantSetting: {}, // 店铺信息
         mchntActivity: {
+          coupon: {
+            amt: 0
+          },
+          point: {
+          },
           prepaid: {
             max_present_amt: 0,
             expired: 1

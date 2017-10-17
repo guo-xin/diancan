@@ -145,7 +145,7 @@
         this.payType = payType
       },
       goChuzhi () {
-        let redirectUrl = encodeURI(window.location.href)
+        let redirectUrl = encodeURIComponent(window.location.href)
         window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       createOrder () {  // 创建订单

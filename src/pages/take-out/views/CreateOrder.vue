@@ -200,7 +200,7 @@
         this.payType = type
       },
       goChuzhi () {
-        let redirectUrl = encodeURI(window.location.href)
+        let redirectUrl = encodeURIComponent(window.location.href)
         window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       getDeliverFee () { // 获取达达等第三方配送费
