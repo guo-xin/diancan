@@ -172,9 +172,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     z-index: 1000;
   }
 
@@ -191,6 +188,9 @@
   .spec {
     box-sizing: border-box;
     position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     padding: 0 30px;
     width: 92%;
     background-color: #fff;

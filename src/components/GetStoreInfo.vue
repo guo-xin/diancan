@@ -9,6 +9,11 @@
           </li>
           <li v-if="mchntActivity.coupon.amt" class="coupon-view"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
           <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
+          <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">
+            <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元~</span>
+          </li>
+          <li v-if="mchntActivity.coupon.amt" class="coupon-view"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
+          <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
         </ul>
       </div>
       <i class="icon-right-arrow"></i>
@@ -74,7 +79,7 @@
     }
     .ul-content {
       margin-top: 20px;
-      height: 35px;
+      height: 37px;
       overflow: hidden;
     }
     ul {
@@ -112,23 +117,23 @@
     }
   }
   .twoAtv {
-    animation: anim1 5s linear infinite normal;
+    animation: anim1 6s linear infinite normal;
   }
   .threeAtv {
-    animation: anim2 8s linear infinite normal;
+    animation: anim2 9s linear infinite normal;
   }
   // 活动滚动动画 3个活动
   @keyframes anim1 {
     0%{
       transform:translateY(0px);
     }
-    40%{
+    45.8%{
       transform:translateY(0px);
     }
     50%{
       transform:translateY(-35px);
     }
-    90%{
+    96%{
       transform:translateY(-35px);
     }
     100%{
@@ -139,23 +144,23 @@
     0%{
       transform:translateY(0px);
     }
-    27.5%{
+    30%{
       transform:translateY(0px);
     }
-    33.75%{
+    32.75%{
       transform:translateY(-35px);
     }
-    61.25%{
+    65%{
       transform:translateY(-35px);
     }
     67.5%{
       transform:translateY(-70px);
     }
-    93.75%{
+    97.25%{
       transform:translateY(-70px);
     }
     100%{
-      transform:translateY(-105px);
+      transform:translateY(-104px);
     }
   }
 </style>

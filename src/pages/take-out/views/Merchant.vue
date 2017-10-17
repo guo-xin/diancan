@@ -2,7 +2,7 @@
   <div>
     <get-Location></get-Location>
     <get-store-info :merchantSetting="merchantSetting" :mchntActivity="mchntActivity"
-                    @showStoreDetailHandler="showStoreDetailHandler()"></get-store-info>
+                    @showStoreDetailHandler="showStoreDetailHandler()" ref="getStore"></get-store-info>
     <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
                        @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
     <div class="tabbar">
@@ -290,6 +290,8 @@
         }).then(function (response) {
           let data = response.data
           this.mchntActivity = data.data
+          let arg = [this.mchntActivity.coupon, this.mchntActivity.point, this.mchntActivity.prepaid]
+          this.$refs.getStore.checkAtvNumber(arg)
           sessionStorage.setItem('prepaid', JSON.stringify({
             balance: data.data.prepaid.balance,
             max_present_amt: data.data.prepaid.max_present_amt,
