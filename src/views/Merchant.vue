@@ -197,7 +197,8 @@
         // localStorage 购物车 商品数量同步
         this.mergeCartsCount()
         this.order_info = data.data.order_info
-        this.hasOrder = data.data.order_info.order_id !== localStorage.getItem('order_id')
+        let orderid = data.data.order_info.order_id
+        this.hasOrder = orderid && orderid !== localStorage.getItem('order_id')
         this.merchantSetting = data.data.merchant_setting
         // 刷新 BScroll 组件
         this.$nextTick(() => {

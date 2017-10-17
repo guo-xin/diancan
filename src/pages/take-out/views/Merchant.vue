@@ -209,7 +209,8 @@
         this.mergeCartsCount()
         // 订单信息
         this.order_info = data.data.order_info
-        this.hasOrder = data.data.order_info.order_id !== localStorage.getItem('order_id')
+        let orderid = data.data.order_info.order_id
+        this.hasOrder = orderid && orderid !== localStorage.getItem('order_id')
         // 刷新 BScroll 组件
         this.$nextTick(() => {
           let locationbarHeight = document.getElementsByClassName('location-bar')[0].offsetHeight
