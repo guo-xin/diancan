@@ -120,7 +120,7 @@
         selectSpecGoods: null,
         showDetail: false,
         selectDetail: null,
-        order_info: {}, // 是否已存在订单
+        order_info: {},
         isExpire: false,
         merchantSetting: {}, // 店铺信息
         mchntActivity: {
@@ -214,7 +214,8 @@
         this.mergeCartsCount()
         // 订单信息
         this.order_info = data.data.order_info
-        this.hasOrder = !Util.isEmptyObject(data.data.order_info)
+        let orderid = data.data.order_info.order_id
+        this.hasOrder = orderid && orderid !== localStorage.getItem('order_id')
         // 刷新 BScroll 组件
         this.$nextTick(() => {
           let locationbarHeight = document.getElementsByClassName('location-bar')[0].offsetHeight
@@ -252,6 +253,7 @@
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
           this.hasOrder = false
+          localStorage.setItem('order_id', this.order_info.order_id)
           this.$nextTick(() => {
             let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
             document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
