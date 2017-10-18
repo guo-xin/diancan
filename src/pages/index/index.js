@@ -5,9 +5,9 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
-import { verify } from '../../methods/verify'
+import { verify } from 'methods/verify'
 import { Toast, MessageBox } from 'qfpay-ui'
-import config from '../../methods/Config'
+import config from 'methods/Config'
 
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
@@ -23,18 +23,16 @@ Vue.http.interceptors.push(function (request, next) {
     let data = response.body
     if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
       let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
-      let url = `${config.o2Host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
-      console.log(config)
-      console.log(url)
+      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
       window.location.replace(url)
     }
   })
 })
 
 import App from './App'
-import '../../filters/index'
-import { WechatPlugin, Wechat } from '../../methods/Wechat'
-import Util from '../../methods/Util'
+import 'filters/index'
+import { WechatPlugin, Wechat } from 'methods/Wechat'
+import Util from 'methods/Util'
 
 Vue.use(VueResource)
 Vue.use(WechatPlugin)
