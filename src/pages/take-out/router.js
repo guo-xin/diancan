@@ -49,11 +49,11 @@ let routes = [
     path: '/order_detail/:order_id/:mchnt_id',
     name: 'orderDetail',
     component: OrderDetail
-  },
-  {
-    path: '/!/order_detail/:order_id/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
-    redirect: { name: 'orderDetail' }
   }
+  // {
+  //   path: '/!/order_detail/:order_id/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+  //   redirect: { name: 'orderDetail' }
+  // }
 ]
 
 export default new VueRouter({

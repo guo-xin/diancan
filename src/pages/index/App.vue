@@ -32,8 +32,8 @@
     },
     mounted () {
       if (window.location.hash === '#!/' || window.location.hash === '#/') {
-        // let url = window.location.origin + window.location.pathname + window.location.search + window.sessionStorage.getItem('redirect_uri')
-        // window.location.replace(url)
+        let url = window.location.origin + window.location.pathname + window.location.search + window.sessionStorage.getItem('redirect_uri')
+        window.location.replace(url)
       }
       this.setOpenId()
     },
