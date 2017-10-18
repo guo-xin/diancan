@@ -23,7 +23,7 @@
           <button type="button" v-if="mchntActivity.prepaid.expired === 0" class="secondary-button small-button" @click="goChuzhi()">储值</button>
         </li>
         <li v-if="mchntActivity.coupon.amt"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
-        <li v-if="mchntActivity.point.obtain_amt"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
+        <li v-if="mchntActivity.point.obtain_amt && mchntActivity.point.status === 1"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
       </ul>
       <i class="icon-closed"></i>
     </div>
