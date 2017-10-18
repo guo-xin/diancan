@@ -182,8 +182,14 @@
         switch (n) {
           case 1:
           case 2:
+            this.ulView = 'ulClass_6';
+            break;
           case 3:
+            this.ulView = 'ulClass_7';
+            break;
           case 4:
+            this.ulView = 'ulClass_8';
+            break;
           case 5:
             this.ulView = 'ulDefault';
             break;
@@ -338,6 +344,21 @@
               width: 520px;
             }
 	    		}
+          .ulClass_6{
+            .lineOne{
+              width: 260px;
+            }
+          }
+          .ulClass_7{
+            .lineOne{
+              width: 360px;
+            }
+          }
+          .ulClass_8{
+            .lineOne{
+              width: 440px;
+            }
+          }
           .ulClass_1{
             padding-top: 20px;
             .lineOne{

@@ -191,6 +191,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
     padding: 0 30px;
     width: 92%;
     background-color: #fff;
