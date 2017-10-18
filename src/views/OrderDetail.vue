@@ -44,8 +44,8 @@
       </section>
     </div>
     <loading :visible="isLoading"></loading>
-    <red-packet v-if="showRedPacket" @hideRedPacketView="hideRedPacketView" :activity="activity"></red-packet>
-    <get-points v-if="showGetPoints" @hidePointView="hidePointView" :card="card" :activity="activity" :couponsUrl="couponsUrl" :customer="customer"></get-points>
+    <!-- <red-packet v-if="showRedPacket" @hideRedPacketView="hideRedPacketView" :activity="activity"></red-packet>
+    <get-points v-if="showGetPoints" @hidePointView="hidePointView" :card="card" :activity="activity" :couponsUrl="couponsUrl" :customer="customer"></get-points> -->
 
   </div>
 </template>
@@ -90,7 +90,7 @@
          */
         this.isLoading = true
         let args = this.$route.params
-        let origin = this.$route.query.from // 确定上个路由来源
+        // let origin = this.$route.query.from // 确定上个路由来源
         args.format = 'jsonp'
         this.$http({
           url: `${config.apiHost}diancan/c/order_detail`,
@@ -104,10 +104,10 @@
             this.hasDetail = data.data.goods_list
             this.order = data.data
             const shopname = data.data.merchant_info.shop_name
-            let syssn = data.data.orderinfo.syssn
-            if (origin) { // 是否是付款成功后跳转过来的
-              this.showActive(syssn)
-            }
+            // let syssn = data.data.orderinfo.syssn
+            // if (origin) { // 是否是付款成功后跳转过来的
+            //   this.showActive(syssn)
+            // }
             util.setTitle(shopname)
           } else {
             this.$toast(data.respmsg)
@@ -129,8 +129,6 @@
           this.card = datas.card
           this.couponsUrl = datas.coupons_url
           this.customer = datas.customer
-          // console.log(this.activity)
-          // console.log(this.card)
           this.checkActive(this.activity, this.card)
         })
       },
