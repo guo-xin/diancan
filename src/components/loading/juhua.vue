@@ -39,9 +39,9 @@ export default {
     z-index: 3;
     width: 240px;
     min-height: 240px;
-    top: 50%;
+    top: 200px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     background: rgba(40, 40, 40, 0.75);
     text-align: center;
     border-radius: 8px; /*px*/
