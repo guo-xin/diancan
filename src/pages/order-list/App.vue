@@ -38,10 +38,10 @@
         </div>
       </li>
     </ul>
-    <div class="no-more" v-show="loaded">
+    <div class="more-btn" v-if="(fromName === 'orderlist')" v-show="loaded">
       <p>没有更多了</p>
     </div>
-    <div class="view-more" v-show="fromName === 'merchant'">
+    <div class="more-btn" v-else @click="emitGoOrderList()">
       <p>查看更多</p>
     </div>
     <loading :visible="loading"></loading>
@@ -100,6 +100,9 @@
       }
     },
     methods: {
+      emitGoOrderList () {
+        this.$emit('goOrderList')
+      },
       getData () {
         let _this = this
         if (!this.loaded) {
@@ -289,7 +292,7 @@
       }
     }
   }
-  .no-more {
+  .more-btn {
     border-top: 2px solid #E5E5E5;
     border-bottom: 2px solid #E5E5E5;
     color: #8A8C92;
@@ -297,5 +300,8 @@
     background-color: #fff;
     text-align: center;
     padding: 24px 0;
+    p {
+      margin: 0;
+    }
   }
 </style>
