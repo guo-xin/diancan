@@ -78,12 +78,13 @@ const getMchntId = () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  if (window.location.search) {
-    QueryArray = window.location.search.split('=')
+  let hash = window.location.hash
+  let search = hash.substr(hash.indexOf('?')) // 截取参数 ？mchnt_id=1733008
+  if (search) {
+    QueryArray = search.split('=')
     tempQueryMchtId = QueryArray[0] === '?mchnt_id' ? QueryArray[1] : QueryArray[2]
   }
-
-  let mchntId = tempHashMchtId || tempLSMchtId || tempQueryMchtId
+  let mchntId = tempQueryMchtId || tempHashMchtId || tempLSMchtId
   if (mchntId && !isNaN(mchntId)) {
     sessionStorage.setItem('mchntId', mchntId)
   }
