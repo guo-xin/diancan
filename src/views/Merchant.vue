@@ -246,6 +246,7 @@
       toggleTab (content) {
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
+          this.$refs.orderlist.getData()
           this.hasOrder = false
           localStorage.setItem('order_id', this.order_info.order_id)
           this.$nextTick(() => {
