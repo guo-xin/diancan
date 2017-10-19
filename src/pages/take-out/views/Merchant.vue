@@ -74,7 +74,7 @@
 
     <!-- 订单列表 -->
     <div class="order-wrapper" ref="order" v-show="showOrderList">
-      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded"></order-list>
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
     </div>
 
     <!--扫描二维码蒙层-->
@@ -319,6 +319,10 @@
             }
           })
         })
+      },
+      goOrderList () {
+        let path = Config.env === 'development' ? '' : 'dc/'
+        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mcmchnt_id}`
       },
       goDetail () {
         this.$router.push({
