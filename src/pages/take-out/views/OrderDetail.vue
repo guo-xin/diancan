@@ -126,13 +126,14 @@
       }
     },
     beforeRouteEnter (to, from, next) {
-      if (from.name === 'createOrder') {
-        next(vm => {
-          vm.fromName = 'createOrder'
-        })
-      } else {
-        next()
-      }
+      next(vm => {
+        if (!from.name) {
+          vm.fromName = window.localStorage.getItem('orderDetailFromName')
+        } else {
+          vm.fromName = from.name
+          window.localStorage.setItem('orderDetailFromName', from.name)
+        }
+      })
     },
     computed: {
       backgroundObj () {

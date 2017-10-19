@@ -81,13 +81,14 @@
       }
     },
     beforeRouteEnter (to, from, next) {
-      if (from.name === 'createOrder') {
-        next(vm => {
-          vm.fromName = 'createOrder'
-        })
-      } else {
-        next()
-      }
+      next(vm => {
+        if (!from.name) {
+          vm.fromName = window.localStorage.getItem('orderDetailFromName')
+        } else {
+          vm.fromName = from.name
+          window.localStorage.setItem('orderDetailFromName', from.name)
+        }
+      })
     },
     created () {
       this.fetchData()
@@ -133,7 +134,6 @@
           }
         }).then(function (res) {
           let datas = res.body.data
-          console.log(datas)
           this.activity = datas.activity
           this.card = datas.card
           this.couponsUrl = datas.coupons_url
