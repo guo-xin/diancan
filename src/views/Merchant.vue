@@ -257,12 +257,12 @@
               startY: 0,
               click: true
             })
-            this.orderScroller.on('scrollEnd', () => {
-              if (!this.ordersLoaded) {
-                this.$refs.orderlist.getData()
-              }
-              this.orderScroller.refresh()
-            })
+            // this.orderScroller.on('scrollEnd', () => {
+            //   if (!this.ordersLoaded) {
+            //     this.$refs.orderlist.getData()
+            //   }
+            //   this.orderScroller.refresh()
+            // })
           })
           this.firstLoadOrders = false
         }

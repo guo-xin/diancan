@@ -41,6 +41,9 @@
     <div class="no-more" v-show="loaded">
       <p>没有更多了</p>
     </div>
+    <div class="view-more" v-show="fromName === 'merchant'">
+      <p>查看更多</p>
+    </div>
     <loading :visible="loading"></loading>
   </div>
 </template>
@@ -61,7 +64,8 @@
         loading: false,
         loaded: false,
         orders: [],
-        noData: false
+        noData: false,
+        fromName: 'orderlist'
       }
     },
     computed: {
@@ -70,7 +74,7 @@
           format: 'jsonp',
           mchnt_id: this.mId,
           openid: this.openId,
-          page_size: 10,
+          page_size: 20,
           page: 1
         }
       }
@@ -79,9 +83,8 @@
       loading: loading
     },
     created () {
-      if (window.location.pathname === '/order-list.html') {
-        this.getData()
-      }
+      this.fromName = window.location.pathname === '/order-list.html' ? 'orderlist' : 'merchant'
+      this.getData()
     },
     mounted () {
       if (!this.useTabs) {
@@ -118,7 +121,7 @@
               if (_this.orders === 0) {
                 _this.noData = true
               }
-              if (res.data.order_list.length < 10) {
+              if (res.data.order_list.length < 20) {
                 _this.loaded = true
                 _this.$emit('updateOrdersLoaded')
               }
