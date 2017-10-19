@@ -283,7 +283,7 @@
           let data = response.data
           if (data.respcd === Config.code.OK) {
             store.commit('CLEANCARTS')
-            // localStorage.removeItem(`carts${this.mchnt_id}`)
+            localStorage.removeItem(`carts${this.mchnt_id}`)
             this.$router.replace({
               name: 'orderDetail',
               params: {

@@ -33,11 +33,12 @@ const getTakeAuthInfo = (mchtId) => {
 
 const getWeixinCallBack = (data) => {
   return new Promise((resolve, reject) => {
+    let appid = data.appid || sessionStorage.getItem('dc_appid')
     Vue.http({
       method: 'jsonp',
       url: `${Config.apiHost}diancan/weixincallback`,
       params: {
-        appid: data.appid,
+        appid: appid,
         format: 'jsonp'
       }
     })
