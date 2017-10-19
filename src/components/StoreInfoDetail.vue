@@ -84,6 +84,7 @@
       box-sizing: border-box;
       background-color: #fff;
       border-radius: 10px;
+      transform: translateY(-54px);
     }
     p {
       padding: 0 30px;

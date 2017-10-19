@@ -361,6 +361,7 @@
       display: block;
       flex: 1;
       border: none;
+      padding: 0;
       line-height: 1.5;
       resize: none;
       &::placeholder {
