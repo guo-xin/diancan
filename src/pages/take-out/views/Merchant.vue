@@ -321,7 +321,7 @@
         })
       },
       goOrderList () {
-        let path = Config.env === 'development' ? '' : 'dc/'
+        let path = Config.env === 'development' ? '' : '/dc'
         window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mcmchnt_id}`
       },
       goDetail () {
