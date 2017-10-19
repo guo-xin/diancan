@@ -70,7 +70,7 @@
           format: 'jsonp',
           mchnt_id: this.mId,
           openid: this.openId,
-          page_size: 20,
+          page_size: 10,
           page: 1
         }
       }
@@ -79,7 +79,9 @@
       loading: loading
     },
     created () {
-      this.getData()
+      if (window.location.pathname === '/order-list.html') {
+        this.getData()
+      }
     },
     mounted () {
       if (!this.useTabs) {
@@ -116,7 +118,7 @@
               if (_this.orders === 0) {
                 _this.noData = true
               }
-              if (res.data.order_list.length < 20) {
+              if (res.data.order_list.length < 10) {
                 _this.loaded = true
                 _this.$emit('updateOrdersLoaded')
               }
