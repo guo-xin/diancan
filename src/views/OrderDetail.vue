@@ -64,6 +64,7 @@
     data () {
       return {
         isLoading: false,
+        fromName: '', // 确定路由来源字段
         order: {
           orderinfo: ''
         },
@@ -79,6 +80,15 @@
         couponsUrl: '' // 我的红包链接
       }
     },
+    beforeRouteEnter (to, from, next) {
+      if (from.name === 'createOrder') {
+        next(vm => {
+          vm.fromName = 'createOrder'
+        })
+      } else {
+        next()
+      }
+    },
     created () {
       this.fetchData()
     },
@@ -90,7 +100,6 @@
          */
         this.isLoading = true
         let args = this.$route.params
-        let origin = this.$route.query.from // 确定上个路由来源
         args.format = 'jsonp'
         this.$http({
           url: `${config.apiHost}diancan/c/order_detail`,
@@ -105,7 +114,7 @@
             this.order = data.data
             const shopname = data.data.merchant_info.shop_name
             let syssn = data.data.orderinfo.syssn
-            if (origin) { // 是否是付款成功后跳转过来的
+            if (this.fromName === 'createOrder') { // 是否是付款成功后跳转过来的
               this.showActive(syssn)
             }
             util.setTitle(shopname)

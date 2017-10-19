@@ -95,6 +95,7 @@
     data () {
       return {
         isLoading: false,
+        fromName: '', // 确定路由来源字段
         order: {
           orderinfo: {
             delivery_info: '',
@@ -122,6 +123,15 @@
         deliveryImg: ''
         // showRedPacket: false,
         // showGetPoints: true
+      }
+    },
+    beforeRouteEnter (to, from, next) {
+      if (from.name === 'createOrder') {
+        next(vm => {
+          vm.fromName = 'createOrder'
+        })
+      } else {
+        next()
       }
     },
     computed: {
@@ -176,7 +186,6 @@
     created () {
       this.isLoading = true
       let args = this.$route.params
-      let origin = this.$route.query.from
       // console.log(args)
       /**
        * order_id     // 订单id
@@ -220,7 +229,7 @@
         const shopname = data.data.merchant_info.shop_name
         Util.setTitle(shopname)
         let syssn = data.data.orderinfo.syssn // 获取交易流水号
-        if (origin) { // 是否是付款成功后跳转过来的
+        if (this.fromName === 'createOrder') { // 是否是付款成功后跳转过来的
           this.showActive(syssn)
         }
       })

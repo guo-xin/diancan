@@ -289,9 +289,6 @@
               params: {
                 'order_id': this.orderId,
                 'mchnt_id': this.mchnt_id
-              },
-              query: {
-                'from': 'create'
               }
             })
           } else {
@@ -323,7 +320,9 @@
   }
   .fill-table-number {
     display: flex;
-    align-items: center;
+    label {
+      padding: 24px 0;
+    }
     padding-top: 0;
     padding-bottom: 0;
     input {
