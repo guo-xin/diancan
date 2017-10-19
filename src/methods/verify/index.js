@@ -79,7 +79,7 @@ const getMchntId = () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  let hash = window.location.hash
+  let hash = window.location.href
   let search = hash.substr(hash.indexOf('?')) // 截取参数 ？mchnt_id=1733008
   if (search) {
     QueryArray = search.split('=')

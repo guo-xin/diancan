@@ -72,7 +72,7 @@
 
     <!-- 订单列表 -->
     <div class="order-wrapper" ref="order" v-show="showOrderList">
-      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded"></order-list>
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
     </div>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -257,12 +257,12 @@
               startY: 0,
               click: true
             })
-            this.orderScroller.on('scrollEnd', () => {
-              if (!this.ordersLoaded) {
-                this.$refs.orderlist.getData()
-              }
-              this.orderScroller.refresh()
-            })
+            // this.orderScroller.on('scrollEnd', () => {
+            //   if (!this.ordersLoaded) {
+            //     this.$refs.orderlist.getData()
+            //   }
+            //   this.orderScroller.refresh()
+            // })
           })
           this.firstLoadOrders = false
         }
@@ -278,7 +278,6 @@
         }).then(function (response) {
           let data = response.data
           this.mchntActivity = data.data
-          console.log(this.mchntActivity)
           let arg = [this.mchntActivity.coupon, this.mchntActivity.point, this.mchntActivity.prepaid]
           this.$refs.getStore.checkAtvNumber(arg)
           sessionStorage.setItem('prepaid', JSON.stringify({
@@ -307,6 +306,10 @@
             }
           })
         })
+      },
+      goOrderList () {
+        let path = Config.env === 'development' ? '' : 'dc/'
+        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
       },
       goDetail () {
         this.$router.push({
