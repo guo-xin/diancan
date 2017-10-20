@@ -14,11 +14,12 @@
           <ul>
             <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index)">
               <div>
-                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '···' : cate.cate_count}}</span>
               </div>
             </li>
           </ul>
         </div>
+        <div class="bottomSpace"></div>
       </div>
 
       <div class="l_auto shopmenu-list-container">
@@ -47,6 +48,7 @@
 
               <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
+                <p v-if="hasNumber(goods) > 0" class="goods-select-number">{{ hasNumber(goods) > 9 ? '···' : hasNumber(goods) }}</p>
               </div>
             </li>
           </ul>
@@ -252,6 +254,15 @@
       next()
     },
     methods: {
+      hasNumber (goods) {
+        let count = 0
+        this.carts.map((value) => {
+          if (value.unionid === goods.unionid) {
+            count += value.count
+          }
+        })
+        return count
+      },
       updateOrdersLoaded () {
         this.ordersLoaded = true
       },
@@ -520,11 +531,14 @@
   .list-group-box {
     width: 156px;
     background-color: #F7F7F7;
+    .bottomSpace {
+      width: 100%;
+      height: 110px;
+    }
   }
 
   .list-group {
     overflow: hidden;
-    margin-bottom: 104px;
     li {
       position: relative;
       text-align: center;
@@ -660,6 +674,18 @@
       border-radius: 30px;
       font-size: 24px;
       color: #fff;
+    }
+    .goods-select-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      line-height: 32px;
+      color: #fff;
+      border-radius: 50%;
+      background-color: #FD5359;
     }
   }
 </style>
