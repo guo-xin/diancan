@@ -519,6 +519,7 @@
 
   .list-group {
     overflow: hidden;
+    margin-bottom: 104px;
     li {
       position: relative;
       text-align: center;

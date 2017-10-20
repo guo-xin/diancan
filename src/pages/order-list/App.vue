@@ -38,10 +38,10 @@
         </div>
       </li>
     </ul>
-    <div class="more-btn" v-if="(fromName === 'orderlist')" v-show="loaded">
+    <div class="more-btn" v-if="fromName === 'orderlist'" v-show='loaded'>
       <p>没有更多了</p>
     </div>
-    <div class="more-btn" v-else @click="emitGoOrderList()">
+    <div class="more-btn" v-if="fromName === 'merchant'" @click="emitGoOrderList()">
       <p>查看更多</p>
     </div>
     <loading :visible="loading"></loading>

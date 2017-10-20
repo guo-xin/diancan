@@ -322,7 +322,7 @@
       },
       goOrderList () {
         let path = Config.env === 'development' ? '' : '/dc'
-        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mcmchnt_id}`
+        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
       },
       goDetail () {
         this.$router.push({
@@ -524,6 +524,7 @@
 
   .list-group {
     overflow: hidden;
+    margin-bottom: 104px;
     li {
       position: relative;
       text-align: center;
