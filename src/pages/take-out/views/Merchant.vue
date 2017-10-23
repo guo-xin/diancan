@@ -19,7 +19,6 @@
             </li>
           </ul>
         </div>
-        <div class="bottomSpace"></div>
       </div>
 
       <div class="l_auto shopmenu-list-container">
@@ -524,21 +523,20 @@
     }
   }
   .order-wrapper {
-    overflow: hidden;
+    overflow: scroll;
+  }
+  .order-wrapper::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
   }
 
   /*左侧分类列表*/
   .list-group-box {
     width: 156px;
     background-color: #F7F7F7;
-    .bottomSpace {
-      width: 100%;
-      height: 110px;
-    }
   }
 
   .list-group {
-    overflow: hidden;
+    overflow: scroll;
     li {
       position: relative;
       text-align: center;
@@ -569,6 +567,9 @@
         background-color: #FD5359;
       }
     }
+  }
+  .list-group::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
   }
 
   /*右侧选菜列表*/
