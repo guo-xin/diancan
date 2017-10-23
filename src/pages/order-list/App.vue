@@ -95,12 +95,19 @@
       if (!this.useTabs) {
         let _this = this
         window.onscroll = () => {
-          var scrollTop = document.body.scrollTop
-          var windowHeight = document.body.offsetHeight
+          // var scrollTop = document.body.scrollTop
+          // var windowHeight = document.body.offsetHeight
           var scrollHeight = document.body.scrollHeight
-          if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          var windowScrollTop = window.scrollY
+          var innerHeight = window.innerHeight
+          // console.log(windowScrollTop)
+          // console.log(innerHeight)
+          if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
             _this.getData()
           }
+          // if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          //   // _this.getData()
+          // }
         }
       }
     },
