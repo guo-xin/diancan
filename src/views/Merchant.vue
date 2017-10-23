@@ -17,7 +17,7 @@
                 {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '···' : cate.cate_count}}</span>
               </div>
             </li>
-            <li></li>
+            <li class="speceBottom"></li>
           </ul>
         </div>
       </div>
@@ -570,6 +570,9 @@
   // 购物车遮挡
   .list-group ul {
     padding-bottom: 104px;
+    .speceBottom {
+      height: 38px;
+    }
   }
   .shopmenu-list {
     overflow: hidden;
