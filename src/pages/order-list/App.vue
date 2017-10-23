@@ -162,6 +162,7 @@
         }
       },
       jumpUrl (item) {
+        window.localStorage.removeItem('orderDetailFromName')
         let path = Config.env === 'development' ? '' : 'dc/'
         let type = item.order_type === 3 ? 'take-out' : 'index'
         window.location.href = `${window.location.origin}/${path}${type}.html#/order_detail/${item.order_id}/${item.mchnt_id}`
