@@ -14,9 +14,10 @@
           <ul>
             <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index)">
               <div>
-                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '···' : cate.cate_count}}</span>
               </div>
             </li>
+            <li class="speceBottom"></li>
           </ul>
         </div>
       </div>
@@ -47,6 +48,7 @@
 
               <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
+                <p v-if="hasNumber(goods) > 0" class="goods-select-number">{{ hasNumber(goods) > 9 ? '···' : hasNumber(goods) }}</p>
               </div>
             </li>
           </ul>
@@ -72,7 +74,7 @@
 
     <!-- 订单列表 -->
     <div class="order-wrapper" ref="order" v-show="showOrderList">
-      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded"></order-list>
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
     </div>
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -240,30 +242,33 @@
       next()
     },
     methods: {
+      hasNumber (goods) {
+        let count = 0
+        this.carts.map((value) => {
+          if (value.unionid === goods.unionid) {
+            count += value.count
+          }
+        })
+        return count
+      },
       updateOrdersLoaded () {
-        this.ordersLoaded = true
+        this.$nextTick(() => {
+          this.ordersLoaded = true
+          let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+          document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
+          this.orderScroller = new BScroll(this.$refs.order, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+        })
       },
       toggleTab (content) {
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
-          this.$refs.orderlist.getData()
+          this.$refs.orderlist.getDataForMerchant()
           this.hasOrder = false
           localStorage.setItem('order_id', this.order_info.order_id)
-          this.$nextTick(() => {
-            let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
-            document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
-            this.orderScroller = new BScroll(this.$refs.order, {
-              startX: 0,
-              startY: 0,
-              click: true
-            })
-            this.orderScroller.on('scrollEnd', () => {
-              if (!this.ordersLoaded) {
-                this.$refs.orderlist.getData()
-              }
-              this.orderScroller.refresh()
-            })
-          })
           this.firstLoadOrders = false
         }
       },
@@ -278,7 +283,6 @@
         }).then(function (response) {
           let data = response.data
           this.mchntActivity = data.data
-          console.log(this.mchntActivity)
           let arg = [this.mchntActivity.coupon, this.mchntActivity.point, this.mchntActivity.prepaid]
           this.$refs.getStore.checkAtvNumber(arg)
           sessionStorage.setItem('prepaid', JSON.stringify({
@@ -307,6 +311,10 @@
             }
           })
         })
+      },
+      goOrderList () {
+        let path = Config.env === 'development' ? '' : '/dc'
+        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
       },
       goDetail () {
         this.$router.push({
@@ -505,7 +513,10 @@
     }
   }
   .order-wrapper {
-    overflow: hidden;
+    overflow: scroll;
+  }
+  .order-wrapper::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
   }
 
   /*左侧分类列表*/
@@ -515,7 +526,7 @@
   }
 
   .list-group {
-    overflow: hidden;
+    overflow: scroll;
     li {
       position: relative;
       text-align: center;
@@ -546,6 +557,9 @@
       }
     }
   }
+  .list-group::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
+  }
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
@@ -556,6 +570,9 @@
   // 购物车遮挡
   .list-group ul {
     padding-bottom: 104px;
+    .speceBottom {
+      height: 38px;
+    }
   }
   .shopmenu-list {
     overflow: hidden;
@@ -654,6 +671,18 @@
       background-color: #FF8100;
       font-size: 24px;
       color: #fff;
+    }
+    .goods-select-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      line-height: 32px;
+      color: #fff;
+      border-radius: 50%;
+      background-color: #FD5359;
     }
   }
 </style>

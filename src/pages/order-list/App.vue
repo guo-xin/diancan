@@ -38,8 +38,11 @@
         </div>
       </li>
     </ul>
-    <div class="no-more" v-show="loaded">
+    <div class="more-btn" v-if="fromName === 'orderlist'" v-show='loaded'>
       <p>没有更多了</p>
+    </div>
+    <div class="more-btn" v-if="fromName === 'merchant'" @click="emitGoOrderList()">
+      <p>查看更多</p>
     </div>
     <loading :visible="loading"></loading>
   </div>
@@ -61,7 +64,8 @@
         loading: false,
         loaded: false,
         orders: [],
-        noData: false
+        noData: false,
+        fromName: 'merchant'
       }
     },
     computed: {
@@ -79,24 +83,54 @@
       loading: loading
     },
     created () {
-      if (window.location.pathname === '/order-list.html') {
+      this.fromName = this.$router ? 'merchant' : 'orderlist'
+      if (this.fromName === 'orderlist') {
         this.getData()
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fromName = from.name === 'merchant' ? 'merchant' : 'orderlist'
+      })
     },
     mounted () {
       if (!this.useTabs) {
         let _this = this
         window.onscroll = () => {
-          var scrollTop = document.body.scrollTop
-          var windowHeight = document.body.offsetHeight
           var scrollHeight = document.body.scrollHeight
-          if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+          var windowScrollTop = window.scrollY
+          var innerHeight = window.innerHeight
+          if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
             _this.getData()
           }
         }
       }
     },
     methods: {
+      emitGoOrderList () {
+        this.$emit('goOrderList')
+      },
+      getDataForMerchant () {
+        let _this = this
+        this.$http({
+          method: 'JSONP',
+          url: Config.apiHost + 'diancan/c/order_list',
+          params: _this.requestData
+        }).then(function (response) {
+          let res = response.data
+          _this.loading = false
+          if (res.respcd === '0000') {
+            _this.orders = _this.orders.concat(res.data.order_list)
+            if (_this.orders === 0) {
+              _this.noData = true
+            }
+            _this.loaded = true
+            _this.$emit('updateOrdersLoaded')
+          } else {
+            _this.$toast(res.respmsg)
+          }
+        })
+      },
       getData () {
         let _this = this
         if (!this.loaded) {
@@ -118,9 +152,8 @@
               if (_this.orders === 0) {
                 _this.noData = true
               }
-              if (res.data.order_list.length < 20) {
+              if (res.data.order_list.length < 10) {
                 _this.loaded = true
-                _this.$emit('updateOrdersLoaded')
               }
             } else {
               _this.$toast(res.respmsg)
@@ -129,6 +162,7 @@
         }
       },
       jumpUrl (item) {
+        window.localStorage.removeItem('orderDetailFromName')
         let path = Config.env === 'development' ? '' : 'dc/'
         let type = item.order_type === 3 ? 'take-out' : 'index'
         window.location.href = `${window.location.origin}/${path}${type}.html#/order_detail/${item.order_id}/${item.mchnt_id}`
@@ -286,7 +320,7 @@
       }
     }
   }
-  .no-more {
+  .more-btn {
     border-top: 2px solid #E5E5E5;
     border-bottom: 2px solid #E5E5E5;
     color: #8A8C92;
@@ -294,5 +328,8 @@
     background-color: #fff;
     text-align: center;
     padding: 24px 0;
+    p {
+      margin: 0;
+    }
   }
 </style>

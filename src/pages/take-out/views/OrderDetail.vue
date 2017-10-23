@@ -121,17 +121,15 @@
         couponsUrl: '', // 我的红包链接
         type: 'android',
         deliveryImg: ''
-        // showRedPacket: false,
-        // showGetPoints: true
       }
     },
     beforeRouteEnter (to, from, next) {
       next(vm => {
         if (!from.name) {
-          vm.fromName = window.localStorage.getItem('orderDetailFromName')
-        } else {
-          vm.fromName = from.name
-          window.localStorage.setItem('orderDetailFromName', from.name)
+          vm.fromName = window.localStorage.getItem('orderDetailFromName') || ''
+        } else if (from.name === 'createOrder') {
+          vm.fromName = 'createOrder'
+          window.localStorage.setItem('orderDetailFromName', 'createOrder')
         }
       })
     },
