@@ -97,25 +97,39 @@
       if (!this.useTabs) {
         let _this = this
         window.onscroll = () => {
-          // var scrollTop = document.body.scrollTop
-          // var windowHeight = document.body.offsetHeight
           var scrollHeight = document.body.scrollHeight
           var windowScrollTop = window.scrollY
           var innerHeight = window.innerHeight
-          // console.log(windowScrollTop)
-          // console.log(innerHeight)
           if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
             _this.getData()
           }
-          // if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          //   // _this.getData()
-          // }
         }
       }
     },
     methods: {
       emitGoOrderList () {
         this.$emit('goOrderList')
+      },
+      getDataForMerchant () {
+        let _this = this
+        this.$http({
+          method: 'JSONP',
+          url: Config.apiHost + 'diancan/c/order_list',
+          params: _this.requestData
+        }).then(function (response) {
+          let res = response.data
+          _this.loading = false
+          if (res.respcd === '0000') {
+            _this.orders = _this.orders.concat(res.data.order_list)
+            if (_this.orders === 0) {
+              _this.noData = true
+            }
+            _this.loaded = true
+            _this.$emit('updateOrdersLoaded')
+          } else {
+            _this.$toast(res.respmsg)
+          }
+        })
       },
       getData () {
         let _this = this
@@ -140,7 +154,6 @@
               }
               if (res.data.order_list.length < 10) {
                 _this.loaded = true
-                _this.$emit('updateOrdersLoaded')
               }
             } else {
               _this.$toast(res.respmsg)

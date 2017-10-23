@@ -252,29 +252,23 @@
         return count
       },
       updateOrdersLoaded () {
-        this.ordersLoaded = true
+        this.$nextTick(() => {
+          this.ordersLoaded = true
+          let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+          document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
+          this.orderScroller = new BScroll(this.$refs.order, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+        })
       },
       toggleTab (content) {
         this.showOrderList = content === 'order'
         if (content === 'order' && this.firstLoadOrders) {
-          this.$refs.orderlist.getData()
+          this.$refs.orderlist.getDataForMerchant()
           this.hasOrder = false
           localStorage.setItem('order_id', this.order_info.order_id)
-          this.$nextTick(() => {
-            let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
-            document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
-            this.orderScroller = new BScroll(this.$refs.order, {
-              startX: 0,
-              startY: 0,
-              click: true
-            })
-            // this.orderScroller.on('scrollEnd', () => {
-            //   if (!this.ordersLoaded) {
-            //     this.$refs.orderlist.getData()
-            //   }
-            //   this.orderScroller.refresh()
-            // })
-          })
           this.firstLoadOrders = false
         }
       },
