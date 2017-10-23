@@ -121,8 +121,6 @@
         couponsUrl: '', // 我的红包链接
         type: 'android',
         deliveryImg: ''
-        // showRedPacket: false,
-        // showGetPoints: true
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -134,6 +132,12 @@
           window.localStorage.setItem('orderDetailFromName', from.name)
         }
       })
+    },
+    beforeRouteLeave (to, from, next) {
+      if (to.name !== 'orderDetail') {
+        localStorage.removeItem('orderDetailFromName')
+      }
+      next()
     },
     computed: {
       backgroundObj () {

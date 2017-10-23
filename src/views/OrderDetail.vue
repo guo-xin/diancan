@@ -90,6 +90,12 @@
         }
       })
     },
+    beforeRouteLeave (to, from, next) {
+      if (to.name !== 'orderDetail') {
+        localStorage.removeItem('orderDetailFromName')
+      }
+      next()
+    },
     created () {
       this.fetchData()
     },
