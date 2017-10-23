@@ -17,6 +17,7 @@
                 {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '···' : cate.cate_count}}</span>
               </div>
             </li>
+            <li></li>
           </ul>
         </div>
       </div>

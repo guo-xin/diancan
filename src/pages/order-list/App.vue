@@ -84,7 +84,9 @@
     },
     created () {
       this.fromName = this.$router ? 'merchant' : 'orderlist'
-      this.getData()
+      if (this.fromName === 'orderlist') {
+        this.getData()
+      }
     },
     beforeRouteEnter (to, from, next) {
       next(vm => {
