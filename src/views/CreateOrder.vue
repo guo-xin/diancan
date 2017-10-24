@@ -18,12 +18,16 @@
             <strong>{{goods.name}}</strong>
             <em>{{goods.spec.name}}{{goods.attrValuesString}}</em>
           </div>
-          <span><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
+          <span class="fee-count"><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
+      <div v-if="coupon.amt && payType === '800207'" class="coupon">
+        <em>店铺红包</em>
+        <span>-<sub>￥</sub>{{coupon.amt | formatCurrency}}</span>
+      </div>
       <div class="total">
-        <!-- <del>原价¥63</del> -->
-        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
+        <del v-if="this.coupon.amt > 0 && payType === '800207'">原价<sub>￥</sub>{{this.cartData.price | formatCurrency}}</del>
+        <span>总计&nbsp;&nbsp;¥&nbsp;<em>{{payAmt | formatCurrency}}</em></span>
       </div>
     </section>
     <section class="payment item">
@@ -41,11 +45,13 @@
         <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
         <i v-else class="icon-checked"></i>
       </div>
-      <div class="chuzhi" style="display:none;" @click="goChuzhi()">
+      <div class="chuzhi" v-if="prepaid.expired === 0" @click="goChuzhi()">
         <p>储值优惠，最高送{{prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元</p><i class="icon-right-arrow"></i>
       </div>
     </section>
-    <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">{{btnText}}</button>
+    <button class="done-btn" @click.stop="createOrder" :disabled="btnText!=='确认下单'">
+      <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
+    </button>
   </div>
 </template>
 
@@ -64,17 +70,23 @@
         orderId: '',
         checkout: {},
         btnText: '确认下单',
+        preAmt: 0,
         prepaid: {},   // 储值信息
-        payType: '800207'  // 支付方式 800207是微信，700000是储值
+        payType: '800207',  // 支付方式 800207是微信，700000是储值
+        coupon: {
+          amt: 0,
+          coupon_code: ''
+        }
       }
     },
     created () {
       let params = this.$route.params
-      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`))
+      let carts = JSON.parse(localStorage.getItem(`carts${params.mchnt_id}`)) // 购物车
       if (carts) {
         store.commit('GETCARTS', carts)
       }
-      let prepaid = JSON.parse(sessionStorage.getItem('prepaid'))
+      this.fetchCoupon(params.mchnt_id)
+      let prepaid = JSON.parse(sessionStorage.getItem('prepaid'))  // 储值信息
       this.payType = prepaid.balance > this.cartData.price ? '700000' : '800207'  // 余额大于订单金额 默认选中余额支付
       this.prepaid = prepaid
       this.hasAddress = params.address !== ':address'
@@ -97,17 +109,43 @@
           count,
           price
         }
+      },
+      payAmt () {
+        let payAmt = this.cartData.price
+        if (this.coupon.amt && this.payType === '800207') {
+          payAmt -= this.coupon.amt
+        }
+        return payAmt
       }
     },
     methods: {
+      fetchCoupon (mchntid) {
+        this.$http({
+          url: Config.apiHost + 'diancan/coupon/get_coupon_list',
+          method: 'GET',
+          params: {
+            format: 'cors',
+            mchnt_id: mchntid,
+            txamt: this.cartData.price
+          }
+        }).then((response) => {
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            this.coupon.amt = data.data.amt
+            this.coupon.coupon_code = data.data.coupon_code
+          } else {
+            this.$toast(data.respmsg)
+          }
+        })
+      },
       choosePayment (payType) {
-        if (this.prepaid.balance < this.cartData.price) {
+        if (this.prepaid.balance < this.payAmt) {
           return
         }
         this.payType = payType
       },
       goChuzhi () {
-        let redirectUrl = window.location.href
+        let redirectUrl = encodeURIComponent(window.location.href)
         window.location.assign(`${this.prepaid.recharge_url}&src=diancan&cback=${redirectUrl}`)
       },
       createOrder () {  // 创建订单
@@ -137,10 +175,14 @@
           mchnt_id: this.mchnt_id,
           address: this.address,
           note: this.note,
-          pay_amt: this.cartData.price,
+          pay_amt: this.payAmt,
           pay_type: this.payType,
           goods_info: JSON.stringify(goodsInfo),
+          coupon_code: '',
           format: 'cors'
+        }
+        if (this.payType === '800207') {
+          args.coupon_code = this.coupon.coupon_code
         }
         this.$http({
           url: Config.apiHost + 'diancan/c/makeorder',
@@ -196,8 +238,7 @@
         }
         let _this = this
         let onBridgeReady = () => {
-          window.WeixinJSBridge.invoke(
-            'getBrandWCPayRequest', payParams,
+          window.WeixinJSBridge.invoke('getBrandWCPayRequest', payParams,
             function (res) {
               if (res.err_msg === 'get_brand_wcpay_request:ok') {
                 _this.orderPaySuccess()
@@ -279,7 +320,9 @@
   }
   .fill-table-number {
     display: flex;
-    align-items: center;
+    label {
+      padding: 24px 0;
+    }
     padding-top: 0;
     padding-bottom: 0;
     input {
@@ -317,6 +360,7 @@
       display: block;
       flex: 1;
       border: none;
+      padding: 0;
       line-height: 1.5;
       resize: none;
       &::placeholder {
@@ -348,12 +392,28 @@
         color: $aluminium;
       }
     }
-    span {
+    .fee-count {
       font-size: 34px;
       em {
         font-size: 26px;
         color: $aluminium;
       }
+    }
+  }
+  .coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px 30px;
+    em, span {
+      display: block;
+    }
+    em {
+      font-size: 30px;
+    }
+    > span {
+      font-size: 34px;
+      color: $orange;
     }
   }
   .total {

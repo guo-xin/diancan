@@ -2,22 +2,22 @@
   <div>
     <get-Location></get-Location>
     <get-store-info :merchantSetting="merchantSetting" :mchntActivity="mchntActivity"
-                    @showStoreDetailHandler="showStoreDetailHandler()"></get-store-info>
+                    @showStoreDetailHandler="showStoreDetailHandler()" ref="getStore"></get-store-info>
     <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
                        @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
-    <div class="order-info" v-if="isEmptyOrder">
-      <p>你在 {{order_info.order_time | formatTime('hh:mm')}} 提交了一个订单</p>
-      <button class="default-button" type="button" @click="goDetail">查看订单</button>
+    <div class="tabbar">
+      <span :class="{'active':!showOrderList}" @click="toggleTab('menu')">菜单</span><span :class="{'active':showOrderList, 'hasorder': hasOrder}" @click="toggleTab('order')">订单</span>
     </div>
-    <div id="c-restaurant-content-box" class="l-r">
+    <div id="c-restaurant-content-box" class="l-r" v-show="!showOrderList">
       <div class="list-group-box">
         <div class="list-group" ref="group">
           <ul>
             <li v-for="(cate, index) in cateList" :class="{'active': selectIndex === index}" @click="cateSelect(index)">
               <div>
-                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '...' : cate.cate_count}}</span>
+                {{cate.name}}<span class="count" v-show="cate.cate_count">{{cate.cate_count > 9 ? '···' : cate.cate_count}}</span>
               </div>
             </li>
+            <li class="speceBottom"></li>
           </ul>
         </div>
       </div>
@@ -48,30 +48,36 @@
 
               <div v-else class="l-c-c goods-select-container spec-btn">
                 <span @click.stop="showSpecHandler(goods)">{{hasSelect(goods) ? '重选规格' : '选择规格' }}</span>
+                <p v-if="hasNumber(goods) > 0" class="goods-select-number">{{ hasNumber(goods) > 9 ? '···' : hasNumber(goods) }}</p>
               </div>
             </li>
           </ul>
         </div>
       </div>
+      <!--选择规格-->
+      <select-spec :visible="showSpec"
+                   :goods="selectSpecGoods"
+                   :updateCatesCount="updateCatesCount"
+                   @hideSpecHandler="hideSpecHandler">
+      </select-spec>
+
+      <goods-detail :visible="showDetail"
+                    @hideDetailHandler="hideDetailHandler"
+                    :goods="selectDetail"></goods-detail>
+
+      <!-- 购物车 -->
+      <cart-bar :updateGoodsCount="updateGoodsCount"
+                :updateCatesCount="updateCatesCount"
+                :overtime="merchantSetting.overtime"
+                :nodelivery="merchantSetting.delivery_open_state === 0"
+                :deliver="deliver"
+                @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
     </div>
-    <!--选择规格-->
-    <select-spec :visible="showSpec"
-                 :goods="selectSpecGoods"
-                 :updateCatesCount="updateCatesCount"
-                 @hideSpecHandler="hideSpecHandler">
-    </select-spec>
 
-    <goods-detail :visible="showDetail"
-                  @hideDetailHandler="hideDetailHandler"
-                  :goods="selectDetail"></goods-detail>
-
-    <!-- 购物车 -->
-    <cart-bar :updateGoodsCount="updateGoodsCount"
-              :updateCatesCount="updateCatesCount"
-              :overtime="merchantSetting.overtime"
-              :nodelivery="merchantSetting.delivery_open_state === 0"
-              :deliver="deliver"
-              @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
+    <!-- 订单列表 -->
+    <div class="order-wrapper" ref="order" v-show="showOrderList">
+      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
+    </div>
 
     <!--扫描二维码蒙层-->
     <scan-qrcode :display="isExpire"></scan-qrcode>
@@ -92,6 +98,7 @@
   import GetLocation from 'components/GetLocation.vue'
   import GetStoreInfo from 'components/GetStoreInfo.vue'
   import StoreInfoDetail from 'components/StoreInfoDetail.vue'
+  import OrderList from '../../order-list/App.vue'
   import Config from 'methods/Config'
   import BScroll from 'better-scroll'
   import store from '../../../vuex/store'
@@ -99,12 +106,14 @@
   export default {
     props: ['deliver'],
     components: {
-      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation, GetStoreInfo, StoreInfoDetail
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation, GetStoreInfo, StoreInfoDetail, OrderList
     },
     data () {
       return {
         isLoading: false,
         mchnt_id: '',   // 商户id
+        showOrderList: false,
+        firstLoadOrders: true,
         selectIndex: 0, // 激活分类
         allGoods: [], // 接口返回的所有商品含分类
         cateList: [],  // 分类列表
@@ -113,10 +122,21 @@
         selectSpecGoods: null,
         showDetail: false,
         selectDetail: null,
-        order_info: {}, // 是否已存在订单
+        order_info: {},
         isExpire: false,
         merchantSetting: {}, // 店铺信息
         mchntActivity: {
+          coupon: {
+            amt: 0
+          },
+          point: {
+            exchange_pt: 0,
+            goods_amt: 0,
+            goods_name: '',
+            obtain_amt: 0,
+            obtain_limi: 0,
+            status: 0
+          },
           prepaid: {
             max_present_amt: 0,
             expired: 1
@@ -124,15 +144,15 @@
         }, // 店铺活动
         showStoreDetail: false,
         typeScroller: null,
-        menuScroller: null
+        menuScroller: null,
+        orderScroller: null,
+        hasOrder: false,  // 有无新订单
+        ordersLoaded: false   // 加载完所有订单
       }
     },
     computed: {
       carts () {
         return this.$store.getters.getCarts
-      },
-      isEmptyOrder () {
-        return !Util.isEmptyObject(this.order_info)
       }
     },
     created () {
@@ -202,6 +222,8 @@
         this.mergeCartsCount()
         // 订单信息
         this.order_info = data.data.order_info
+        let orderid = data.data.order_info.order_id || false
+        this.hasOrder = orderid && orderid !== localStorage.getItem('order_id')
         // 刷新 BScroll 组件
         this.$nextTick(() => {
           let locationbarHeight = document.getElementsByClassName('location-bar')[0].offsetHeight
@@ -232,6 +254,36 @@
       next()
     },
     methods: {
+      hasNumber (goods) {
+        let count = 0
+        this.carts.map((value) => {
+          if (value.unionid === goods.unionid) {
+            count += value.count
+          }
+        })
+        return count
+      },
+      updateOrdersLoaded () {
+        this.$nextTick(() => {
+          this.ordersLoaded = true
+          let storebarHeight = document.getElementsByClassName('store-info')[0].offsetHeight
+          document.getElementsByClassName('order-wrapper')[0].style.height = window.innerHeight - storebarHeight + 'px'
+          this.orderScroller = new BScroll(this.$refs.order, {
+            startX: 0,
+            startY: 0,
+            click: true
+          })
+        })
+      },
+      toggleTab (content) {
+        this.showOrderList = content === 'order'
+        if (content === 'order' && this.firstLoadOrders) {
+          this.$refs.orderlist.getDataForMerchant()
+          this.hasOrder = false
+          localStorage.setItem('order_id', this.order_info.order_id || '')
+          this.firstLoadOrders = false
+        }
+      },
       fetchMchntActivity (hashid) {
         this.$http({
           url: Config.mHost + 'v1/mkw/activity_tip',
@@ -243,6 +295,8 @@
         }).then(function (response) {
           let data = response.data
           this.mchntActivity = data.data
+          let arg = [this.mchntActivity.coupon, this.mchntActivity.point, this.mchntActivity.prepaid]
+          this.$refs.getStore.checkAtvNumber(arg)
           sessionStorage.setItem('prepaid', JSON.stringify({
             balance: data.data.prepaid.balance,
             max_present_amt: data.data.prepaid.max_present_amt,
@@ -269,6 +323,10 @@
             }
           })
         })
+      },
+      goOrderList () {
+        let path = Config.env === 'development' ? '' : '/dc'
+        window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
       },
       goDetail () {
         this.$router.push({
@@ -427,6 +485,44 @@
     }
   }
 
+  .tabbar {
+    padding: 0 15%;
+    font-size: 32px;
+    border-bottom: 2px solid #E5E5E5;
+    span {
+      width: 50%;
+      display: inline-block;
+      text-align: center;
+      height: 90px;
+      line-height: 90px;
+      color: #606470;
+      &.active {
+        color: #ff8100;
+        border-bottom: 4px solid #ff8100;
+      }
+      &.hasorder {
+        position: relative;
+      }
+      &.hasorder:after {
+        position: absolute;
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+        display: inline-block;
+        background-color: #FF2400;
+        top: 50%;
+        margin-top: -26px;
+      }
+    }
+  }
+  .order-wrapper {
+    overflow: scroll;
+  }
+  .order-wrapper::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
+  }
+
   /*左侧分类列表*/
   .list-group-box {
     width: 156px;
@@ -434,14 +530,13 @@
   }
 
   .list-group {
-    overflow: hidden;
+    overflow: scroll;
     li {
       position: relative;
       text-align: center;
       padding: 30px 12px;
       font-size: 28px;
       color: #2F323A;
-      border-bottom: 2px solid #E5E5E5; /*px*/
       &.active {
         background-color: #fff;
         color: #FE9B20;
@@ -467,6 +562,9 @@
       }
     }
   }
+  .list-group::-webkit-scrollbar { // 隐藏滚动条
+    display: none;
+  }
 
   /*右侧选菜列表*/
   .shopmenu-list-container {
@@ -481,6 +579,9 @@
   // 购物车遮挡
   .list-group ul{
     padding-bottom: 104px;
+    .speceBottom {
+      height: 38px;
+    }
   }
   .shopmenu-list ul {
     padding-bottom: 180px;
@@ -571,6 +672,18 @@
       border-radius: 30px;
       font-size: 24px;
       color: #fff;
+    }
+    .goods-select-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      text-align: center;
+      line-height: 32px;
+      color: #fff;
+      border-radius: 50%;
+      background-color: #FD5359;
     }
   }
 </style>

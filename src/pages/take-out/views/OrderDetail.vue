@@ -43,6 +43,10 @@
         <!-- <span v-if="deliveryStatus">{{deliveryStatus}}</span> -->
         <span><sub>￥</sub>{{order.orderinfo.shipping_fee | formatCurrency}}</span>
       </div>
+      <div v-if="order.orderinfo.coupon_amt" class="coupon">
+        <em>店铺红包</em>
+        <span>-<sub>￥</sub>{{order.orderinfo.coupon_amt | formatCurrency}}</span>
+      </div>
       <div class="total">
         <strong>总计</strong>
         <!-- <del>原价¥63</del> -->
@@ -67,6 +71,8 @@
       <p>长按二维码关注，<br/>获取更多店铺福利！</p>
       <img src="../assets/btn_add.svg" alt="扫码关注公众号">
     </section> -->
+    <red-packet v-if="showRedPacket" @hideRedPacketView="hideRedPacketView" :activity="activity"></red-packet>
+    <get-points v-if="showGetPoints" @hidePointView="hidePointView" :card="card" :activity="activity" :couponsUrl="couponsUrl" :customer="customer"></get-points>
   </div>
 </template>
 
@@ -79,14 +85,17 @@
   import img2 from '../assets/img_progress_2@2x.png'
   import img3 from '../assets/img_progress_3@2x.png'
   import img4 from '../assets/img_progress_4@2x.jpg'
+  import RedPacket from '../../../components/RedPacket'
+  import GetPoints from '../../../components/GetPoints'
 
   export default {
     components: {
-      Loading
+      Loading, RedPacket, GetPoints
     },
     data () {
       return {
         isLoading: false,
+        fromName: '', // 确定路由来源字段
         order: {
           orderinfo: {
             delivery_info: '',
@@ -101,9 +110,28 @@
             address: ''
           }
         },
+        showRedPacket: false,
+        showGetPoints: false,
+        activity: {}, // 红包数据
+        card: { // 集点数据
+          actv: {},
+          customer_info: {}
+        },
+        customer: {}, // 消费者信息
+        couponsUrl: '', // 我的红包链接
         type: 'android',
         deliveryImg: ''
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if (!from.name) {
+          vm.fromName = window.localStorage.getItem('orderDetailFromName') || ''
+        } else if (from.name === 'createOrder') {
+          vm.fromName = 'createOrder'
+          window.localStorage.setItem('orderDetailFromName', 'createOrder')
+        }
+      })
     },
     computed: {
       backgroundObj () {
@@ -114,9 +142,50 @@
         }
       }
     },
+    methods: {
+      showActive (syssn) {
+        this.$http({
+          url: `${Config.mHost}v1/mkw/activity`,
+          methods: 'GET',
+          params: {
+            syssn,
+            format: 'cors'// 处理跨域问题
+          }
+        }).then(function (res) {
+          let datas = res.body.data
+          console.log(datas)
+          this.activity = datas.activity
+          this.card = datas.card
+          this.couponsUrl = datas.coupons_url
+          this.customer = datas.customer
+          // console.log(this.activity)
+          // console.log(this.card)
+          this.checkActive(this.activity, this.card)
+        })
+      },
+      checkActive (activity, card) {
+        if (JSON.stringify(activity) !== '{}' && JSON.stringify(card.actv) === '{}') {
+          this.showRedPacket = true
+          this.showGetPoints = false
+        } else if (JSON.stringify(card.actv) !== '{}') { // 集点活动存在
+          this.showRedPacket = false
+          this.showGetPoints = true
+        } else {
+          this.showRedPacket = false
+          this.showGetPoints = false
+        }
+      },
+      hideRedPacketView () {
+        this.showRedPacket = false
+      },
+      hidePointView () {
+        this.showGetPoints = false
+      }
+    },
     created () {
       this.isLoading = true
       let args = this.$route.params
+      // console.log(args)
       /**
        * order_id     // 订单id
        * mchnt_id     // 商户id
@@ -158,6 +227,10 @@
         }
         const shopname = data.data.merchant_info.shop_name
         Util.setTitle(shopname)
+        let syssn = data.data.orderinfo.syssn // 获取交易流水号
+        if (this.fromName === 'createOrder') { // 是否是付款成功后跳转过来的
+          this.showActive(syssn)
+        }
       })
     }
   }
@@ -271,10 +344,26 @@
     margin-bottom: 26px;
     > span {
       display: block;
-      font-size: 32px;
+      font-size: 34px;
       &.except {
         text-decoration: line-through;
       }
+    }
+  }
+  .coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 30px;
+    em, span {
+      display: block;
+    }
+    em {
+      font-size: 30px;
+    }
+    > span {
+      font-size: 34px;
+      color: $orange;
     }
   }
   .total {

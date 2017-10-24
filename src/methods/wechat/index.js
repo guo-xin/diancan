@@ -92,6 +92,9 @@ const getCoords = () => {
         window.localStorage.setItem('longitude', res.longitude)
         window.localStorage.setItem('latitude', res.latitude)
         resolve(res)
+      },
+      fail: function (res) {
+        reject(res)
       }
     })
   })

@@ -137,6 +137,9 @@
           params: {
             mchnt_id: this.$parent.mchnt_id,
             address: this.$route.params.address || ':address'
+          },
+          query: {
+            mchnt_id: this.$parent.mchnt_id
           }
         })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])

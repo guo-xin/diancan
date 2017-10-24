@@ -1,7 +1,11 @@
 <template>
-  <div>
-    <ul v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item)'>
+  <div :class="{'hasbottom': useTabs}">
+    <div v-if="noData" class="no-data">
+      <img src="./assets/no_data.png" alt="">
+      <p>暂无订单</p>
+    </div>
+    <ul class="order-list" v-else>
+      <li v-for="item in orders" @click='jumpUrl(item)'>
         <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
@@ -34,9 +38,11 @@
         </div>
       </li>
     </ul>
-    <div v-if="noData" class="no-data">
-      <img src="./assets/no_data.png" alt="">
-      <p>暂无订单</p>
+    <div class="more-btn" v-if="fromName === 'orderlist'" v-show='loaded'>
+      <p>没有更多了</p>
+    </div>
+    <div class="more-btn" v-if="fromName === 'merchant'" @click="emitGoOrderList()">
+      <p>查看更多</p>
     </div>
     <loading :visible="loading"></loading>
   </div>
@@ -48,6 +54,7 @@
   import loading from '../../components/loading/juhua.vue'
 
   export default {
+    props: ['useTabs'],
     data () {
       return {
         init: true,
@@ -56,10 +63,9 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        responseData: {
-          list: []
-        },
-        noData: false
+        orders: [],
+        noData: false,
+        fromName: 'merchant'
       }
     },
     computed: {
@@ -77,20 +83,54 @@
       loading: loading
     },
     created () {
-      this.getData()
+      this.fromName = this.$router ? 'merchant' : 'orderlist'
+      if (this.fromName === 'orderlist') {
+        this.getData()
+      }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.fromName = from.name === 'merchant' ? 'merchant' : 'orderlist'
+      })
     },
     mounted () {
-      let _this = this
-      window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
-        var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
-          _this.getData()
+      if (!this.useTabs) {
+        let _this = this
+        window.onscroll = () => {
+          var scrollHeight = document.body.scrollHeight
+          var windowScrollTop = window.scrollY
+          var innerHeight = window.innerHeight
+          if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
+            _this.getData()
+          }
         }
       }
     },
     methods: {
+      emitGoOrderList () {
+        this.$emit('goOrderList')
+      },
+      getDataForMerchant () {
+        let _this = this
+        this.$http({
+          method: 'JSONP',
+          url: Config.apiHost + 'diancan/c/order_list',
+          params: _this.requestData
+        }).then(function (response) {
+          let res = response.data
+          _this.loading = false
+          if (res.respcd === '0000') {
+            _this.orders = _this.orders.concat(res.data.order_list)
+            if (_this.orders === 0) {
+              _this.noData = true
+            }
+            _this.loaded = true
+            _this.$emit('updateOrdersLoaded')
+          } else {
+            _this.$toast(res.respmsg)
+          }
+        })
+      },
       getData () {
         let _this = this
         if (!this.loaded) {
@@ -108,8 +148,8 @@
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
-              _this.responseData.list = _this.responseData.list.concat(res.data.order_list)
-              if (res.data.order_list.length === 0) {
+              _this.orders = _this.orders.concat(res.data.order_list)
+              if (_this.orders === 0) {
                 _this.noData = true
               }
               if (res.data.order_list.length < 10) {
@@ -122,6 +162,7 @@
         }
       },
       jumpUrl (item) {
+        window.localStorage.removeItem('orderDetailFromName')
         let path = Config.env === 'development' ? '' : 'dc/'
         let type = item.order_type === 3 ? 'take-out' : 'index'
         window.location.href = `${window.location.origin}/${path}${type}.html#/order_detail/${item.order_id}/${item.mchnt_id}`
@@ -139,7 +180,7 @@
   }
 </script>
 <style lang="scss" type="scss" rel="stylesheet/scss">
-  @import "../../styles/main.scss";
+  @import "../../styles/base/_reset";
   .no-data{
     position: relative;
     width: 100%;
@@ -156,8 +197,14 @@
       line-height: 3;
     }
   }
-  ul {
+  .hasbottom {
+    padding-bottom: 180px;
+  }
+  .order-list {
     li {
+      &:first-child > div {
+        border-top: none;
+      }
       > div {
         border-top: 2px solid #e5e5e5;
         border-bottom: 2px solid #e5e5e5;
@@ -192,12 +239,11 @@
       color: #60AA0F;
     }
   }
-  ul {
+  .order-list {
     list-style: none;
-    padding: 0;
     margin: 0;
     li {
-      margin: 20px auto;
+      margin-bottom: 24px;
       background-color: #fff;
       h2 {
         height: 70px;
@@ -272,6 +318,18 @@
           }
         }
       }
+    }
+  }
+  .more-btn {
+    border-top: 2px solid #E5E5E5;
+    border-bottom: 2px solid #E5E5E5;
+    color: #8A8C92;
+    font-size: 24px;
+    background-color: #fff;
+    text-align: center;
+    padding: 24px 0;
+    p {
+      margin: 0;
     }
   }
 </style>

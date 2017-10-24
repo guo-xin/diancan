@@ -33,11 +33,12 @@ const getTakeAuthInfo = (mchtId) => {
 
 const getWeixinCallBack = (data) => {
   return new Promise((resolve, reject) => {
+    let appid = data.appid || sessionStorage.getItem('dc_appid')
     Vue.http({
       method: 'jsonp',
       url: `${Config.apiHost}diancan/weixincallback`,
       params: {
-        appid: data.appid,
+        appid: appid,
         format: 'jsonp'
       }
     })
@@ -78,12 +79,13 @@ const getMchntId = () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  if (window.location.search) {
-    QueryArray = window.location.search.split('=')
+  let hash = window.location.href
+  let search = hash.substr(hash.indexOf('?')) // 截取参数 ？mchnt_id=1733008
+  if (search) {
+    QueryArray = search.split('=')
     tempQueryMchtId = QueryArray[0] === '?mchnt_id' ? QueryArray[1] : QueryArray[2]
   }
-
-  let mchntId = tempHashMchtId || tempLSMchtId || tempQueryMchtId
+  let mchntId = tempQueryMchtId || tempHashMchtId || tempLSMchtId
   if (mchntId && !isNaN(mchntId)) {
     sessionStorage.setItem('mchntId', mchntId)
   }
@@ -93,7 +95,8 @@ const getMchntId = () => {
 const isLogin = () => {
   let hasCsid = Util.getCookie('csid')
   let hasOpenid = sessionStorage.getItem('dc_openid')
-  return hasCsid && hasOpenid
+  let hasMchntid = sessionStorage.getItem('mchntId') === getMchntId()
+  return hasCsid && hasOpenid && hasMchntid
 }
 
 const verify = async () => {

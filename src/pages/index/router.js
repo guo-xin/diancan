@@ -42,7 +42,7 @@ const routes = [
     component: CreateOrder
   },
   {
-    path: '/order_detail/:order_id/:mchnt_id', // 订单详情: 订单id|商户id
+    path: '/order_detail/:order_id/:mchnt_id/', // 订单详情: 订单id|商户id
     name: 'orderDetail',
     component: OrderDetail
   },
