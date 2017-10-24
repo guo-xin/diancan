@@ -222,7 +222,7 @@
         this.mergeCartsCount()
         // 订单信息
         this.order_info = data.data.order_info
-        let orderid = data.data.order_info.order_id
+        let orderid = data.data.order_info.order_id || false
         this.hasOrder = orderid && orderid !== localStorage.getItem('order_id')
         // 刷新 BScroll 组件
         this.$nextTick(() => {
@@ -280,7 +280,7 @@
         if (content === 'order' && this.firstLoadOrders) {
           this.$refs.orderlist.getDataForMerchant()
           this.hasOrder = false
-          localStorage.setItem('order_id', this.order_info.order_id)
+          localStorage.setItem('order_id', this.order_info.order_id || '')
           this.firstLoadOrders = false
         }
       },
