@@ -8,7 +8,7 @@
             <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元~</span>
           </li>
           <li v-if="mchntActivity.coupon.amt" class="coupon-view"><i class="icon-coupon"></i><span>消费满{{ mchntActivity.coupon.amt | formatCurrency | noZeroCurrency }}元领红包~</span></li>
-          <li v-if="mchntActivity.point.obtain_amt && mchntActivity.point.status === 1"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
+          <li v-if="mchntActivity.point.obtain_amt && (mchntActivity.point.status === 1 || mchntActivity.point.status === 2)"><i class="icon-star"></i><span>消费满{{ mchntActivity.point.obtain_amt | formatCurrency | noZeroCurrency }}元可集点~</span></li>
           <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">
             <i class="icon-wallet"></i><span>储值最高送{{mchntActivity.prepaid.max_present_amt | formatCurrency | noZeroCurrency}}元~</span>
           </li>
