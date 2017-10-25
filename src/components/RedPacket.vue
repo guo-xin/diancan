@@ -41,16 +41,12 @@
       }
     },
     created () {
-      // console.log(this.activity)
       this.coupons = this.activity.coupons
       this.redPacketNumber = filter.formatCurrency(this.coupons[0].amt)
       this.page = this.activity.page
       this.share = this.activity.share
       // this.redPacketTitle = '红包来了'
       this.redPacketTitle = this.coupons[0].title
-      // console.log(this.coupons)
-      // console.log(this.page)
-      // console.log(this.share)
       //如果是分享红包
       const menuList = {
         menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']

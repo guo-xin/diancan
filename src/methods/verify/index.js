@@ -80,7 +80,7 @@ const getMchntId = () => {
   }
 
   let hash = window.location.href
-  let search = hash.substr(hash.indexOf('?')) // 截取参数 ？mchnt_id=1733008
+  let search = hash.substr(hash.lastIndexOf('?')) // 截取参数 ？mchnt_id=1733008
   if (search) {
     QueryArray = search.split('=')
     tempQueryMchtId = QueryArray[0] === '?mchnt_id' ? QueryArray[1] : QueryArray[2]
