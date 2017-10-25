@@ -180,6 +180,18 @@
       }
     },
     created () {
+      // init 获取
+      let jsApiList = [
+        'checkJsApi',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'hideMenuItems',
+        'showMenuItems',
+        'onMenuShareAppMessage',
+        'onMenuShareTimeline',
+        'scanQRCode'
+      ]
+      this.$wechat.init(jsApiList)
       this.isLoading = true
       let args = this.$route.params
       /**
