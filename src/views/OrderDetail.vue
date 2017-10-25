@@ -109,7 +109,6 @@
         }).then(function (response) {
           this.isLoading = false
           let data = response.data
-          // console.log(data)
           if (data.respcd === config.code.OK) {
             this.hasDetail = data.data.goods_list
             this.order = data.data
