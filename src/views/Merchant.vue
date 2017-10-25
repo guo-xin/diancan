@@ -282,14 +282,15 @@
           }
         }).then(function (response) {
           let data = response.data
+          let prepaid = response.data.data.prepaid
           this.mchntActivity = data.data
           let arg = [this.mchntActivity.coupon, this.mchntActivity.point, this.mchntActivity.prepaid]
           this.$refs.getStore.checkAtvNumber(arg)
           sessionStorage.setItem('prepaid', JSON.stringify({
-            balance: data.data.prepaid.balance,
-            max_present_amt: data.data.prepaid.max_present_amt,
-            expired: data.data.prepaid.expired,
-            recharge_url: data.data.prepaid.recharge_url
+            balance: prepaid.balance || 0,
+            max_present_amt: prepaid.max_present_amt,
+            expired: prepaid.expired,
+            recharge_url: prepaid.recharge_url
           }))
         })
       },

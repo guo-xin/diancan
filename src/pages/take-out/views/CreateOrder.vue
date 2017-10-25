@@ -45,10 +45,10 @@
         <i class="icon-checked"></i>
       </div>
       <div class="balance" :class="{'active': payType === '700000'}" @click="choosePayment('700000')">
-        <strong>
+        <strong :class="{'disabled': prepaid.balance < cartData.price}">
           <i class="icon-wallet"></i><span>余额支付<em>￥{{prepaid.balance | formatCurrency}}</em></span>
         </strong>
-        <em v-if="prepaid.balance === 0">储值享优惠</em>
+        <em v-if="!prepaid.balance">储值享优惠</em>
         <em v-else-if="prepaid.balance < cartData.price" class="red">余额不足</em>
         <i v-else class="icon-checked"></i>
       </div>
@@ -625,6 +625,15 @@
         em {
           color: $orange;
           margin-left: 10px;
+        }
+        .red {
+          color: $red;
+        }
+        .disabled {
+          color: $midGray;
+          .icon-wallet, em {
+            color: $midGray;
+          }
         }
       }
       &.active {
