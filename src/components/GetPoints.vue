@@ -10,18 +10,18 @@
         	<div :class="ulView">
             <div class="lineOne">
               <div class="cir-point" v-for="index in fullPoints" v-if="index <= lineOneNumber">
-                  <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
-                  <div class="starView" v-if="index <= curCardHave ? true : false">
-                    <span class="newPoint" v-show="newPoint(index)"></span>
-                  </div>
+                <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
+                <div class="starView" v-if="index <= curCardHave ? true : false">
+                  <span class="newPoint" v-show="newPoint(index)"></span>
+                </div>
               </div>
             </div>
             <div class="lineTwo" v-if='fullPoints > 5'>
               <div class="cir-point" v-for="index in fullPoints" v-if="index > lineOneNumber">
-                  <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
-                  <div class="starView" v-if="index <= curCardHave ? true : false">
-                    <span class="newPoint" v-show="newPoint(index)"></span>
-                  </div>
+                <span v-if="index <= curCardHave ? false : true">{{ index }}</span>
+                <div class="starView" v-if="index <= curCardHave ? true : false">
+                  <span class="newPoint" v-show="newPoint(index)"></span>
+                </div>
               </div>
             </div>
         	</div>
@@ -136,8 +136,6 @@
       //获取顾客id与活动id
       this.customerId = this.customer.id
       this.activityId = this.card.actv.id
-      // console.log(this.customerId)
-      // console.log(this.activityId)
       // 获取 我的兑换券 链接
       this.myCardsUrl = 'http://m.haojin.in/v2/exchange-cards.html?customer_id='+this.customerId+'&activity_id='+this.activityId
       // 分享红包 链接数据
@@ -449,7 +447,6 @@
 	        .active-time {
 	        	font-size: 24px;
 	          color: #8A8C92;
-	          // width: 570px;
 	          text-align: center;
 	          height: 28px;
 	          line-height: 28px;
@@ -674,9 +671,9 @@
         	float: left;
         	margin-top: 24px;
           height: 170px;
-          width: 312px;
+          width: 340px;
         	.boss-get-info {
-	        	width: 312px;
+	        	width: 340px;
 	        	height: 80px;
 	        	font-size: 28px;
 	        	color: #680713;
@@ -691,7 +688,7 @@
 	          }
         	}
           .default{
-            width: 312px;
+            width: 340px;
 	        	height: 80px;
 	        	font-size: 28px;
 	        	color: #680713;
@@ -715,7 +712,7 @@
           	background-color: #F7503D;
           	border-radius: 6px;
 				    margin-top: 18px;
-            margin-left: 10px;
+            margin-left: 16px;
         	}
 		    }
 			}

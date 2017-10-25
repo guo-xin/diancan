@@ -153,13 +153,10 @@
           }
         }).then(function (res) {
           let datas = res.body.data
-          console.log(datas)
           this.activity = datas.activity
           this.card = datas.card
           this.couponsUrl = datas.coupons_url
           this.customer = datas.customer
-          // console.log(this.activity)
-          // console.log(this.card)
           this.checkActive(this.activity, this.card)
         })
       },
@@ -183,9 +180,20 @@
       }
     },
     created () {
+      // init 获取
+      let jsApiList = [
+        'checkJsApi',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'hideMenuItems',
+        'showMenuItems',
+        'onMenuShareAppMessage',
+        'onMenuShareTimeline',
+        'scanQRCode'
+      ]
+      this.$wechat.init(jsApiList)
       this.isLoading = true
       let args = this.$route.params
-      // console.log(args)
       /**
        * order_id     // 订单id
        * mchnt_id     // 商户id
