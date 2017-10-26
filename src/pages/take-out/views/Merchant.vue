@@ -432,7 +432,7 @@
         this.showDetail = false
       },
       shareStore (shopname, logourl) {
-        let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + this.mchnt_id
+        let shareLink = Config.rootHost + 'index.html#/merchant/' + this.mchnt_id
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         this.$wechat.menuShareAppMessage({
           title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,

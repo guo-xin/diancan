@@ -320,6 +320,8 @@
   }
   .fill-table-number {
     display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
     label {
       padding: 24px 0;
     }
@@ -327,6 +329,8 @@
     padding-bottom: 0;
     input {
       flex: 1;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
       display: block;
       padding: 24px 0;
       border: none;
