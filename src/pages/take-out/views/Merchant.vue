@@ -156,6 +156,10 @@
       }
     },
     created () {
+      const menuList = {
+        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+      }
+      this.$wechat.showMenuItems(menuList)
       this.isLoading = true
       this.mchnt_id = this.$route.params.mchnt_id
       let carts = JSON.parse(localStorage.getItem(`carts${this.mchnt_id}`))
@@ -432,7 +436,7 @@
         this.showDetail = false
       },
       shareStore (shopname, logourl) {
-        let shareLink = Config.rootHost + 'index.html#/merchant/' + this.mchnt_id
+        let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         this.$wechat.menuShareAppMessage({
           title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,

@@ -155,6 +155,10 @@
       }
     },
     created () {
+      const menuList = {
+        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+      }
+      this.$wechat.showMenuItems(menuList)
       this.isLoading = true
       let mchntId = this.$route.params.mchnt_id
       this.mchnt_id = mchntId
@@ -420,7 +424,8 @@
         this.showDetail = false
       },
       shareStore (shopname, logourl) {
-        let shareLink = Config.rootHost + 'index.html#/merchant/' + this.mchnt_id
+        let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
+        // window.alert(window.location.href)
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         this.$wechat.menuShareAppMessage({
           title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`,
