@@ -155,9 +155,6 @@
           name: 'createOrder',
           params: {
             mchnt_id: this.mchnt_id
-          },
-          query: {
-            mchnt_id: this.$parent.mchnt_id
           }
         })
         _hmt.push(['_trackEvent', 'view-merchant', 'click-xuanhaoleBtn'])
