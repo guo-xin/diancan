@@ -425,7 +425,6 @@
       },
       shareStore (shopname, logourl) {
         let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
-        // window.alert(window.location.href)
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         this.$wechat.menuShareAppMessage({
           title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`,

@@ -443,6 +443,12 @@
           desc: '菜单在眼前，吃啥不纠结！',
           imgUrl: imgUrl,
           link: shareLink
+          // success: function () {
+          //   window.alert('success')
+          // },
+          // fail: function () {
+          //   window.alert('fail')
+          // }
         })
         this.$wechat.menuShareTimeline({
           title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`,
