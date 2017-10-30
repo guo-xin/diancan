@@ -436,7 +436,7 @@
         this.showDetail = false
       },
       shareStore (shopname, logourl) {
-        let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
+        let shareLink = Config.rootHost + 'take-out.html?/#!/merchant/' + this.mchnt_id
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
         Promise.all([this.$wechat.init(), this.$wechat.ready()]).then(() => {
           this.$wechat.menuShareAppMessage({
