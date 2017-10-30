@@ -438,22 +438,19 @@
       shareStore (shopname, logourl) {
         let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-        this.$wechat.menuShareAppMessage({
-          title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,
-          desc: '菜单在眼前，吃啥不纠结！',
-          imgUrl: imgUrl,
-          link: shareLink
-          // success: function () {
-          //   window.alert('success')
-          // },
-          // fail: function () {
-          //   window.alert('fail')
-          // }
-        })
-        this.$wechat.menuShareTimeline({
-          title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`,
-          imgUrl: imgUrl,
-          link: shareLink
+        Promise.all([this.$wechat.init(), this.$wechat.ready()]).then(() => {
+          this.$wechat.menuShareAppMessage({
+            title: `我在${shopname}叫了外卖，美食当然要和你一起分享！`,
+            desc: '菜单在眼前，吃啥不纠结！',
+            imgUrl: imgUrl,
+            link: shareLink
+          })
+          this.$wechat.menuShareTimeline({
+            title: `我在${shopname}叫了外卖，好吃到发朋友圈！快来看看~`,
+            imgUrl: imgUrl,
+            link: shareLink
+          })
+          this.$wechat.getOverdistFormattedAddress()
         })
       },
       showStoreDetailHandler () {

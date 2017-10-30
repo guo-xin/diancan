@@ -58,7 +58,10 @@ const init = async (jsApis = jsApiList) => {
     format: 'jsonp',
     url: window.location.href
   }
-  await getWxConfig(args, jsApis)
+  await new Promise(function (resolve, reject) {
+    getWxConfig(args, jsApis)
+    resolve()
+  })
 }
 
 const ready = () => {

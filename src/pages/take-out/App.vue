@@ -29,17 +29,6 @@
       }
     },
     created () {
-      let jsApiList = [
-        'checkJsApi',
-        'hideAllNonBaseMenuItem',
-        'showAllNonBaseMenuItem',
-        'hideMenuItems',
-        'showMenuItems',
-        'onMenuShareAppMessage',
-        'onMenuShareTimeline',
-        'scanQRCode'
-      ]
-      this.$wechat.init(jsApiList)
     },
     computed: {
       carts () {
