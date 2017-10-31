@@ -12,6 +12,7 @@ const jsApiList = [
   'hideAllNonBaseMenuItem',
   'showAllNonBaseMenuItem',
   'hideMenuItems',
+  'hideOptionMenu',
   'showMenuItems',
   'getLocation',
   'scanQRCode',

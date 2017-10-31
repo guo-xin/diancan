@@ -47,6 +47,7 @@ let jsApiList = [
   'checkJsApi',
   'hideAllNonBaseMenuItem',
   'showAllNonBaseMenuItem',
+  'hideOptionMenu',
   'hideMenuItems',
   'showMenuItems',
   'onMenuShareAppMessage',
