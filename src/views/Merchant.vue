@@ -155,6 +155,10 @@
       }
     },
     created () {
+      const menuList = {
+        menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
+      }
+      this.$wechat.showMenuItems(menuList)
       this.isLoading = true
       let mchntId = this.$route.params.mchnt_id
       this.mchnt_id = mchntId
@@ -422,16 +426,18 @@
       shareStore (shopname, logourl) {
         let shareLink = Config.rootHost + '?/#!/merchant/' + this.mchnt_id
         let imgUrl = logourl || 'http://near.m1img.com/op_upload/8/14944084019.jpg'
-        this.$wechat.menuShareAppMessage({
-          title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`,
-          desc: '不骗你，这里味道超赞还不用排队！',
-          imgUrl: imgUrl,
-          link: shareLink
-        })
-        this.$wechat.menuShareTimeline({
-          title: `${shopname}太赞了，快到店来和我一起坐享美味！`,
-          imgUrl: imgUrl,
-          link: shareLink
+        Promise.all([this.$wechat.init(), this.$wechat.ready()]).then(() => {
+          this.$wechat.menuShareAppMessage({
+            title: `还在店里排队叫餐吗？我已经在${shopname}坐享美味啦~`,
+            desc: '不骗你，这里味道超赞还不用排队！',
+            imgUrl: imgUrl,
+            link: shareLink
+          })
+          this.$wechat.menuShareTimeline({
+            title: `${shopname}太赞了，快到店来和我一起坐享美味！`,
+            imgUrl: imgUrl,
+            link: shareLink
+          })
         })
       },
       showStoreDetailHandler () {
