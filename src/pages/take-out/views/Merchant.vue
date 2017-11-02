@@ -450,7 +450,6 @@
             imgUrl: imgUrl,
             link: shareLink
           })
-          this.$wechat.getOverdistFormattedAddress()
         })
       },
       showStoreDetailHandler () {
