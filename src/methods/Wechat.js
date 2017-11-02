@@ -71,10 +71,20 @@ Wechat.getFormattedAddress = async () => {
   await getFormattedAddress(false, coords)
 }
 
-Wechat.getOverdistFormattedAddress = async () => {
-  let coords = await Wechat.getCoords()
-  let overdist = await isOverdist(coords)
-  await getFormattedAddress(overdist, coords)
+Wechat.getOverdistFormattedAddress = () => {
+  Wechat.getCoords().then((res) => {
+    isOverdist(res).then((msg) => {
+      let coords = {}
+      coords.longitude = window.localStorage.getItem('longitude')
+      coords.latitude = window.localStorage.getItem('latitude')
+      if (!msg) {
+        getFormattedAddress(msg, coords)
+      }
+    })
+  })
+  // let coords = await Wechat.getCoords()
+  // let overdist = await isOverdist(coords)
+  // await getFormattedAddress(overdist, coords)
 }
 
 export { WechatPlugin, Wechat }
