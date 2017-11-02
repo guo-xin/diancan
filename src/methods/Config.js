@@ -32,7 +32,7 @@ if (test) {
 
 // 开发配置
 if (dev) {
-  rootHost = 'https://o.qa.qfpay.net/'
+  rootHost = 'https://fe.qa.qfpay.net/'
   payHost = 'https://openapi.qa.qfpay.net/'
   apiHost = 'https://o.qa.qfpay.net/'
   dcHost = 'https://o.qa.qfpay.net/'

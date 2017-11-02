@@ -152,7 +152,6 @@
         }
       },
       payAmt () {
-        console.log(this.deliver.shipping_fee)
         let payAmt = this.cartData.price
         if (this.isDadaDeliver) {   // 达达配送费
           payAmt += this.dadaDeliveryFee

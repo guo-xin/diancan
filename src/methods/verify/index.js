@@ -71,7 +71,11 @@ const getMchntId = () => {
   if (window.location.hash) {
     sessionStorage.setItem('redirect_uri', window.location.hash)
     hashArray = window.location.hash.split('/')
-    tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+    if (hashArray[1] === 'create_order') {
+      tempHashMchtId = hashArray[2]
+    } else {
+      tempHashMchtId = hashArray[1] === 'merchant' ? hashArray[2] : hashArray[3]
+    }
   }
 
   if (sessionStorage.getItem('redirect_uri')) {
@@ -79,13 +83,11 @@ const getMchntId = () => {
     tempLSMchtId = LSArray[1] === 'merchant' ? LSArray[2] : LSArray[3]
   }
 
-  let hash = window.location.href
-  let search = hash.substr(hash.lastIndexOf('?')) // 截取参数 ？mchnt_id=1733008
-  if (search) {
-    QueryArray = search.split('=')
+  if (window.location.search) {
+    QueryArray = window.location.search.split('=')
     tempQueryMchtId = QueryArray[0] === '?mchnt_id' ? QueryArray[1] : QueryArray[2]
   }
-  let mchntId = tempQueryMchtId || tempHashMchtId || tempLSMchtId
+  let mchntId = tempHashMchtId || tempLSMchtId || tempQueryMchtId
   if (mchntId && !isNaN(mchntId)) {
     sessionStorage.setItem('mchntId', mchntId)
   }

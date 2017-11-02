@@ -25,13 +25,24 @@
     methods: {
       getLocation () {
         this.btnDisabled = 'disabled'
-        Wechat.getFormattedAddress()
-        .then(() => {
-          this.btnDisabled = false
-        })
-        .catch(() => {
-          this.btnDisabled = false
-        })
+        let href = window.location.pathname
+        if (href === '/take-out.html') {
+          Wechat.getOverdistFormattedAddress()
+          .then(() => {
+            this.btnDisabled = false
+          })
+          .catch(() => {
+            this.btnDisabled = false
+          })
+        } else {
+          Wechat.getFormattedAddress()
+          .then(() => {
+            this.btnDisabled = false
+          })
+          .catch(() => {
+            this.btnDisabled = false
+          })
+        }
       }
     },
     store

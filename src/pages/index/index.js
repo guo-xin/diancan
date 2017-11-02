@@ -47,6 +47,7 @@ let jsApiList = [
   'checkJsApi',
   'hideAllNonBaseMenuItem',
   'showAllNonBaseMenuItem',
+  'hideOptionMenu',
   'hideMenuItems',
   'showMenuItems',
   'onMenuShareAppMessage',
@@ -59,7 +60,7 @@ if (Util.isWX || process.env.NODE_ENV === 'production') {
   Wechat.init(jsApiList)
   Wechat.ready()
   .then(() => {
-    Wechat.hideOptionMenu()
+    Wechat.hideOptionMenu() // 首页分享按钮进入就要显示
     const menuList = {
       menuList: ['menuItem:share:appMessage', 'menuItem:share:timeline']
     }
