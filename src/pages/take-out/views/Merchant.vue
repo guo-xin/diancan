@@ -29,6 +29,7 @@
               <div class="l-r wrap">
                 <div class="list-img" @click.stop="showDetailHandler(goods)">
                   <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
+                  <p class="sell-count"><span>已售{{ sellNum(goods.spec_list) }}</span></p>
                 </div>
                 <div class="l_auto list-content">
                   <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
@@ -333,6 +334,13 @@
         let path = Config.env === 'development' ? '' : '/dc'
         window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
       },
+      sellNum (specList) {
+        let num = 0
+        specList.map((value) => {
+          num += value.sale_num
+        })
+        return num
+      },
       goDetail () {
         this.$router.push({
           name: 'orderDetail',
@@ -617,6 +625,23 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-position: top center;
+      }
+      .sell-count {
+        width: 100%;
+        height: 27px;
+        line-height: 27px;
+        background-color: rgba(0, 0, 0, 0.5);
+        margin-top: -27px;
+        span {
+          display: block;
+          height: 27px;
+          color: #fff;
+          font-size: 24px;
+          text-align: center;
+          -webkit-transform-origin-x: center;
+          -webkit-transform: scale(0.625);
+          margin: 0 auto;
+        }
       }
     }
     .list-content {
