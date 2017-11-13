@@ -69,6 +69,7 @@
       <!-- 购物车 -->
       <cart-bar :updateGoodsCount="updateGoodsCount"
                 :updateCatesCount="updateCatesCount"
+                :rule="merchantSetting.rules"
                 :overtime="merchantSetting.overtime"
                 :nodelivery="merchantSetting.delivery_open_state === 0"
                 :deliver="deliver"
