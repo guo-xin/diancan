@@ -58,6 +58,7 @@ let jsApiList = [
 
 if (Util.isWX || process.env.NODE_ENV === 'production') {
   verify().then(initVue)
+  // initVue()
   Wechat.init(jsApiList)
   Wechat.ready().then(() => {
     Wechat.hideOptionMenu()

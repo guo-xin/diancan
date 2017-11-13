@@ -15,7 +15,7 @@
       <div class="delivery">
         <p v-if="merchantSetting.durations">配送时间：<span v-for="(value, index) in merchantSetting.durations">{{value.start_time.substring(0, 5)}}-{{value.end_time.substring(0, 5)}}<i v-if="index < merchantSetting.durations.length -1"> , </i></span></p>
         <p v-if="merchantSetting.rules">配送范围：{{merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist / 1000}}km 内</p>
-        <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
+        <p v-if="merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
         <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">
