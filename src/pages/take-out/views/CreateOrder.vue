@@ -62,14 +62,14 @@
     <button class="done-btn" @click.stop="reviewOrder" :disabled="btnText!=='确认下单'">
       <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
-    <div class="blackBg" v-if="min_fee_change">
+    <div class="blackBg" v-if="min_fee_change" @click.stop="cancelCreate()">
       <div class="tipView">
         <div class="textTips">
-          <span>由于配送地址变化，您的订单价格未满足起送价。</span>
+          <span>由于配送地址变化，您的订单起送价已变为<em>￥{{deliverFee.start_delivery_fee | formatCurrency}}</em>。</span>
         </div>
         <div class="goOnBtn">
-          <span @click.stop="cancelCreate()">取消</span>
-          <span @click.stop="goOnBuy()">继续购物</span>
+          <!-- <span @click.stop="cancelCreate()">取消</span> -->
+          <span @click.stop="goOnBuy()">去凑单~</span>
         </div>
       </div>
     </div>
@@ -231,7 +231,6 @@
         }).then((response) => {
           let data = response.data
           if (data.respcd === Config.code.OK) {
-            console.log(data.data)
             this.deliverFee = data.data
             if (!this.deliverFee.overdist && this.deliverFee.start_delivery_fee>this.goodsAmt) { // 改变地址后起送价发生变化
               this.min_fee_change = true
@@ -246,7 +245,7 @@
       },
       cancelCreate () {
         this.min_fee_change = false
-        this.btnText = ''
+        this.btnText = '确认下单 '// 加空格是为了将按钮置灰，且文案不变
       },
       goOnBuy () {
         this.min_fee_change = false
