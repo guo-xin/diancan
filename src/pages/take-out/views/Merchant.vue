@@ -630,17 +630,17 @@
       .sell-count {
         width: 100%;
         height: 27px;
-        line-height: 27px;
         background-color: rgba(0, 0, 0, 0.5);
         margin-top: -27px;
         span {
           display: block;
           height: 27px;
+          line-height: 30px;
           color: #fff;
           font-size: 24px;
           text-align: center;
           -webkit-transform-origin-x: center;
-          -webkit-transform: scale(0.625);
+          -webkit-transform: scale(0.8);
           margin: 0 auto;
         }
       }
