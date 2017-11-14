@@ -16,8 +16,8 @@
       </div>
       <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
       <span v-else>
-        <a class="row-status" @click.prevent="goNextView()" v-if="deliver.start_delivery_fee <= cartData.price">选好了</a>
-        <a class="row-status gray-status" v-else>{{deliver.start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
+        <a class="row-status" @click.prevent="goNextView()" v-if="rule && rule[0].start_delivery_fee <= cartData.price">选好了</a>
+        <a class="row-status gray-status" v-else>{{rule && rule[0].start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
       </span>
     </div>
     <!--列表-->
