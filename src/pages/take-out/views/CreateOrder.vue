@@ -24,9 +24,12 @@
         </li>
       </ul>
       <div class="deliver-fee">
-        <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <!-- <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
-        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span>
+        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span> -->
+        <em>配送费<span v-if="deliverFee.min_shipping_fee">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <span v-if="deliveryStatus">{{deliveryStatus}}</span>
+        <span v-else :class="{'except': cartData.price >= deliverFee.min_shipping_fee && deliverFee.min_shipping_fee}"><sub>￥</sub>{{deliverFee.shipping_fee || 0 | formatCurrency}}</span>
       </div>
       <div v-if="coupon.amt && payType === '800207'" class="coupon">
         <em>店铺红包</em>
@@ -59,6 +62,17 @@
     <button class="done-btn" @click.stop="reviewOrder" :disabled="btnText!=='确认下单'">
       <em>¥{{payAmt | formatCurrency}}</em>&nbsp;{{btnText}}
     </button>
+    <div class="blackBg" v-if="min_fee_change">
+      <div class="tipView">
+        <div class="textTips">
+          <span>由于配送地址变化，您的订单价格未满足起送价</span>
+        </div>
+        <div class="goOnBtn">
+          <span @click.stop="cancelCreate()">取消</span>
+          <span @click.stop="goOnBuy()">继续购物</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script type="text/ecmascript-6">
@@ -77,11 +91,14 @@
         orderId: '',        // 订单ID
         checkout: {},
         btnText: '确认下单',
+        deliverFee: {},// 配送费
+        min_fee_change: false,
         isDadaDeliver: false,
         dadaDeliveryFee: 0,
         third_order_id: '',   // 达达特需
         delivery_no: '',   // 达达特需
         deliveryStatus: '',    // 达达配送费状态
+        goodsAmt: 0, // 商品总价（不包括配送费）
         preAmt: 0, // 原价
         getDeliverFeeTimestamp: 0,
         prepaid: {},   // 储值信息
@@ -127,6 +144,13 @@
           }
           this.hasAddress = true
           this.$parent.current_addr = _data
+          let args = {
+            mchnt_id: this.mchnt_id,
+            longitude: data.data.addr.longitude,
+            latitude: data.data.addr.latitude,
+            format: 'cors'
+          }
+          this.getDeliver(args)
           if (this.isDadaDeliver) {
             this.getDeliverFee()
           }
@@ -153,15 +177,16 @@
       },
       payAmt () {
         let payAmt = this.cartData.price
+        this.goodsAmt = payAmt
         if (this.isDadaDeliver) {   // 达达配送费
           payAmt += this.dadaDeliveryFee
           this.preAmt = payAmt
-        } else if (this.deliver.shipping_fee && payAmt < this.deliver.min_shipping_fee) {
-          payAmt += this.deliver.shipping_fee
-        } else if (this.deliver.shipping_fee && this.deliver.min_shipping_fee === 0) {
-          payAmt += this.deliver.shipping_fee
-        } else if (this.deliver.shipping_fee) {
-          this.preAmt = payAmt + this.deliver.shipping_fee
+        } else if (this.deliverFee.shipping_fee && payAmt < this.deliverFee.min_shipping_fee) {
+          payAmt += this.deliverFee.shipping_fee
+        } else if (this.deliverFee.shipping_fee && this.deliverFee.min_shipping_fee === 0) {
+          payAmt += this.deliverFee.shipping_fee
+        } else if (this.deliverFee.shipping_fee) {
+          this.preAmt = payAmt + this.deliverFee.shipping_fee
         }
         if (this.coupon.amt && this.payType === '800207') {
           payAmt -= this.coupon.amt
@@ -197,6 +222,41 @@
           return
         }
         this.payType = type
+      },
+      getDeliver (args) {
+        this.$http({
+          url: Config.apiHost + 'diancan/c/is_overdist',
+          method: 'GET',
+          params: args
+        }).then((response) => {
+          let data = response.data
+          if (data.respcd === Config.code.OK) {
+            console.log(data.data)
+            this.deliverFee = data.data
+            if (!this.deliverFee.overdist && this.deliverFee.start_delivery_fee>this.goodsAmt) { // 改变地址后起送价发生变化
+              this.min_fee_change = true
+            }else {
+              if (window.localStorage.getItem('deliver') && this.deliverFee.shipping_fee != window.localStorage.getItem('deliver')) {
+                this.$toast('由于配送地址变化，您的配送费也发生了变化')
+              }
+            }
+            window.localStorage.setItem('deliver', this.deliverFee.shipping_fee)
+          }
+        })
+      },
+      cancelCreate () {
+        this.min_fee_change = false
+        this.btnText = ''
+      },
+      goOnBuy () {
+        this.min_fee_change = false
+        let mchntId = this.mchnt_id
+        this.$router.replace({
+          name: 'merchant',
+          params: {
+            'mchnt_id': this.mchnt_id
+          }
+        })
       },
       goChuzhi () {
         let redirectUrl = encodeURIComponent(window.location.href)
@@ -701,6 +761,55 @@
       vertical-align: text-bottom;
       background: url("../assets/triangle.svg") center center no-repeat;
       background-size: contain;
+    }
+  }
+  .blackBg {
+    background-color: rgba(0, 0, 0, .7);
+    position: absolute;
+    z-index: 200;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    .tipView {
+      width: 670px;
+      height: 340px;
+      border-radius: 8px;
+      background-color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%);
+    }
+    .textTips {
+      width: 100%;
+      height: 252px;
+      span {
+        display: inline-block;
+        position: absolute;
+        line-height: 60px;
+        top: 60px;
+        left: 40px;
+        right: 40px;
+        color: #2F323A;
+        font-size: 34px;
+      }
+    }
+    .goOnBtn {
+      width: 100%;
+      height: 84px;
+      border-top: 2px solid #D8D8D8;
+      display: flex;
+      span {
+        flex: 1;
+        color: #FE9B20;
+        line-height: 88px;
+        font-size: 34px;
+        text-align: center;
+        &:first-child {
+          border-right: 2px solid #D8D8D8;
+        }
+      }
     }
   }
 </style>
