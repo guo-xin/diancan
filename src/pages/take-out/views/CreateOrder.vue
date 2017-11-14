@@ -27,7 +27,7 @@
         <!-- <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
         <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span> -->
-        <em>配送费<span v-if="deliverFee.min_shipping_fee">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+        <em>配送费<span v-if="deliverFee.min_shipping_fee && !deliveryStatus">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
         <span v-else :class="{'except': cartData.price >= deliverFee.min_shipping_fee && deliverFee.min_shipping_fee}"><sub>￥</sub>{{deliverFee.shipping_fee || 0 | formatCurrency}}</span>
       </div>
@@ -65,7 +65,7 @@
     <div class="blackBg" v-if="min_fee_change">
       <div class="tipView">
         <div class="textTips">
-          <span>由于配送地址变化，您的订单价格未满足起送价</span>
+          <span>由于配送地址变化，您的订单价格未满足起送价。</span>
         </div>
         <div class="goOnBtn">
           <span @click.stop="cancelCreate()">取消</span>
@@ -800,8 +800,12 @@
       height: 84px;
       border-top: 2px solid #D8D8D8;
       display: flex;
+      display: -webkit-box;
+      display: -webkit-flex;
       span {
         flex: 1;
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
         color: #FE9B20;
         line-height: 88px;
         font-size: 34px;
