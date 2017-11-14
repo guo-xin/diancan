@@ -615,32 +615,35 @@
       display: block;
       left: 10px;
       top: 10px;
-      width: 120px;
-      height: 120px;
+      width: 164px;
+      height: 164px;
+      border-radius: 6px;
       background: url(../../../assets/default_food_pic.png) center center no-repeat;
       /*background-size: 50px 50px;*/
       background-size: 100%;
       > div {
-        width: 120px;
-        height: 120px;
+        border-radius: 6px;
+        width: 164px;
+        height: 164px;
         background-size: cover;
         background-repeat: no-repeat;
         background-position: top center;
       }
       .sell-count {
         width: 100%;
-        height: 27px;
+        height: 36px;
+        border-radius:0 0 6px 6px;
         background-color: rgba(0, 0, 0, 0.5);
-        margin-top: -27px;
+        margin-top: -36px;
         span {
           display: block;
-          height: 27px;
-          line-height: 30px;
+          height: 36px;
+          line-height: 40px;
           color: #fff;
-          font-size: 24px;
           text-align: center;
+          font-size: 24px;
           -webkit-transform-origin-x: center;
-          -webkit-transform: scale(0.8);
+          -webkit-transform: scale(0.85);
           margin: 0 auto;
         }
       }
@@ -651,9 +654,16 @@
       .title {
         font-weight: normal;
         color: #4d4d4d;
-        font-size: 32px;
+        font-size: 30px;
+        line-height: 42px;
         padding-right: 24px;
         color: #2f323a;
+        height: 84px;
+        overflow : hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .description {
@@ -666,14 +676,14 @@
 
       .old-price {
         font-size: 26px;
-        height: 34px;
-        line-height: 34px;
+        height: 40px;
+        line-height: 40px;
         color: #8A8C92;
       }
       .price {
-        font-size: 30px;
+        font-size: 28px;
         color: #fe9b20;
-        line-height: 40px;
+        margin-top: 8px;
       }
     }
   }
