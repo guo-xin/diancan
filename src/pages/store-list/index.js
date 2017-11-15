@@ -56,11 +56,11 @@ verify().then(initVue)
 // initVue()
 
 Wechat.init(jsApiList)
-Wechat.ready()
-.then(() => {
-  Wechat.hideOptionMenu()
-  Wechat.getFormattedAddress()
-})
+// Wechat.ready()
+// .then(() => {
+//   Wechat.hideOptionMenu()
+//   Wechat.getFormattedAddress()
+// })
 
 function initVue () {
   /* eslint-disable no-new */

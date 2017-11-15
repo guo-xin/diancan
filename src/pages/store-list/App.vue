@@ -11,6 +11,12 @@
       }
     },
     created () {
+      this.$wechat.init()
+      this.$wechat.ready()
+      .then(() => {
+        this.$wechat.hideOptionMenu()
+        this.$wechat.getFormattedAddress()
+      })
     },
     computed: {
     },
