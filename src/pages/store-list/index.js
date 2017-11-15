@@ -4,7 +4,6 @@ window.FastClick = FastClick
 
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import router from './router'
 import { verify } from 'methods/verify'
 import { Toast } from 'qfpay-ui'
 import config from 'methods/Config'
@@ -66,7 +65,6 @@ function initVue () {
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
-    router,
     template: '<App/>',
     components: { App }
   })
