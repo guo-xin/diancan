@@ -41,7 +41,7 @@
       }
     },
     created () {
-      if (window.location.pathname === '/take-out.html') {
+      if (window.location.href.indexOf('take-out.html') !== -1) {
         this.isTakeOut = true
       }
     },
