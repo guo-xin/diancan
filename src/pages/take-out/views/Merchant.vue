@@ -29,6 +29,7 @@
               <div class="l-r wrap">
                 <div class="list-img" @click.stop="showDetailHandler(goods)">
                   <div :style="{'background-image': 'url(' + goods.img + '?imageView2/1/w/120/h/120/format/jpg)'}"></div>
+                  <p class="sell-count"><span>已售{{ sellNum(goods.spec_list) }}</span></p>
                 </div>
                 <div class="l_auto list-content">
                   <h4 class="title" @click.stop="showDetailHandler(goods)">{{goods.name}}</h4>
@@ -68,6 +69,7 @@
       <!-- 购物车 -->
       <cart-bar :updateGoodsCount="updateGoodsCount"
                 :updateCatesCount="updateCatesCount"
+                :rule="merchantSetting.rules"
                 :overtime="merchantSetting.overtime"
                 :nodelivery="merchantSetting.delivery_open_state === 0"
                 :deliver="deliver"
@@ -251,6 +253,8 @@
         Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
+      // 防止用户切换店铺下单时出现toast提示
+      window.localStorage.removeItem('deliver')
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
@@ -332,6 +336,13 @@
       goOrderList () {
         let path = Config.env === 'development' ? '' : '/dc'
         window.location.href = `${window.location.origin}${path}/order-list.html?#/merchant/${this.mchnt_id}`
+      },
+      sellNum (specList) {
+        let num = 0
+        specList.map((value) => {
+          num += value.sale_num
+        })
+        return num
       },
       goDetail () {
         this.$router.push({
@@ -606,17 +617,37 @@
       display: block;
       left: 10px;
       top: 10px;
-      width: 120px;
-      height: 120px;
+      width: 164px;
+      height: 164px;
+      border-radius: 6px;
       background: url(../../../assets/default_food_pic.png) center center no-repeat;
       /*background-size: 50px 50px;*/
       background-size: 100%;
       > div {
-        width: 120px;
-        height: 120px;
+        border-radius: 6px;
+        width: 164px;
+        height: 164px;
         background-size: cover;
         background-repeat: no-repeat;
         background-position: top center;
+      }
+      .sell-count {
+        width: 100%;
+        height: 36px;
+        border-radius:0 0 6px 6px;
+        background-color: rgba(0, 0, 0, 0.5);
+        margin-top: -36px;
+        span {
+          display: block;
+          height: 36px;
+          line-height: 40px;
+          color: #fff;
+          text-align: center;
+          font-size: 24px;
+          -webkit-transform-origin-x: center;
+          -webkit-transform: scale(0.85);
+          margin: 0 auto;
+        }
       }
     }
     .list-content {
@@ -625,9 +656,16 @@
       .title {
         font-weight: normal;
         color: #4d4d4d;
-        font-size: 32px;
+        font-size: 30px;
+        line-height: 42px;
         padding-right: 24px;
         color: #2f323a;
+        height: 84px;
+        overflow : hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .description {
@@ -640,14 +678,14 @@
 
       .old-price {
         font-size: 26px;
-        height: 34px;
-        line-height: 34px;
+        height: 40px;
+        line-height: 40px;
         color: #8A8C92;
       }
       .price {
-        font-size: 30px;
+        font-size: 28px;
         color: #fe9b20;
-        line-height: 40px;
+        margin-top: 8px;
       }
     }
   }
