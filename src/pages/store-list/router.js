@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import StoreList from './views/StoreList'
 import TangShi from './views/TangShi'
 import GroupList from './views/GroupList'
 
@@ -16,6 +15,10 @@ let routes = [
     path: '/merchant/:mchnt_id',
     name: 'merchant',
     component: GroupList
+  },
+  {
+    path: '/!/merchant/:mchnt_id', // 兼容老链接 #!会自动去掉! 变成#
+    redirect: { name: 'merchant' }
   },
   {
     path: '/group/:group_id',
