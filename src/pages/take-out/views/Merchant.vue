@@ -253,6 +253,8 @@
         Util.setTitle(shopname)
         this.shareStore(shopname, logourl)
       })
+      // 防止用户切换店铺下单时出现toast提示
+      window.localStorage.removeItem('deliver')
     },
     beforeRouteLeave (to, from, next) {
       this.$wechat.hideOptionMenu()
