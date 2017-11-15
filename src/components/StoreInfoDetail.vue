@@ -12,7 +12,7 @@
         </div>
         <a :href="'tel:' + merchantSetting.mobile"><i class="icon-phone"></i></a>
       </header>
-      <div class="delivery">
+      <div class="delivery" v-if="isTakeOut">
         <p v-if="merchantSetting.durations">配送时间：<span v-for="(value, index) in merchantSetting.durations">{{value.start_time.substring(0, 5)}}-{{value.end_time.substring(0, 5)}}<i v-if="index < merchantSetting.durations.length -1"> , </i></span></p>
         <p v-if="merchantSetting.rules">配送范围：{{merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist / 1000}}km 内</p>
         <p v-if="merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
@@ -36,10 +36,14 @@
     props: ['merchantSetting', 'mchntActivity', 'visible'],
     data () {
       return {
-        btnDisabled: false
+        btnDisabled: false,
+        isTakeOut: false
       }
     },
     created () {
+      if (window.location.pathname === '/take-out.html') {
+        this.isTakeOut = true
+      }
     },
     methods: {
       goChuzhi () {
