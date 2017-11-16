@@ -46,7 +46,6 @@
       return {
         userId: this.$route.params.mchnt_id,
         groupId: this.$route.params.group_id,
-        openId: sessionStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
@@ -194,7 +193,11 @@
     background-color: #fff;
     li {
       display: flex;
+      display: -webkit-box;
+      display: -webkit-flex;
       flex-wrap: wrap;
+      -webkit-flex-wrap:wrap;
+      -webkit-box-lines:multiple;
       position: relative;
       overflow: hidden;
       border-bottom: 2px solid $lightGray;

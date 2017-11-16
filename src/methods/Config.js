@@ -34,7 +34,8 @@ if (test) {
 if (dev) {
   rootHost = 'https://fe.qa.qfpay.net/'
   payHost = 'https://openapi.qa.qfpay.net/'
-  apiHost = 'https://o.qa.qfpay.net/'
+  // apiHost = 'https://o.qa.qfpay.net/'
+  apiHost = 'http://172.100.108.141/'
   dcHost = 'https://o.qa.qfpay.net/'
   o2Host = 'https://o2.qa.qfpay.net/'
   wxmpHost = 'https://wxmp.qa.qfpay.net/'

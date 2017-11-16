@@ -9,6 +9,7 @@
           <h3>{{item.shopname}}</h3>
           <p class="address">{{item.address}}</p>
         </div>
+        <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
       </li>
     </ul>
     <div v-if="noData" class="no-data">
@@ -20,14 +21,12 @@
 </template>
 <script type="text/ecmascript-6">
   /* eslint-disable no-unused-vars */
-  import Wechat from 'methods/Wechat'
   import Config from 'methods/Config'
   import loading from 'components/loading/juhua.vue'
   export default {
     data () {
       return {
         userId: this.$route.params.mchnt_id,
-        openId: sessionStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
@@ -41,11 +40,7 @@
       requestData () {
         return {
           format: 'jsonp',
-          userid: this.userId,
-          longitude: window.localStorage.getItem('longitude'),
-          latitude: window.localStorage.getItem('latitude'),
-          pagesize: 10,
-          page: 1
+          userid: this.userId
         }
       }
     },
@@ -53,15 +48,8 @@
       loading
     },
     created () {
-      let _this = this
-      let longitude = 0
-      let _t = setInterval(function () {
-        longitude = window.localStorage.getItem('longitude')
-        if (longitude) {
-          _this.getData()
-          clearInterval(_t)
-        }
-      }, 1000)
+      window.alert('jd')
+      this.getData()
     },
     mounted () {
       let _this = this
@@ -154,7 +142,7 @@
       position: relative;
       overflow: hidden;
       border-bottom: 2px solid $lightGray;
-      padding: 30px 26px 0 30px;
+      padding: 30px 26px 30px 30px;
       font-size: 24px;
       &:first-child .ribbon{
         display: block;
@@ -170,14 +158,14 @@
         flex: 1;
         padding-left: 20px;
         h3 {
-          margin-bottom: 10px;
+          margin-bottom: 20px;
           font-size: 30px;
         }
       }
       .address {
-        color: $aluminium;
-        line-height: 1.5;
-        margin-bottom: 10px;
+        font-size: 24px;
+        line-height: 36px;
+        // margin-bottom: 10px;
       }
       .ribbon {
         display: none;
