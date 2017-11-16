@@ -23,13 +23,14 @@
           <span class="fee-count"><sub>￥</sub>{{goods.spec.txamt | formatCurrency}}<em>&nbsp;x&nbsp;{{goods.count}}</em></span>
         </li>
       </ul>
-      <div class="deliver-fee">
-        <!-- <em>配送费<span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
+      <div class="deliver-fee" v-if="!current_addr.overdist">
+        <em>配送费
+          <span v-if="deliverFee.min_shipping_fee && deliverFee.min_shipping_fee <= this.goodsAmt && !deliveryStatus">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+          <span v-if="deliverFee.min_shipping_fee!==0 && !deliverFee.min_shipping_fee && !deliveryStatus">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+        </em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
-        <span v-else :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee | formatCurrency}}</span> -->
-        <em>配送费<span v-if="deliverFee.min_shipping_fee && !deliveryStatus">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span></em>
-        <span v-if="deliveryStatus">{{deliveryStatus}}</span>
-        <span v-else :class="{'except': cartData.price >= deliverFee.min_shipping_fee && deliverFee.min_shipping_fee}"><sub>￥</sub>{{deliverFee.shipping_fee || 0 | formatCurrency}}</span>
+        <span v-if="!deliveryStatus && deliverFee.min_shipping_fee >= 0" :class="{'except': cartData.price >= deliverFee.min_shipping_fee && deliverFee.min_shipping_fee}"><sub>￥</sub>{{deliverFee.shipping_fee || 0 | formatCurrency}}</span>
+        <span v-if="!deliveryStatus && deliverFee.min_shipping_fee!==0 && !deliverFee.min_shipping_fee" :class="{'except': cartData.price >= deliver.min_shipping_fee && deliver.min_shipping_fee}"><sub>￥</sub>{{deliver.shipping_fee || 0 | formatCurrency}}</span>
       </div>
       <div v-if="coupon.amt && payType === '800207'" class="coupon">
         <em>店铺红包</em>
@@ -235,7 +236,7 @@
             if (!this.deliverFee.overdist && this.deliverFee.start_delivery_fee>this.goodsAmt) { // 改变地址后起送价发生变化
               this.min_fee_change = true
             }else {
-              if (window.localStorage.getItem('deliver') && this.deliverFee.shipping_fee != window.localStorage.getItem('deliver')) {
+              if (!this.deliveryStatus && window.localStorage.getItem('deliver') && this.deliverFee.shipping_fee && this.deliverFee.shipping_fee != window.localStorage.getItem('deliver')) {
                 this.$toast('由于配送地址变化，您的配送费也发生了变化')
               }
             }
