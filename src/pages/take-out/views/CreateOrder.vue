@@ -25,7 +25,7 @@
       </ul>
       <div class="deliver-fee" v-if="!current_addr.overdist">
         <em>配送费
-          <span v-if="deliverFee.min_shipping_fee && deliverFee.min_shipping_fee <= this.goodsAmt && !deliveryStatus">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+          <span v-if="deliverFee.min_shipping_fee && !deliveryStatus">（满{{deliverFee.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
           <span v-if="deliverFee.min_shipping_fee!==0 && !deliverFee.min_shipping_fee && !deliveryStatus && deliver.min_shipping_fee !== 0">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
         </em>
         <span v-if="deliveryStatus">{{deliveryStatus}}</span>
