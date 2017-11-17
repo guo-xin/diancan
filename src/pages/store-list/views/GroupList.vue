@@ -5,6 +5,7 @@
       <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
         <figure>
           <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
+          <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
         </figure>
         <div>
           <h3>{{item.shopname}}</h3>
@@ -19,8 +20,20 @@
               </span>
               <i v-if="item.durations.length>3">...</i>
             </span>
-            <span v-if="item.rules[0].shipping_fee">配送费：¥{{item.rules[0].shipping_fee | formatCurrency}}
-              <span>（¥{{item.rules[0].start_delivery_fee | formatCurrency}}起送）</span>
+            <span v-else>配送时间:
+              <span>{{item.start_time}}-{{item.end_time}}</span>
+            </span>
+            <span v-if="item.rules.length>0">配送费：¥{{item.rules[0].shipping_fee | formatCurrency}}
+              <span v-if="item.rules[0].start_delivery_fee">（¥{{item.rules[0].start_delivery_fee | formatCurrency}}起送）</span>
+            </span>
+            <span v-if="item.rules.length>0 && item.rules[0].shipping_fee===0">免配送费
+              <span v-if="item.rules[0].start_delivery_fee">（¥{{item.rules[0].start_delivery_fee | formatCurrency}}起送）</span>
+            </span>
+            <span v-if="item.rules.length===0 && item.shipping_fee">配送费：¥{{item.shipping_fee | formatCurrency}}
+              <span v-if="item.start_delivery_fee">（¥{{item.start_delivery_fee | formatCurrency}}起送）</span>
+            </span>
+            <span v-if="item.rules.length===0 && item.shipping_fee===0">免配送费
+              <span v-if="item.start_delivery_fee">（¥{{item.start_delivery_fee | formatCurrency}}起送）</span>
             </span>
           </p>
           <a :href="'tel:' + item.telephone"></a>
@@ -62,6 +75,7 @@
       loading, GetLocation
     },
     created () {
+      console.log(this.$route.params.group_id)
       let _this = this
       let longitude = 0
       let _t = setInterval(function () {
@@ -93,10 +107,12 @@
           page: 1
         }
         if (this.groupId) {
+          // data.userid = this.userId
           data.groupid = this.groupId
         }
         if (this.userId) {
           data.userid = this.userId
+          // data.groupid = 11111215
         }
         return data
       },
@@ -200,7 +216,7 @@
       -webkit-box-lines:multiple;
       position: relative;
       overflow: hidden;
-      border-bottom: 2px solid $lightGray;
+      border-bottom: 1px solid $lightGray;
       padding: 30px 26px 0 30px;
       font-size: 24px;
       &:first-child .ribbon{
@@ -211,6 +227,18 @@
         position: relative;
         img {
           width: 100%;
+        }
+        span {
+          position: absolute;
+          top: 36%;
+          left: 0;
+          height: 50px;
+          line-height: 50px;
+          font-size: 24px;
+          color: #fff;
+          text-align: center;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.8);
         }
       }
       div {

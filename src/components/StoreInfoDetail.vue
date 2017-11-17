@@ -12,10 +12,16 @@
         </div>
         <a :href="'tel:' + merchantSetting.mobile"><i class="icon-phone"></i></a>
       </header>
-      <div class="delivery" v-if="isTakeOut">
+      <div class="delivery" v-if="isTakeOut && merchantSetting.rules.length>0">
         <p v-if="merchantSetting.durations">配送时间：<span v-for="(value, index) in merchantSetting.durations">{{value.start_time.substring(0, 5)}}-{{value.end_time.substring(0, 5)}}<i v-if="index < merchantSetting.durations.length -1"> , </i></span></p>
-        <p v-if="merchantSetting.rules">配送范围：{{merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist / 1000}}km 内</p>
+        <p v-if="merchantSetting.dist_switch">配送范围：{{merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist / 1000}}km 内</p>
         <p v-if="merchantSetting.rules[merchantSetting.rules.length-1].max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
+      </div>
+      <!-- 兼容老字段 -->
+      <div class="delivery" v-else>
+        <p v-if="merchantSetting.start_time">配送时间：{{merchantSetting.start_time}}-{{merchantSetting.end_time}}</p>
+        <p v-if="merchantSetting.max_shipping_dist">配送范围：{{merchantSetting.max_shipping_dist / 1000}}km 内</p>
+        <p v-if="merchantSetting.max_shipping_dist === 0 && merchantSetting.sale_type === 3">配送范围：不限制配送范围</p>
       </div>
       <ul class="activity-list">
         <li v-if="!(mchntActivity.prepaid.expired || isNaN(mchntActivity.prepaid.max_present_amt))">

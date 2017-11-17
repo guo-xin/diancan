@@ -9,7 +9,7 @@
           <h3>{{item.shopname}}</h3>
           <p class="address">{{item.address}}</p>
         </div>
-        <span class="ribbon" :class="{orange: item.consumed, show: item.consumed}">{{item.consumed ? '上次去过' : '离我最近'}}</span>
+        <span class="ribbon" v-if="item.consumed" :class="{orange: item.consumed, show: item.consumed}">上次去过</span>
       </li>
     </ul>
     <div v-if="noData" class="no-data">
@@ -30,6 +30,7 @@
         firstRequest: true,
         loading: false,
         loaded: false,
+        address: '',
         responseData: {
           list: []
         },
@@ -48,7 +49,7 @@
       loading
     },
     created () {
-      window.alert('jd')
+      this.getAddress()
       this.getData()
     },
     mounted () {
@@ -93,9 +94,18 @@
           })
         }
       },
+      getAddress () {
+        if (this.$route.query.address) {
+          this.address = this.$route.query.address
+        }
+      },
       jumpUrl (mchntId, e) {
         if (e.target.nodeName !== 'A') {
-          window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+          if (this.$route.query.address) { // 带桌号
+            window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}/${this.address}`
+          } else {
+            window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+          }
         }
       }
     }
@@ -139,6 +149,8 @@
     background-color: #fff;
     li {
       display: flex;
+      display: -webkit-box;
+      display: -webkit-flex;
       position: relative;
       overflow: hidden;
       border-bottom: 2px solid $lightGray;
@@ -156,6 +168,8 @@
       }
       div {
         flex: 1;
+        -webkit-box-flex:1;
+        -webkit-flex:1;
         padding-left: 20px;
         h3 {
           margin-bottom: 20px;
@@ -165,7 +179,6 @@
       .address {
         font-size: 24px;
         line-height: 36px;
-        // margin-bottom: 10px;
       }
       .ribbon {
         display: none;

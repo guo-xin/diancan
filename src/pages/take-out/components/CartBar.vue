@@ -6,18 +6,32 @@
           <img src="../assets/cart.png">
           <span class="count" v-show="cartData.count">{{cartData.count}}</span>
         </div>
-        <div class="cart-price">
+        <div class="cart-price" v-if="rule && rule.length > 0">
           <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
           <p v-show="rule && rule[0].shipping_fee">
             配送费 <em :class="{'except': cartData.price >= (rule && rule[0].min_shipping_fee) && (rule && rule[0].min_shipping_fee)}">¥ {{rule && rule[0].shipping_fee | formatCurrency}}</em>
             <span v-if="rule && rule[0].min_shipping_fee">（满{{rule && rule[0].min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
           </p>
         </div>
+        <!--  兼容老字段 -->
+        <div class="cart-price" v-else>
+          <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
+          <p v-show="deliver.shipping_fee">
+            配送费 <em :class="{'except': cartData.price >= deliver.min_shipping_fee && (deliver.min_shipping_fee)}">¥ {{deliver.shipping_fee | formatCurrency}}</em>
+            <span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
+          </p>
+        </div>
       </div>
       <a class="row-status gray-status" v-if="overtime || nodelivery">{{calcBtnText}}</a>
-      <span v-else v-show="rule">
-        <a class="row-status" @click.prevent="goNextView()" v-if="rule && rule[0].start_delivery_fee <= cartData.price">选好了</a>
-        <a class="row-status gray-status" v-else>{{rule && rule[0].start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
+      <span v-else>
+        <div v-if="rule && rule.length>0">
+          <a class="row-status" @click.prevent="goNextView()" v-if="rule && rule[0].start_delivery_fee <= cartData.price">选好了</a>
+          <a class="row-status gray-status" v-else>{{rule && rule[0].start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
+        </div>
+        <div v-else>
+          <a class="row-status" @click.prevent="goNextView()" v-if="deliver.start_delivery_fee <= cartData.price">选好了</a>
+          <a class="row-status gray-status" v-else>{{deliver.start_delivery_fee | formatCurrency | noZeroCurrency}}元起送</a>
+        </div>
       </span>
     </div>
     <!--列表-->

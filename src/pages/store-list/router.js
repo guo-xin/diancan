@@ -21,12 +21,12 @@ let routes = [
     redirect: { name: 'merchant' }
   },
   {
-    path: '/group/:group_id',
+    path: '/merchant/:mchnt_id/group/:group_id',
     name: 'group',
     component: GroupList
   },
   {
-    path: '/tangshi/:mchnt_id',
+    path: '/merchant/:mchnt_id/tangshi/',
     name: 'tangshi',
     component: TangShi
   }
