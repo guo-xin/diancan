@@ -23,13 +23,13 @@
             <span v-else>配送时间:
               <span>{{item.start_time}}-{{item.end_time}}</span>
             </span>
-            <span v-if="item.rules.length>0">配送费：¥{{item.rules[0].shipping_fee | formatCurrency}}
+            <span v-if="item.rules.length>0 && item.rules[0].shipping_fee!==0">配送费：¥{{item.rules[0].shipping_fee | formatCurrency}}
               <span v-if="item.rules[0].start_delivery_fee">（¥{{item.rules[0].start_delivery_fee | formatCurrency}}起送）</span>
             </span>
             <span v-if="item.rules.length>0 && item.rules[0].shipping_fee===0">免配送费
               <span v-if="item.rules[0].start_delivery_fee">（¥{{item.rules[0].start_delivery_fee | formatCurrency}}起送）</span>
             </span>
-            <span v-if="item.rules.length===0 && item.shipping_fee">配送费：¥{{item.shipping_fee | formatCurrency}}
+            <span v-if="item.rules.length===0 && item.shipping_fee!==0">配送费：¥{{item.shipping_fee | formatCurrency}}
               <span v-if="item.start_delivery_fee">（¥{{item.start_delivery_fee | formatCurrency}}起送）</span>
             </span>
             <span v-if="item.rules.length===0 && item.shipping_fee===0">免配送费
@@ -207,7 +207,7 @@ ul, h3, p, figure {
     -webkit-box-lines:multiple;
     position: relative;
     overflow: hidden;
-    border-bottom: 1px solid $lightGray;
+    border-bottom: 2px solid $lightGray;
     padding: 30px 26px 0 30px;
     font-size: 24px;
     &:first-child .ribbon{
@@ -247,7 +247,6 @@ ul, h3, p, figure {
     }
     .distance {
       color: $black;
-      margin-bottom: 20px;
       strong {
         font-size: 28px;
         font-weight: bold;
@@ -290,6 +289,7 @@ ul, h3, p, figure {
       }
     }
     footer {
+      margin-top: 20px;
       padding: 20px 0;
       border-top: 2px dashed $lightGray;
       width: 100%;
@@ -309,9 +309,10 @@ ul, h3, p, figure {
           line-height: 40px;
           &:first-child {
             color: #8A8C92;
+            font-family: PingFangSC-Regular;
           }
           &:nth-child(2) {
-            font-family: PingFang SC-Medium;
+            font-family: PingFangSC-Medium;
           }
         }
       }
