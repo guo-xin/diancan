@@ -309,10 +309,10 @@ ul, h3, p, figure {
           line-height: 40px;
           &:first-child {
             color: #8A8C92;
-            font-family: PingFangSC-Regular;
+            font-family: PingFangSC-Regular, Arial, Helvetica, sans-serif;
           }
           &:nth-child(2) {
-            font-family: PingFangSC-Medium;
+            font-family: PingFangSC-Medium, Arial, Helvetica, sans-serif;
           }
         }
       }
