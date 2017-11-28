@@ -233,7 +233,11 @@ ul, h3, p, figure {
       }
     }
     div {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      -ms-flex: 1;
       flex: 1;
+      width: 474px;
       padding-left: 20px;
       h3 {
         margin-bottom: 10px;
@@ -244,6 +248,7 @@ ul, h3, p, figure {
       color: $aluminium;
       line-height: 1.5;
       margin-bottom: 10px;
+      overflow-y: auto;
     }
     .distance {
       color: $black;
