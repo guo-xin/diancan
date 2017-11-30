@@ -5,7 +5,7 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import router from './router'
-import { verify } from 'methods/verify'
+// import { verify } from 'methods/verify'
 import { Toast } from 'qfpay-ui'
 import config from 'methods/Config'
 
@@ -51,9 +51,9 @@ let jsApiList = [
 ]
 
 // 需要csid的情况
-verify().then(initVue)
+// verify().then(initVue)
 // 不需要csid的情况
-// initVue()
+initVue()
 
 Wechat.init(jsApiList)
 Wechat.ready()

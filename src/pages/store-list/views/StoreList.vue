@@ -49,8 +49,6 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  /* eslint-disable no-unused-vars */
-  import Wechat from 'methods/Wechat'
   import Config from 'methods/Config'
   import loading from 'components/loading/juhua.vue'
   import GetLocation from 'components/GetLocation.vue'
@@ -107,12 +105,10 @@
           page: 1
         }
         if (this.groupId) {
-          // data.userid = this.userId
           data.groupid = this.groupId
         }
         if (this.userId) {
           data.userid = this.userId
-          // data.groupid = 11111215
         }
         return data
       },
