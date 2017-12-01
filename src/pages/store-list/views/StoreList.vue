@@ -73,7 +73,6 @@
       loading, GetLocation
     },
     created () {
-      console.log(this.$route.params.group_id)
       let _this = this
       let longitude = 0
       let _t = setInterval(function () {
@@ -143,8 +142,9 @@
         }
       },
       jumpUrl (mchntId, e) {
+        let path = Config.env === 'development' ? '' : 'dc/'
         if (e.target.nodeName !== 'A') {
-          window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+          window.location.href = `${window.location.origin}/${path}/take-out.html?/#/merchant/${mchntId}`
         }
       }
     }

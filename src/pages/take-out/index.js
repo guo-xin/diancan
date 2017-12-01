@@ -23,7 +23,7 @@ Vue.http.interceptors.push(function (request, next) {
     let data = response.body
     if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
       let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
-      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      let url = `${config.o2Host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
       window.location.replace(url)
     }
   })

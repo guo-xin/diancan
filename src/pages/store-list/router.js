@@ -21,12 +21,7 @@ let routes = [
     component: StoreList
   },
   {
-    path: '/merchant/:mchnt_id/group/:group_id',
-    name: 'group',
-    component: StoreList
-  },
-  {
-    path: '/merchant/:mchnt_id/tangshi/',
+    path: '/tangshi/:mchnt_id',
     name: 'tangshi',
     component: TangShi
   }

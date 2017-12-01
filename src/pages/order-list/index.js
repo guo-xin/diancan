@@ -4,6 +4,7 @@ window.FastClick = FastClick
 
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import VueRouter from 'vue-router'
 import { verify } from 'methods/verify'
 import { isWX } from 'methods/Util'
 import { Toast } from 'qfpay-ui'
@@ -23,7 +24,7 @@ Vue.http.interceptors.push(function (request, next) {
     let data = response.body
     if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
       let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
-      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      let url = `${config.o2Host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
       window.location.replace(url)
     }
   })
@@ -34,6 +35,7 @@ import 'filters/index'
 import { WechatPlugin, Wechat } from 'methods/Wechat'
 
 Vue.use(VueResource)
+Vue.use(VueRouter)
 Vue.use(WechatPlugin)
 
 Vue.component(Toast.name, Toast)
@@ -60,9 +62,25 @@ if (process.env.NODE_ENV === 'production' || isWX) {
 }
 
 function initVue () {
+  let routes = [
+    {
+      path: '/merchant/:mchnt_id',
+      name: 'merchant',
+      component: App
+    },
+    { // 展示该渠道下的所有订单
+      path: '/group/:group_id',
+      name: 'group',
+      component: App
+    }
+  ]
+  const router = new VueRouter({
+    routes
+  })
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
+    router,
     template: '<App/>',
     components: { App }
   })

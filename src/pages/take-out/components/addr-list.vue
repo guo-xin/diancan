@@ -19,7 +19,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import config from '../../../methods/Config'
+  import config from 'methods/Config'
   export default {
     data () {
       return {
@@ -39,11 +39,11 @@
     methods: {
       fetchData () {
         this.$http({
-          url: config.dcHost + 'diancan/c/addr_list',
+          url: `${config.dcHost}diancan/c/addr_list`,
           method: 'JSONP',
           params: {
             format: 'jsonp',
-            userid: this.$route.query.mchnt_id
+            userid: sessionStorage.getItem('mchntId')
           }
         }).then((res) => {
           if (res.data.respcd === '0000') {

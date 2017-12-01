@@ -12,6 +12,7 @@
           location: '',
           longitude: 0,
           latitude: 0,
+          detail_addr: '',
           adcode: 0,
           city_code: 0
         },
@@ -42,6 +43,7 @@
           coord = e.data.location.split(',')
           _this.info.longitude = coord[0]
           _this.info.latitude = coord[1]
+          _this.info.detail_addr = _this.$parent.tempAddr.detail_addr + e.data.address
           _this.getAdcode(coord[0], coord[1])
         }
       }
@@ -102,9 +104,5 @@
     position: absolute;
     top: 0;
     left: 0;
-  }
-  .main-header .picker-index .back {
-    display: none;
-    margin-left: 20px;
   }
 </style>

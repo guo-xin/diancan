@@ -51,43 +51,33 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  /* eslint-disable no-unused-vars */
-  import Config from '../../methods/Config'
-  import Util from '../../methods/Util'
-  import loading from '../../components/loading/juhua.vue'
+  import Config from 'methods/Config'
+  import loading from 'components/loading/juhua.vue'
 
   export default {
     props: ['useTabs'],
     data () {
       return {
         init: true,
-        mId: Util.getRequestParams().mchnt_id || sessionStorage.getItem('mchntId') || '',
+        userId: this.$route.params.mchnt_id || '',
+        groupId: this.$route.params.group_id || '',
         openId: sessionStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
+        page: 1,
         orders: [],
         noData: false,
         fromName: 'merchant'
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'jsonp',
-          mchnt_id: this.mId,
-          openid: this.openId,
-          page_size: 10,
-          page: 1
-        }
       }
     },
     components: {
       loading: loading
     },
     created () {
-      this.fromName = this.$router ? 'merchant' : 'orderlist'
-      if (this.fromName === 'orderlist') {
+      let fromName = window.location.pathname === '/order-list.html' ? 'orderlist' : 'merchant'
+      this.fromName = fromName
+      if (fromName === 'orderlist') {
         this.getData()
       }
     },
@@ -118,7 +108,13 @@
         this.$http({
           method: 'JSONP',
           url: Config.apiHost + 'diancan/c/order_list',
-          params: _this.requestData
+          params: {
+            format: 'jsonp',
+            openid: this.openId,
+            mchnt_id: this.userId,
+            page_size: 10,
+            page: 1
+          }
         }).then(function (response) {
           let res = response.data
           _this.loading = false
@@ -134,17 +130,32 @@
           }
         })
       },
+      requestData () {
+        let data = {
+          format: 'jsonp',
+          openid: this.openId,
+          page_size: 10,
+          page: this.page
+        }
+        if (this.groupId) {
+          data.groupid = this.groupId
+        }
+        if (this.userId) {
+          data.mchnt_id = this.userId
+        }
+        return data
+      },
       getData () {
         let _this = this
         if (!this.loaded) {
           this.loading = true
           if (!this.firstRequest) {
-            this.requestData.page += 1
+            this.page += 1
           }
           this.$http({
             method: 'JSONP',
             url: Config.apiHost + 'diancan/c/order_list',
-            params: _this.requestData
+            params: _this.requestData()
           }).then(function (response) {
             let res = response.data
             _this.init = false

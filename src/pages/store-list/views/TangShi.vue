@@ -20,7 +20,6 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  /* eslint-disable no-unused-vars */
   import Config from 'methods/Config'
   import loading from 'components/loading/juhua.vue'
   export default {
@@ -30,7 +29,6 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        address: '',
         responseData: {
           list: []
         },
@@ -49,7 +47,6 @@
       loading
     },
     created () {
-      this.getAddress()
       this.getData()
     },
     mounted () {
@@ -94,17 +91,14 @@
           })
         }
       },
-      getAddress () {
-        if (this.$route.query.address) {
-          this.address = this.$route.query.address
-        }
-      },
       jumpUrl (mchntId, e) {
+        let path = Config.env === 'development' ? '' : 'dc/'
+        let address = this.$route.query.address
         if (e.target.nodeName !== 'A') {
-          if (this.$route.query.address) { // 带桌号
-            window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}/${this.address}`
+          if (address) { // 带桌号
+            window.location.href = `${window.location.origin}/${path}/index.html?/#/merchant/${mchntId}/${address}`
           } else {
-            window.location.href = `${Config.apiHost}dc/take-out.html?/#!/merchant/${mchntId}`
+            window.location.href = `${window.location.origin}/${path}/index.html?/#/merchant/${mchntId}`
           }
         }
       }
