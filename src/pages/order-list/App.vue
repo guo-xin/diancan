@@ -32,7 +32,10 @@
             <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}} <span></span></p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
+                <span v-if="item.order_state == 3">已退款</span>
+                <span v-if="item.order_state == 2" class="success">支付成功</span>
+              </p>
             </div>
           </div>
         </div>
