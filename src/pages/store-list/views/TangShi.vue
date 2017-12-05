@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="store-list" v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
+      <li v-for="item in storeList" @click='jumpUrl(item.userid, $event)'>
         <figure>
           <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
         </figure>
@@ -29,18 +29,9 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        responseData: {
-          list: []
-        },
+        storeList: [],
+        page: 1,
         noData: false
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'jsonp',
-          userid: this.userId
-        }
       }
     },
     components: {
@@ -52,10 +43,10 @@
     mounted () {
       let _this = this
       window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
         var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+        var windowScrollTop = window.scrollY
+        var innerHeight = window.innerHeight
+        if (windowScrollTop + innerHeight >= scrollHeight && !_this.loading) {
           _this.getData()
         }
       }
@@ -66,19 +57,22 @@
         if (!this.loaded) {
           this.loading = true
           if (!this.firstRequest) {
-            this.requestData.page += 1
+            this.page += 1
           }
           this.$http({
             url: Config.apiHost + 'diancan/c/ts_mchnt_list',
-            params: _this.requestData,
+            params: {
+              format: 'jsonp',
+              userid: this.userId,
+              page: this.page
+            },
             method: 'JSONP'
           }).then(function (response) {
             let res = response.data
-            _this.init = false
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
-              _this.responseData.list = _this.responseData.list.concat(res.data.mchnts)
+              _this.storeList = _this.storeList.concat(res.data.mchnts)
               if (res.data.mchnts.length === 0) {
                 _this.noData = true
               }
@@ -92,13 +86,13 @@
         }
       },
       jumpUrl (mchntId, e) {
-        let path = Config.env === 'development' ? '' : 'dc/'
+        let path = Config.env === 'development' ? '' : '/dc/'
         let address = this.$route.query.address
         if (e.target.nodeName !== 'A') {
           if (address) { // 带桌号
-            window.location.href = `${window.location.origin}/${path}/index.html?/#/merchant/${mchntId}/${address}`
+            window.location.href = `${window.location.origin}${path}/index.html?/#/merchant/${mchntId}/${address}`
           } else {
-            window.location.href = `${window.location.origin}/${path}/index.html?/#/merchant/${mchntId}`
+            window.location.href = `${window.location.origin}${path}/index.html?/#/merchant/${mchntId}`
           }
         }
       }

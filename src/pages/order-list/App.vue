@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'hasbottom': useTabs}">
+  <div :class="{'hasbottom': fromName === 'merchant'}">
     <div v-if="noData" class="no-data">
       <img src="./assets/no_data.png" alt="">
       <p>暂无订单</p>
@@ -55,7 +55,6 @@
   import loading from 'components/loading/juhua.vue'
 
   export default {
-    props: ['useTabs'],
     data () {
       return {
         init: true,
@@ -87,13 +86,13 @@
       })
     },
     mounted () {
-      if (!this.useTabs) {
+      if (this.fromName === 'orderlist') {
         let _this = this
         window.onscroll = () => {
           var scrollHeight = document.body.scrollHeight
           var windowScrollTop = window.scrollY
           var innerHeight = window.innerHeight
-          if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
+          if (windowScrollTop + innerHeight >= scrollHeight && !_this.loading) {
             _this.getData()
           }
         }

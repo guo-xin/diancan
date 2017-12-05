@@ -12,7 +12,6 @@
           location: '',
           longitude: 0,
           latitude: 0,
-          detail_addr: '',
           adcode: 0,
           city_code: 0
         },
@@ -39,11 +38,10 @@
         let coord = []
         if (e.data.name) {
           window.removeEventListener('message', listener, false)
-          _this.info.location = e.data.name
+          _this.info.location = e.data.name + e.data.address
           coord = e.data.location.split(',')
           _this.info.longitude = coord[0]
           _this.info.latitude = coord[1]
-          _this.info.detail_addr = _this.$parent.tempAddr.detail_addr + e.data.address
           _this.getAdcode(coord[0], coord[1])
         }
       }

@@ -78,7 +78,7 @@
 
     <!-- 订单列表 -->
     <div class="order-wrapper" ref="order" v-show="showOrderList">
-      <order-list ref="orderlist" :useTabs="true" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
+      <order-list ref="orderlist" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
     </div>
 
     <!--扫描二维码蒙层-->

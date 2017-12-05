@@ -43,7 +43,7 @@
     </ul>
     <div v-if="noData" class="no-data">
       <img src="../assets/no_data.png" alt="">
-      <p>暂无数据</p>
+      <p>{{groupId ? '快让你心仪的店铺来找我入驻吧！' : '暂无数据'}}</p>
     </div>
     <loading :visible="loading"></loading>
   </div>
