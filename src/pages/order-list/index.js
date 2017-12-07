@@ -5,7 +5,6 @@ window.FastClick = FastClick
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import VueRouter from 'vue-router'
-import { verify } from 'methods/verify'
 import { isWX } from 'methods/Util'
 import { Toast } from 'qfpay-ui'
 import config from 'methods/Config'
@@ -23,8 +22,7 @@ Vue.http.interceptors.push(function (request, next) {
   next(function (response) {
     let data = response.body
     if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
-      let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
-      let url = `${config.o2Host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      let url = `${config.o2Host}trade/v1/customer/get?redirect_uri=` + encodeURIComponent(window.location.href)
       window.location.replace(url)
     }
   })
@@ -43,17 +41,11 @@ Vue.prototype.$toast = Toast
 
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [
-  'checkJsApi',
-  'hideAllNonBaseMenuItem',
-  'showAllNonBaseMenuItem',
-  'hideMenuItems',
-  'showMenuItems',
-  'getLocation',
-  'scanQRCode'
+  'hideMenuItems'
 ]
 
 if (process.env.NODE_ENV === 'production' || isWX) {
-  verify().then(initVue)
+  initVue()
   Wechat.init(jsApiList)
   Wechat.ready()
   .then(Wechat.hideOptionMenu)
