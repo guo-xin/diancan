@@ -142,7 +142,7 @@
         }
       },
       jumpUrl (mchntId, e) {
-        let path = Config.env === 'development' ? '' : '/dc/'
+        let path = Config.env === 'development' ? '' : '/dc'
         if (e.target.nodeName !== 'A') {
           window.location.href = `${window.location.origin}${path}/take-out.html?/#/merchant/${mchntId}`
         }

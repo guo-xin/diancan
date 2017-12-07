@@ -86,7 +86,7 @@
         }
       },
       jumpUrl (mchntId, e) {
-        let path = Config.env === 'development' ? '' : '/dc/'
+        let path = Config.env === 'development' ? '' : '/dc'
         let address = this.$route.query.address
         if (e.target.nodeName !== 'A') {
           if (address) { // 带桌号
