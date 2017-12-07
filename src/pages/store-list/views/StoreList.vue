@@ -150,12 +150,14 @@
     }
   }
 </script>
-<style scoped lang="scss" type="scss" rel="stylesheet/scss">
+<style lang="scss">
 @import "../../../styles/base/_reset";
 @import "../../../styles/base/_var";
 @import "../../../styles/iconfont/iconfont.css";
 html {
   height: 100%;
+  font-family: PingFang-SC-Regular;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -246,17 +248,20 @@ ul, h3, p, figure {
       padding-left: 20px;
       h3 {
         margin-bottom: 10px;
-        font-size: 30px;
+        font-size: 32px;
+        font-family: PingFang-SC-Medium;
       }
     }
     .address {
-      color: $aluminium;
+      color: #000;
       line-height: 1.5;
       margin-bottom: 10px;
       overflow-y: auto;
+      // font-family: PingFang-SC-Regular;
     }
     .distance {
       color: $black;
+      font-family: PingFang-SC-Medium;
       strong {
         font-size: 28px;
         font-weight: bold;
