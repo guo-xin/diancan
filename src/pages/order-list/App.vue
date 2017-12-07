@@ -74,7 +74,7 @@
       loading: loading
     },
     created () {
-      let fromName = window.location.pathname === '/order-list.html' ? 'orderlist' : 'merchant'
+      let fromName = window.location.pathname.indexOf('order-list') > 0 ? 'orderlist' : 'merchant'
       this.fromName = fromName
       if (fromName === 'orderlist') {
         this.getData()
