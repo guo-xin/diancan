@@ -145,6 +145,7 @@
         return data
       },
       getData () {
+        console.log('getData')
         let _this = this
         if (!this.loaded) {
           this.loading = true
