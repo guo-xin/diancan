@@ -150,24 +150,8 @@
     }
   }
 </script>
-<style lang="scss">
-@import "../../../styles/base/_reset";
+<style scoped lang="scss">
 @import "../../../styles/base/_var";
-@import "../../../styles/iconfont/iconfont.css";
-html {
-  height: 100%;
-  font-family: PingFang-SC-Regular;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  background-color: #F7F7F7;
-  height: 100%;
-}
-ul, h3, p, figure {
-  margin: 0;
-}
-
 .no-data {
   position: relative;
   padding: 1px;
@@ -257,7 +241,6 @@ ul, h3, p, figure {
       line-height: 1.5;
       margin-bottom: 10px;
       overflow-y: auto;
-      // font-family: PingFang-SC-Regular;
     }
     .distance {
       color: $black;
@@ -324,7 +307,6 @@ ul, h3, p, figure {
           line-height: 40px;
           &:first-child {
             color: #8A8C92;
-            font-family: PingFangSC-Regular, Arial, Helvetica, sans-serif;
           }
           &:nth-child(2) {
             font-family: PingFangSC-Medium, Arial, Helvetica, sans-serif;
