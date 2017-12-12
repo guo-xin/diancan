@@ -90,9 +90,9 @@
         let address = this.$route.query.address
         if (e.target.nodeName !== 'A') {
           if (address) { // 带桌号
-            window.location.href = `${window.location.origin}${path}/index.html?#/merchant/${mchntId}/${address}`
+            window.location.href = `${window.location.origin}${path}/index.html?/#!/merchant/${mchntId}/${address}`
           } else {
-            window.location.href = `${window.location.origin}${path}/index.html?#/merchant/${mchntId}`
+            window.location.href = `${window.location.origin}${path}/index.html?/#!/merchant/${mchntId}`
           }
         }
       }
@@ -158,9 +158,11 @@
         -webkit-flex:1;
         padding-left: 20px;
         display: flex;
-        -webkit-display: flex;
+        display: -webkit-flex;
         align-content: space-between;
+        -webkit-align-content: space-between;
         flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
         padding-bottom: 10px;
         h3 {
           width: 100%;
