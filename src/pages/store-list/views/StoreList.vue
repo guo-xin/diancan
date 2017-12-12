@@ -144,28 +144,14 @@
       jumpUrl (mchntId, e) {
         let path = Config.env === 'development' ? '' : '/dc'
         if (e.target.nodeName !== 'A') {
-          window.location.href = `${window.location.origin}${path}/take-out.html?/#/merchant/${mchntId}`
+          window.location.href = `${window.location.origin}${path}/take-out.html?/#!/merchant/${mchntId}`
         }
       }
     }
   }
 </script>
-<style scoped lang="scss" type="scss" rel="stylesheet/scss">
-@import "../../../styles/base/_reset";
+<style scoped lang="scss">
 @import "../../../styles/base/_var";
-@import "../../../styles/iconfont/iconfont.css";
-html {
-  height: 100%;
-}
-
-body {
-  background-color: #F7F7F7;
-  height: 100%;
-}
-ul, h3, p, figure {
-  margin: 0;
-}
-
 .no-data {
   position: relative;
   padding: 1px;
@@ -246,17 +232,19 @@ ul, h3, p, figure {
       padding-left: 20px;
       h3 {
         margin-bottom: 10px;
-        font-size: 30px;
+        font-size: 32px;
+        font-family: PingFang-SC-Medium;
       }
     }
     .address {
-      color: $aluminium;
+      color: #000;
       line-height: 1.5;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       overflow-y: auto;
     }
     .distance {
       color: $black;
+      font-family: PingFang-SC-Medium;
       strong {
         font-size: 28px;
         font-weight: bold;
@@ -317,10 +305,6 @@ ul, h3, p, figure {
         >span {
           display: block;
           line-height: 40px;
-          &:first-child {
-            color: #8A8C92;
-            font-family: PingFangSC-Regular, Arial, Helvetica, sans-serif;
-          }
           &:nth-child(2) {
             font-family: PingFangSC-Medium, Arial, Helvetica, sans-serif;
           }
