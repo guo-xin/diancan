@@ -6,22 +6,22 @@
     </div>
     <ul class="order-list" v-else>
       <li v-for="item in orders" @click='jumpUrl(item)'>
-        <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
+        <div v-if="item.order_type === 3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
             <p>外送单号 <em>{{item.order_sn}}</em>
-              <i v-if="item.delivery_state==4">已退款</i>
-              <i v-if="item.delivery_state==3">已送达</i>
-              <i v-if="item.delivery_state==2">已发货</i>
-              <i v-if="item.delivery_state==1">已接单</i>
-              <i v-if="item.delivery_state==0">已付款</i>
+              <i v-if="item.delivery_state === 4">已退款</i>
+              <i v-if="item.delivery_state === 3">已送达</i>
+              <i v-if="item.delivery_state === 2">已发货</i>
+              <i v-if="item.delivery_state === 1">已接单</i>
+              <i v-if="item.delivery_state === 0">已付款</i>
             </p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span>
               </p>
               <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
-                <span v-if="item.order_state == 3">已退款</span>
-                <span v-if="item.order_state == 2" class="success">支付成功</span>
+                <span v-if="item.order_state === 3">已退款</span>
+                <span v-if="item.order_state === 2" class="success">支付成功</span>
               </p>
             </div>
           </div>
@@ -33,8 +33,8 @@
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
               <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
-                <span v-if="item.order_state == 3">已退款</span>
-                <span v-if="item.order_state == 2" class="success">支付成功</span>
+                <span v-if="item.order_state === 3">已退款</span>
+                <span v-if="item.order_state === 2" class="success">支付成功</span>
               </p>
             </div>
           </div>
