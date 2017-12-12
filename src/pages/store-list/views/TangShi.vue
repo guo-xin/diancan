@@ -73,7 +73,7 @@
             _this.loading = false
             if (res.respcd === '0000') {
               _this.storeList = _this.storeList.concat(res.data.mchnts)
-              if (res.data.mchnts.length === 0) {
+              if (_this.storeList.length === 0) {
                 _this.noData = true
               }
               if (res.data.mchnts.length < 10) {

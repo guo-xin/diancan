@@ -2,7 +2,7 @@
   <div>
     <get-Location></get-Location>
     <ul class="store-list" v-if="!noData">
-      <li v-for="item in responseData.list" @click='jumpUrl(item.userid, $event)'>
+      <li v-for="item in storeList" @click='jumpUrl(item.userid, $event)'>
         <figure>
           <img :src="(item.head_img ? item.head_img : 'http://near.m1img.com/op_upload/155/149432051742.png') + '?imageView2/1/w/200/h/150'" alt="店铺图片">
           <span v-if="item.overtime || !item.delivery_open_state">{{item.overtime ? '已打烊' : '暂停送餐'}}</span>
@@ -60,9 +60,8 @@
         firstRequest: true,
         loading: false,
         loaded: false,
-        responseData: {
-          list: []
-        },
+        page: 1,
+        storeList: [],
         noData: false
       }
     },
@@ -86,10 +85,10 @@
     mounted () {
       let _this = this
       window.onscroll = () => {
-        var scrollTop = document.body.scrollTop
-        var windowHeight = document.body.offsetHeight
         var scrollHeight = document.body.scrollHeight
-        if (scrollTop + windowHeight + 100 >= scrollHeight && !_this.loading) {
+        var windowScrollTop = window.scrollY
+        var innerHeight = window.innerHeight
+        if (windowScrollTop + innerHeight >= scrollHeight && !_this.loading) {
           _this.getData()
         }
       }
@@ -100,8 +99,7 @@
           format: 'jsonp',
           longitude: window.localStorage.getItem('longitude'),
           latitude: window.localStorage.getItem('latitude'),
-          pagesize: 10,
-          page: 1
+          page: this.page
         }
         if (this.groupId) {
           data.groupid = this.groupId
@@ -116,7 +114,7 @@
         if (!this.loaded) {
           this.loading = true
           if (!this.firstRequest) {
-            this.requestData.page += 1
+            this.page += 1
           }
           this.$http({
             url: Config.apiHost + 'diancan/c/mchnt_list',
@@ -124,12 +122,11 @@
             method: 'JSONP'
           }).then(function (response) {
             let res = response.data
-            _this.init = false
             _this.firstRequest = false
             _this.loading = false
             if (res.respcd === '0000') {
-              _this.responseData.list = _this.responseData.list.concat(res.data.mchnts)
-              if (res.data.mchnts.length === 0) {
+              _this.storeList = _this.storeList.concat(res.data.mchnts)
+              if (_this.storeList.length === 0) {
                 _this.noData = true
               }
               if (res.data.mchnts.length < 10) {
