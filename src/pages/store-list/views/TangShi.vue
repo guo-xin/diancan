@@ -90,19 +90,17 @@
         let address = this.$route.query.address
         if (e.target.nodeName !== 'A') {
           if (address) { // 带桌号
-            window.location.href = `${window.location.origin}${path}/index.html?/#/merchant/${mchntId}/${address}`
+            window.location.href = `${window.location.origin}${path}/index.html?#/merchant/${mchntId}/${address}`
           } else {
-            window.location.href = `${window.location.origin}${path}/index.html?/#/merchant/${mchntId}`
+            window.location.href = `${window.location.origin}${path}/index.html?#/merchant/${mchntId}`
           }
         }
       }
     }
   }
 </script>
-<style lang="scss" type="scss" rel="stylesheet/scss">
-  @import "../../../styles/base/_reset";
+<style scoped lang="scss" type="scss" rel="stylesheet/scss">
   @import "../../../styles/base/_var";
-  @import "../../../styles/iconfont/iconfont.css";
   html {
     height: 100%;
   }
@@ -111,7 +109,7 @@
     background-color: #F7F7F7;
     height: 100%;
   }
-  ul, h3, p, figure {
+  ul, h3, p {
     margin: 0;
   }
 
@@ -159,9 +157,16 @@
         -webkit-box-flex:1;
         -webkit-flex:1;
         padding-left: 20px;
+        display: flex;
+        -webkit-display: flex;
+        align-content: space-between;
+        flex-wrap: wrap;
+        padding-bottom: 10px;
         h3 {
+          width: 100%;
           margin-bottom: 20px;
           font-size: 30px;
+          font-family: PingFang-SC-Medium;
         }
       }
       .address {

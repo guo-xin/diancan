@@ -144,7 +144,7 @@
       jumpUrl (mchntId, e) {
         let path = Config.env === 'development' ? '' : '/dc'
         if (e.target.nodeName !== 'A') {
-          window.location.href = `${window.location.origin}${path}/take-out.html?/#/merchant/${mchntId}`
+          window.location.href = `${window.location.origin}${path}/take-out.html?#/merchant/${mchntId}`
         }
       }
     }
@@ -239,7 +239,7 @@
     .address {
       color: #000;
       line-height: 1.5;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       overflow-y: auto;
     }
     .distance {
@@ -305,9 +305,6 @@
         >span {
           display: block;
           line-height: 40px;
-          &:first-child {
-            color: #8A8C92;
-          }
           &:nth-child(2) {
             font-family: PingFangSC-Medium, Arial, Helvetica, sans-serif;
           }
