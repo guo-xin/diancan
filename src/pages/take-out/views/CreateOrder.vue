@@ -3,7 +3,7 @@
     <section v-if="!hasAddress" class="address add" @click="goAddAddress">
       <img src="../assets/btn_add.svg"><span>新增配送地址</span>
     </section>
-    <section v-else class="address content" @click="goList" :id="current_addr.addr_id">
+    <section v-else class="address content" @click="goAddressList" :id="current_addr.addr_id">
       <p>{{current_addr.contact_name}}　{{current_addr.mobile}}</p>
       <p>{{current_addr.location}} {{current_addr.detail_addr}}</p>
       <p v-if="!current_addr.longitude" class="update-tip">需要升级地址</p>
@@ -515,12 +515,9 @@
           name: 'addressMarker'
         })
       },
-      goList () {
+      goAddressList () {
         this.$router.push({
-          path: '/address/list',
-          query: {
-            'mchnt_id': this.mchnt_id
-          }
+          path: '/address/list'
         })
       }
     }

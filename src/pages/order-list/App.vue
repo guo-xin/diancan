@@ -1,27 +1,27 @@
 <template>
-  <div :class="{'hasbottom': useTabs}">
+  <div :class="{'hasbottom': fromName === 'merchant'}">
     <div v-if="noData" class="no-data">
       <img src="./assets/no_data.png" alt="">
       <p>暂无订单</p>
     </div>
     <ul class="order-list" v-else>
       <li v-for="item in orders" @click='jumpUrl(item)'>
-        <div v-if="item.order_type==3" :class="theme(item.delivery_state)">
+        <div v-if="item.order_type === 3" :class="theme(item.delivery_state)">
           <h2 v-if="item.shop_name">{{item.shop_name}} <span>外卖</span></h2>
           <div class="content">
             <p>外送单号 <em>{{item.order_sn}}</em>
-              <i v-if="item.delivery_state==4">已退款</i>
-              <i v-if="item.delivery_state==3">已送达</i>
-              <i v-if="item.delivery_state==2">已发货</i>
-              <i v-if="item.delivery_state==1">已接单</i>
-              <i v-if="item.delivery_state==0">已付款</i>
+              <i v-if="item.delivery_state === 4">已退款</i>
+              <i v-if="item.delivery_state === 3">已送达</i>
+              <i v-if="item.delivery_state === 2">已发货</i>
+              <i v-if="item.delivery_state === 1">已接单</i>
+              <i v-if="item.delivery_state === 0">已付款</i>
             </p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span>
               </p>
               <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
-                <span v-if="item.order_state == 3">已退款</span>
-                <span v-if="item.order_state == 2" class="success">支付成功</span>
+                <span v-if="item.order_state === 3">已退款</span>
+                <span v-if="item.order_state === 2" class="success">支付成功</span>
               </p>
             </div>
           </div>
@@ -32,7 +32,10 @@
             <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
-              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}} <span></span></p>
+              <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
+                <span v-if="item.order_state === 3">已退款</span>
+                <span v-if="item.order_state === 2" class="success">支付成功</span>
+              </p>
             </div>
           </div>
         </div>
@@ -48,43 +51,32 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-  /* eslint-disable no-unused-vars */
-  import Config from '../../methods/Config'
-  import Util from '../../methods/Util'
-  import loading from '../../components/loading/juhua.vue'
+  import Config from 'methods/Config'
+  import loading from 'components/loading/juhua.vue'
 
   export default {
-    props: ['useTabs'],
     data () {
       return {
         init: true,
-        mId: Util.getRequestParams().mchnt_id || sessionStorage.getItem('mchntId') || '',
+        userId: this.$route.params.mchnt_id || '',
+        groupId: this.$route.params.group_id || '',
         openId: sessionStorage.getItem('dc_openid') || '',
         firstRequest: true,
         loading: false,
         loaded: false,
+        page: 1,
         orders: [],
         noData: false,
         fromName: 'merchant'
-      }
-    },
-    computed: {
-      requestData () {
-        return {
-          format: 'jsonp',
-          mchnt_id: this.mId,
-          openid: this.openId,
-          page_size: 10,
-          page: 1
-        }
       }
     },
     components: {
       loading: loading
     },
     created () {
-      this.fromName = this.$router ? 'merchant' : 'orderlist'
-      if (this.fromName === 'orderlist') {
+      let fromName = window.location.pathname.indexOf('order-list') > 0 ? 'orderlist' : 'merchant'
+      this.fromName = fromName
+      if (fromName === 'orderlist') {
         this.getData()
       }
     },
@@ -94,13 +86,13 @@
       })
     },
     mounted () {
-      if (!this.useTabs) {
+      if (this.fromName === 'orderlist') {
         let _this = this
         window.onscroll = () => {
           var scrollHeight = document.body.scrollHeight
           var windowScrollTop = window.scrollY
           var innerHeight = window.innerHeight
-          if (windowScrollTop + innerHeight >= scrollHeight & !_this.loading) {
+          if (windowScrollTop + innerHeight >= scrollHeight && !_this.loading) {
             _this.getData()
           }
         }
@@ -115,7 +107,13 @@
         this.$http({
           method: 'JSONP',
           url: Config.apiHost + 'diancan/c/order_list',
-          params: _this.requestData
+          params: {
+            format: 'jsonp',
+            openid: this.openId,
+            mchnt_id: this.userId,
+            page_size: 10,
+            page: 1
+          }
         }).then(function (response) {
           let res = response.data
           _this.loading = false
@@ -131,17 +129,33 @@
           }
         })
       },
+      requestData () {
+        let data = {
+          format: 'jsonp',
+          openid: this.openId,
+          page_size: 10,
+          page: this.page
+        }
+        if (this.groupId) {
+          data.groupid = this.groupId
+        }
+        if (this.userId) {
+          data.mchnt_id = this.userId
+        }
+        return data
+      },
       getData () {
+        console.log('getData')
         let _this = this
         if (!this.loaded) {
           this.loading = true
           if (!this.firstRequest) {
-            this.requestData.page += 1
+            this.page += 1
           }
           this.$http({
             method: 'JSONP',
             url: Config.apiHost + 'diancan/c/order_list',
-            params: _this.requestData
+            params: _this.requestData()
           }).then(function (response) {
             let res = response.data
             _this.init = false

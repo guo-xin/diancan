@@ -4,7 +4,8 @@ window.FastClick = FastClick
 
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import { verify } from 'methods/verify'
+import router from './router'
+// import { verify } from 'methods/verify'
 import { Toast } from 'qfpay-ui'
 import config from 'methods/Config'
 
@@ -21,8 +22,7 @@ Vue.http.interceptors.push(function (request, next) {
   next(function (response) {
     let data = response.body
     if (data.respcd === config.code.SESSIONERR || data.respcd === config.code.LOGINERR) {
-      let appid = sessionStorage.getItem('dc_appid') || 'wxeb6e671f5571abce'
-      let url = `${config.o2_host}trade/v1/customer/get?appid=${appid}&redirect_uri=` + encodeURIComponent(window.location.href)
+      let url = `${config.o2Host}trade/v1/customer/get?redirect_uri=` + encodeURIComponent(window.location.href)
       window.location.replace(url)
     }
   })
@@ -50,9 +50,9 @@ let jsApiList = [
 ]
 
 // 需要csid的情况
-verify().then(initVue)
+// verify().then(initVue)
 // 不需要csid的情况
-// initVue()
+initVue()
 
 Wechat.init(jsApiList)
 Wechat.ready()
@@ -65,6 +65,7 @@ function initVue () {
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
+    router,
     template: '<App/>',
     components: { App }
   })

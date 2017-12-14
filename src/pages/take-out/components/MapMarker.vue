@@ -38,7 +38,7 @@
         let coord = []
         if (e.data.name) {
           window.removeEventListener('message', listener, false)
-          _this.info.location = e.data.name
+          _this.info.location = e.data.name + e.data.address
           coord = e.data.location.split(',')
           _this.info.longitude = coord[0]
           _this.info.latitude = coord[1]
@@ -102,9 +102,5 @@
     position: absolute;
     top: 0;
     left: 0;
-  }
-  .main-header .picker-index .back {
-    display: none;
-    margin-left: 20px;
   }
 </style>

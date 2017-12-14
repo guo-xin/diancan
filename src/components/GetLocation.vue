@@ -25,8 +25,8 @@
     methods: {
       getLocation () {
         this.btnDisabled = 'disabled'
-        let href = window.location.pathname
-        if (href === '/take-out.html') {
+        let pathname = window.location.pathname
+        if (pathname.indexOf('take-out') > 0) {
           Wechat.getOverdistFormattedAddress()
           .then(() => {
             this.btnDisabled = false
