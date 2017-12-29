@@ -134,6 +134,7 @@
           white-space: nowrap;
           text-overflow: ellipsis;
           font-style: normal;
+          padding-right: 55px;
           color: $black;
         }
       }

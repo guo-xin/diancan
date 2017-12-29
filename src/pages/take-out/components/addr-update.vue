@@ -146,6 +146,7 @@
         em {
           display: block;
           flex: 1;
+          padding-right: 55px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
