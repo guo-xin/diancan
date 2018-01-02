@@ -145,6 +145,8 @@
         background-size: .3rem auto;
         em {
           display: block;
+          width: 270px;
+          -webkit-flex: 1;
           flex: 1;
           padding-right: 55px;
           overflow: hidden;
