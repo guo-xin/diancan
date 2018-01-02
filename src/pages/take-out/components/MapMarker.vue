@@ -13,7 +13,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // import BScroll from 'better-scroll'
   export default {
     data () {
       return {
@@ -79,7 +78,7 @@
           // 监听列表选中
           AMap.event.addListener(auto, "select", function(e){
             this.info = {
-              location: e.poi.name,
+              location: e.poi.district + ' ' + e.poi.name,
               longitude: e.poi.location.lng,
               latitude: e.poi.location.lat,
               adcode: e.poi.adcode,
@@ -214,7 +213,7 @@
       width: 200px;
       height: 100%;
       span {
-        display: inline-block;
+        display: block;
         width: 100px;
         text-align: center;
         font-size: 34px;
