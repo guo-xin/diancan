@@ -78,7 +78,7 @@
           // 监听列表选中
           AMap.event.addListener(auto, "select", function(e){
             this.info = {
-              location: e.poi.district + ' ' + e.poi.name,
+              location: e.poi.name + ' ' + e.poi.address,
               longitude: e.poi.location.lng,
               latitude: e.poi.location.lat,
               adcode: e.poi.adcode,
@@ -131,7 +131,6 @@
       adInput () {
         let value = document.getElementById('searchInput').value
         if (value === '') {
-          // this.initMap(true)
         }
       },
       deleteSug () {
@@ -247,6 +246,7 @@
     left: 0!important;
     right: 0!important;
     visibility: visible!important;
+    display: block!important;
     color: #2F323A;
     height: 50%;
     overflow-y: scroll;
@@ -276,6 +276,7 @@
     left: 0!important;
     right: 0!important;
     visibility: visible!important;
+    display: block!important;
     color: #2F323A;
     height: 85%;
     overflow-y: scroll;
