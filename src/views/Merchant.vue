@@ -6,7 +6,7 @@
     <store-info-detail :merchantSetting="merchantSetting" :mchntActivity="mchntActivity" :visible="showStoreDetail"
                        @hideStoreDetailHandler="hideStoreDetailHandler()"></store-info-detail>
     <div class="tabbar">
-      <span :class="{'active':!showOrderList}" @click="toggleTab('menu')">菜单</span><span :class="{'active':showOrderList, 'hasorder': hasOrder}" @click="toggleTab('order')">订单</span>
+      <span :class="{'active':!showOrderList}" @click="toggleTab('menu')">{{$t.name}}</span><span :class="{'active':showOrderList, 'hasorder': hasOrder}" @click="toggleTab('order')">订单</span>
     </div>
     <div id="c-restaurant-content-box" class="l-r" v-show="!showOrderList">
       <div class="list-group-box">

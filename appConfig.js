@@ -12,7 +12,7 @@ exports.pages = [
   {
     filename: 'index',
     template: 'src/pages/index/index.ejs',
-    title:  '微信点餐',
+    title:  '', //标题要根据appid来 修改为 微信点餐 or 微信商场
     chunks: 'vue_vue-resource',
     isBuild: true
   },

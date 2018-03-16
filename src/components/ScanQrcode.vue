@@ -1,8 +1,8 @@
 <template>
   <div v-show="display" class="go-scan">
     <div class="head">
-      <p>对不起，我们还不清楚你坐在哪个位置</p>
-      <p>请扫一扫桌上的二维码，开始点餐</p>
+      <p>{{$t.sorry}}</p>
+      <p>{{$t.again}}</p>
     </div>
     <a @click.prevent="scan" class="scan">扫描二维码</a>
   </div>

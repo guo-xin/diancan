@@ -8,7 +8,7 @@ import VueRouter from 'vue-router'
 import { isWX } from 'methods/Util'
 import { Toast } from 'qfpay-ui'
 import config from 'methods/Config'
-
+import {shop, restaurant} from 'methods/merchantTypeLang'
 // 将post请求的提交方式默认为表格提交的方式
 Vue.http.options.headers = {
   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8;'
@@ -38,6 +38,12 @@ Vue.use(WechatPlugin)
 
 Vue.component(Toast.name, Toast)
 Vue.prototype.$toast = Toast
+let appid = sessionStorage.getItem('dc_appid')
+if (appid === 'wx4a0bbf08f242c6d8') {
+  Vue.prototype.$t = shop
+} else {
+  Vue.prototype.$t = restaurant
+}
 
 // 此处声明你需要用到的JS-SDK权限
 let jsApiList = [

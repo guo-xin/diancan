@@ -27,9 +27,9 @@
           </div>
         </div>
         <div v-else>
-          <h2 v-if="item.shop_name">{{item.shop_name}} <span>堂食</span></h2>
+          <h2 v-if="item.shop_name">{{item.shop_name}} <span>{{$t.eatin}}</span></h2>
           <div class="content">
-            <p>取餐号 <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}号桌</span></p>
+            <p>{{$t.number}} <em>{{item.order_sn}}</em> <span v-if="item.address">{{item.address}}</span></p>
             <div>
               <p class="goods-name">{{item.ordername}} <span>￥{{item.txamt | formatCurrency}}</span></p>
               <p class="goods-time">购买时间: {{item.pay_time | formatTime('yyyy-M-d hh:mm')}}
