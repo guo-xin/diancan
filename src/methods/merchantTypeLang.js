@@ -1,6 +1,6 @@
 // 不同的商户类型 展示不同的文案，现只有 餐厅和商品 两类
 const shop = {
-  name: '商店',
+  name: '商品',
   number: '订单号',
   eatin: '',
   pageTitle: '微信商城',
