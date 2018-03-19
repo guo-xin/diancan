@@ -20,9 +20,11 @@ const getTakeAuthInfo = (mchtId) => {
       let data = res.data
       if (data.respcd === Config.code.OK) {
         let appid = data.data.appid
+        let isShopText = data.data.is_shop_text
         sessionStorage.setItem('dc_appid', appid)
+        sessionStorage.setItem('is_shop_text', isShopText)
         // $t 不同商户类型展示不同文案
-        if (appid === 'wx4a0bbf08f242c6d8') {
+        if (isShopText) {
           Vue.prototype.$t = shop
         } else {
           Vue.prototype.$t = restaurant

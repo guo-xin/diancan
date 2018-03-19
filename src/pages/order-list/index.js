@@ -38,8 +38,10 @@ Vue.use(WechatPlugin)
 
 Vue.component(Toast.name, Toast)
 Vue.prototype.$toast = Toast
-let appid = sessionStorage.getItem('dc_appid')
-if (appid === 'wx4a0bbf08f242c6d8') {
+
+// $t 不同商户类型展示不同文案
+let isShopText = sessionStorage.getItem('is_shop_text')
+if (isShopText === '1') {
   Vue.prototype.$t = shop
 } else {
   Vue.prototype.$t = restaurant
