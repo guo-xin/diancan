@@ -2,9 +2,9 @@
   <div class="order-detail-view">
     <section class="order_sn">
       <h3><img src="../assets/icon-check.png" alt="">支付成功</h3>
-      <div class="order_sn_num"><span>取餐号</span><em>{{order.orderinfo.order_sn}}</em></div>
+      <div class="order_sn_num"><span>{{$t.number}}</span><em>{{order.orderinfo.order_sn}}</em></div>
       <p class="order_address" v-show="order.orderinfo.address">
-        <span>{{order.orderinfo.address}}号桌</span>
+        <span>{{order.orderinfo.address}}</span>
       </p>
     </section>
     <section class="show_detail" :class="{'activate': hasDetail}" @click="hasDetail=!hasDetail">

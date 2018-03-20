@@ -3,7 +3,7 @@ import Config from '../Config'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
 import Util from 'methods/Util'
-
+import {shop, restaurant} from 'methods/merchantTypeLang'
 Vue.use(VueResource)
 
 const getTakeAuthInfo = (mchtId) => {
@@ -19,7 +19,16 @@ const getTakeAuthInfo = (mchtId) => {
     .then((res) => {
       let data = res.data
       if (data.respcd === Config.code.OK) {
-        sessionStorage.setItem('dc_appid', data.data.appid)
+        let appid = data.data.appid
+        let isShopText = data.data.is_shop_text
+        sessionStorage.setItem('dc_appid', appid)
+        sessionStorage.setItem('is_shop_text', isShopText)
+        // $t 不同商户类型展示不同文案
+        if (isShopText) {
+          Vue.prototype.$t = shop
+        } else {
+          Vue.prototype.$t = restaurant
+        }
         resolve(data.data)
       } else {
         window.alert(data.resperr)

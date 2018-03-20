@@ -84,7 +84,7 @@ var appConfig = require('../appConfig')
 appConfig.pages.forEach(function(page) {
   var conf = {
     template: page.template || 'src/templates/vue.ejs',  // html模板路径
-    title: page.title || '钱方商户',
+    title: page.title,
     // filename: 'templates/' + page.filename + '.html', // 生成的html存放路径,文件名，相对于path
     filename: '' + page.filename + '.html', // 生成的html存放路径,文件名，相对于path
     inject: true,

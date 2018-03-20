@@ -23,7 +23,8 @@
         msg: ''
       }
     },
-    created () {
+    beforeCreate () {
+      document.title = this.$t.pageTitle
     },
     computed: {
       carts () {

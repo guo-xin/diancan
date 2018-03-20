@@ -2,9 +2,7 @@
 import Config from '../Config'
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-
 Vue.use(VueResource)
-
 /* global wx */
 const DEBUG = false
 const jsApiList = [

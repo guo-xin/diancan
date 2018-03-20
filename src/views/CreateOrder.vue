@@ -1,11 +1,11 @@
 <template>
   <div class="create-order-view">
     <section v-if="hasAddress" class="table-number">
-      <strong>&#8901;<span>{{address}}号桌</span>&#8901;</strong>
+      <strong>&#8901;<span>{{address}}</span>&#8901;</strong>
     </section>
     <section v-else class="fill-table-number item">
-      <label for="table-number-input">桌号：</label>
-      <input id="table-number-input" type="text" v-model="address" maxlength="8" placeholder="请填写餐桌号码（选填）"/>
+      <label for="table-number-input">{{$t.location}}：</label>
+      <input id="table-number-input" type="text" v-model="address" maxlength="8" placeholder="（选填）"/>
     </section>
     <section class="note item">
       <label for="note">备注：</label>
