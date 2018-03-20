@@ -73,6 +73,7 @@
                 :overtime="merchantSetting.overtime"
                 :nodelivery="merchantSetting.delivery_open_state === 0"
                 :deliver="deliver"
+                :isDadaDeliver="merchantSetting.distribution === 1"
                 @cleanCatesGoodsCount="cleanCatesGoodsCount"></cart-bar>
     </div>
 
@@ -80,9 +81,6 @@
     <div class="order-wrapper" ref="order" v-show="showOrderList">
       <order-list ref="orderlist" @updateOrdersLoaded="updateOrdersLoaded" @goOrderList="goOrderList"></order-list>
     </div>
-
-    <!--扫描二维码蒙层-->
-    <scan-qrcode :display="isExpire"></scan-qrcode>
 
     <loading :visible="isLoading"></loading>
   </div>
@@ -96,7 +94,6 @@
   import SelectSpec from 'components/SelectSpec'
   import CartBar from '../components/CartBar'
   import GoodsDetail from 'components/GoodsDetail'
-  import ScanQrcode from 'components/ScanQrcode.vue'
   import GetLocation from 'components/GetLocation.vue'
   import GetStoreInfo from 'components/GetStoreInfo.vue'
   import StoreInfoDetail from 'components/StoreInfoDetail.vue'
@@ -108,7 +105,7 @@
   export default {
     props: ['deliver'],
     components: {
-      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, ScanQrcode, GetLocation, GetStoreInfo, StoreInfoDetail, OrderList
+      Loading, CartBar, GoodsSelect, SelectSpec, GoodsDetail, GetLocation, GetStoreInfo, StoreInfoDetail, OrderList
     },
     data () {
       return {
@@ -125,7 +122,6 @@
         showDetail: false,
         selectDetail: null,
         order_info: {},
-        isExpire: false,
         merchantSetting: {}, // 店铺信息
         mchntActivity: {
           coupon: {
@@ -180,10 +176,7 @@
       }).then(function (response) {
         this.isLoading = false
         let data = response.data
-        if (data.respcd === '4000') {   // 验证链接时间是否过期
-          this.isExpire = true
-          return
-        } else if (data.respcd !== Config.code.OK) {
+        if (data.respcd !== Config.code.OK) {
           this.$toast(data.respmsg)
           return
         }

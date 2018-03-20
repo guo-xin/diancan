@@ -2,7 +2,7 @@
   <div class="order-detail-view">
     <section class="order_sn">
       <h3><img src="../assets/icon-check.png" alt="">支付成功</h3>
-      <div class="order_sn_num"><span>{{$t.number}}</span><em>{{order.orderinfo.order_sn}}</em></div>
+      <div class="order_sn_num" v-show="hasDetail"><span>{{$t.number}}</span><em>{{order.orderinfo.order_sn}}</em></div>
       <p class="order_address" v-show="order.orderinfo.address">
         <span>{{order.orderinfo.address}}</span>
       </p>
@@ -56,7 +56,7 @@
   import RedPacket from '../components/RedPacket'
   import GetPoints from '../components/GetPoints'
   import config from 'methods/Config'
-
+  import {shop, restaurant} from 'methods/merchantTypeLang'
   export default {
     components: {
       loading, RedPacket, GetPoints
@@ -121,6 +121,11 @@
           this.isLoading = false
           let data = response.data
           if (data.respcd === config.code.OK) {
+            if (data.data.merchant_info.is_shop_text) {
+              this.$t = shop
+            } else {
+              this.$t = restaurant
+            }
             this.hasDetail = data.data.goods_list
             this.order = data.data
             const shopname = data.data.merchant_info.shop_name

@@ -8,7 +8,7 @@
         </div>
         <div class="cart-price" v-if="rule && rule.length > 0">
           <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
-          <p v-show="rule && rule[0].shipping_fee">
+          <p v-if="!isDadaDeliver" v-show="rule && rule[0].shipping_fee">
             配送费 <em :class="{'except': cartData.price >= (rule && rule[0].min_shipping_fee) && (rule && rule[0].min_shipping_fee)}">¥ {{rule && rule[0].shipping_fee | formatCurrency}}</em>
             <span v-if="rule && rule[0].min_shipping_fee">（满{{rule && rule[0].min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
           </p>
@@ -16,7 +16,7 @@
         <!--  兼容老字段 -->
         <div class="cart-price" v-else>
           <span>总价&nbsp;¥&nbsp;<em>{{cartData.price | formatCurrency}}</em></span>
-          <p v-show="deliver.shipping_fee">
+          <p v-if="!isDadaDeliver" v-show="deliver.shipping_fee">
             配送费 <em :class="{'except': cartData.price >= deliver.min_shipping_fee && (deliver.min_shipping_fee)}">¥ {{deliver.shipping_fee | formatCurrency}}</em>
             <span v-if="deliver.min_shipping_fee">（满{{deliver.min_shipping_fee | formatCurrency | noZeroCurrency}}元免配送费）</span>
           </p>
@@ -79,7 +79,7 @@
     components: {
       GoodsSelect
     },
-    props: ['overtime', 'deliver', 'rule', 'nodelivery', 'updateGoodsCount', 'updateCatesCount'],
+    props: ['overtime', 'deliver', 'rule', 'nodelivery', 'updateGoodsCount', 'updateCatesCount', 'isDadaDeliver'],
     data () {
       return {
         mchnt_id: this.$route.params.mchnt_id,
