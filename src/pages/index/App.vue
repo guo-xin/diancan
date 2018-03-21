@@ -23,9 +23,6 @@
         msg: ''
       }
     },
-    beforeCreate () {
-      document.title = this.$t.pageTitle
-    },
     computed: {
       carts () {
         return this.$store.getters.getCarts

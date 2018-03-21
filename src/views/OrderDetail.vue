@@ -123,10 +123,8 @@
           if (data.respcd === config.code.OK) {
             if (data.data.merchant_info.is_shop_text) {
               this.$t = shop
-              document.title = '微信商城'
             } else {
               this.$t = restaurant
-              document.title = '微信点餐'
             }
             this.hasDetail = data.data.goods_list
             this.order = data.data
