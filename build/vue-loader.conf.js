@@ -15,9 +15,5 @@ module.exports = {
     remVersion: true,       // whether to generate rem version (default: true)
     remUnit: 75,            // rem unit value (default: 75)
     remPrecision: 6         // rem precision (default: 6)
-  })],
-  autoprefixer: {
-    browsers: ["Android >= 2.3", "iOS >= 4"],
-    cascade: false  // 不美化输出 css
-  }
+  })]
 }
