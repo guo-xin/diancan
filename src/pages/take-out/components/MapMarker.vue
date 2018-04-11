@@ -17,13 +17,6 @@
     data () {
       return {
         src: '',
-        info: {
-          location: '',
-          longitude: 0,
-          latitude: 0,
-          adcode: 0,
-          city_code: 0
-        },
         fromName: '',
         formattedAddress: ''
       }
@@ -40,7 +33,6 @@
     },
     mounted () {
       this.initMap()
-      /* eslint-disable */
     },
     beforeDestroy () {
       let element = document.getElementById('m')
@@ -51,6 +43,7 @@
     },
     methods: {
       initMap (query) {
+        /* eslint-disable */
         if (query === 'cancel') this.deleteSug()
         var map,auto,positionPicker
         let _this = this
@@ -58,7 +51,7 @@
         let latitude = window.localStorage.getItem('latitude') || '39.908627'
 
         // 地图初始化
-         map = new AMap.Map('container', {
+        map = new AMap.Map('container', {
           zoom: 15,
           center: [longitude, latitude],
           resizeEnable: true
@@ -76,8 +69,8 @@
           // // auto.search(adr)
 
           // 监听列表选中
-          AMap.event.addListener(auto, "select", function(e){
-            this.info = {
+          AMap.event.addListener(auto, 'select', function(e) {
+            let info = {
               location: e.poi.name + ' ' + e.poi.address,
               longitude: e.poi.location.lng,
               latitude: e.poi.location.lat,
@@ -85,9 +78,9 @@
               city_code: 0
             }
             // 选中地址后跳转
-            Object.assign(_this.$parent.tempAddr, this.info)
-            if (this.fromName === 'addressList' || this.fromName === 'createOrder') {
-                this.$router.push({
+            Object.assign(_this.$parent.tempAddr, info)
+            if (_this.fromName === 'addressList' || _this.fromName === 'createOrder') {
+              _this.$router.push({
                 name: 'addressUpdate'
               })
             } else {
