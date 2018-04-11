@@ -2,7 +2,7 @@
   "name": "fe_diancan",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "lidong <lidong@qfpay.com>",
+  "author": "liuyuan <liuyuan@qfpay.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
